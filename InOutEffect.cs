@@ -22,9 +22,9 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            if(_color.A > 0)
+            if(_color.A >= 0.02)
             {
-                _color.A -= (float)0.05;
+                _color.A -= (float)0.02;
             }
             SplashKit.FillRectangle(_color, 0, 0, _width, _height);
         }
@@ -45,9 +45,9 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            if (_color.A < 1)
+            if (_color.A <= 0.98)
             {
-                _color.A += (float)0.05;
+                _color.A += (float)0.02;
             } else
             {
                 _completed = true;
