@@ -6,6 +6,7 @@ using SplashKitSDK;
 
 namespace Cyberpunk77022
 {
+    
     public class Program
     {
 
@@ -22,6 +23,7 @@ namespace Cyberpunk77022
                 state = NewState;
             };
             HomeStage home = new HomeStage(window, WIDTH, HEIGHT, ChangeState);
+            GameStage game = new GameStage(window, WIDTH, HEIGHT, ChangeState);
 
 
             for (int i = 0; i < stars.Length; i++)
@@ -54,6 +56,10 @@ namespace Cyberpunk77022
                     case "home":
                         home.Update();
                         home.Draw();
+                        break;
+                    case "game":
+                        game.Update();
+                        game.Draw();
                         break;
                 }
 

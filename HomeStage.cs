@@ -22,6 +22,12 @@ namespace Cyberpunk77022
         Action startAct;
         Action shopAct;
         Action aboutAct;
+        Action<string> setClosing;
+        InEffect inEf;
+        OutEffect outEf;
+        bool _closing = false;
+        string _nextState;
+        Action<string> _ChangeState;
         public HomeStage(Window window, int width, int height, Action<string> ChangeState)
         {
 
@@ -36,21 +42,28 @@ namespace Cyberpunk77022
             };
             _width = width;
             _height = height;
+            inEf = new InEffect(width,height);
+            outEf = new OutEffect(width, height);
             startBtn = new Button("START", Color.Red, width / 2, 400, 250, 150);
             shopBtn = new Button("SHOP", Color.Red, width / 2, 650, 250, 150);
             aboutBtn = new Button("ABOUT", Color.Red, width / 2, 900, 250, 150);
             startAct = () =>
             {
-                ChangeState("start");
+                _closing = true;
+                _nextState = "game";
             };
             shopAct = () =>
             {
-                ChangeState("shop");
+                _closing = true;
+                _nextState = "shop";
             };
             aboutAct = () =>
             {
-                ChangeState("about");
+                _closing = true;
+                _nextState = "about";
             };
+            _ChangeState = ChangeState;
+
         }
 
         public void Update()
@@ -58,6 +71,10 @@ namespace Cyberpunk77022
             startBtn.Update(startAct);
             shopBtn.Update(shopAct);
             aboutBtn.Update(aboutAct);
+            if(outEf._completed)
+            {
+                _ChangeState(_nextState);
+            }
         }
 
         public void Draw() 
@@ -67,6 +84,11 @@ namespace Cyberpunk77022
             startBtn.Draw();
             shopBtn.Draw();
             aboutBtn.Draw();
+            inEf.Draw();
+            if(_closing)
+            {
+                outEf.Draw();
+            }
         }
     }
 }
