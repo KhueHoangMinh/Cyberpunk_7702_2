@@ -15,20 +15,36 @@ namespace Cyberpunk77022
         InEffect inEf;
         OutEffect outEf;
         bool _closing = false;
+        Player player;
+        List<Ground> grounds;
 
         public GameStage(Window window, int width, int height, Action<string> ChangeStatus)
         {
             inEf = new InEffect(width, height);
             outEf = new OutEffect(width, height);
+            player = new Player(new Point2D() { X = 50, Y = 50}, 100, 100, Color.AliceBlue);
+            Ground ground1 = new Ground(new Point2D() { X = width / 2, Y = height }, width, 400, Color.Brown);
+            grounds = new List<Ground>();
+            grounds.Add(ground1);
         }
 
         public void Update()
         {
+            player.Update(grounds);
+        }
 
+        public Player GetPlayer
+        {
+            get { return player; }
         }
 
         public void Draw()
         {
+            player?.Draw();
+            for(int i = 0; i < grounds.Count; i++)
+            {
+                grounds[i].Draw();
+            }
             inEf.Draw();
             if(_closing)
             {

@@ -27,7 +27,7 @@ namespace Cyberpunk77022
             _initX = _x;
             _initY = _y;
         }
-        public void Update(string state, int width, int height)
+        public void Update(string state, int width, int height, Point2D coord)
         {
             if (_color.R == 1) clrDirRed = false;
             if (_color.G == 1) clrDirGreen = false;
@@ -58,15 +58,8 @@ namespace Cyberpunk77022
             {
                 _color.B -= (float)0.01;
             }
-            if (state == "game")
-            {
-                //_x = _x - @win.game.player.camx / _speed_dec;
-            }
-            else if (state != "game")
-            {
-                _x += (-_x + (_initX - ((float)SplashKit.MousePosition().X - (float)width / 2) / diff_dis)) * (float)0.05;
-                _y += (-_y + (_initY - ((float)SplashKit.MousePosition().Y - (float)height / 2) / diff_dis)) * (float)0.05;
-            }
+            _x += (-_x + (_initX - ((float)coord.X - (float)width / 2) / diff_dis)) * (float)0.04;
+            _y += (-_y + (_initY - ((float)coord.Y - (float)height / 2) / diff_dis)) * (float)0.04;
 
         }
         public void Draw()

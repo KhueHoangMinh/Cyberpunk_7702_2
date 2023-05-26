@@ -43,12 +43,26 @@ namespace Cyberpunk77022
 
                 for (int i = 0; i < stars.Length; i++)
                 {
-                    stars[i].Update("test",WIDTH, HEIGHT);
+                    if(state == "game")
+                    {
+                        stars[i].Update("test", WIDTH, HEIGHT, game.GetPlayer.Pos);
+                    }
+                    else
+                    {
+                        stars[i].Update("test", WIDTH, HEIGHT, SplashKit.MousePosition());
+                    }
                     stars[i].Draw();
                 }
                 for (int i = 0; i < sths.Length; i++)
                 {
-                    sths[i].Update("test", WIDTH, HEIGHT);
+                    if (state == "game")
+                    {
+                        sths[i].Update("test", WIDTH, HEIGHT, game.GetPlayer.Pos);
+                    }
+                    else
+                    {
+                        sths[i].Update("test", WIDTH, HEIGHT, SplashKit.MousePosition());
+                    }
                     sths[i].Draw();
                 }
                 switch(state)
