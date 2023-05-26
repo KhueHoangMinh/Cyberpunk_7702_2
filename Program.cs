@@ -25,7 +25,6 @@ namespace Cyberpunk77022
                 ScaleY = (float)1.5,
 
             };
-            drawingOptions.ScaleX = (float)3;
             
 
             for (int i = 0; i < stars.Length; i++)
