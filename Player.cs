@@ -19,31 +19,54 @@ namespace Cyberpunk77022
             bool graCheck = true;
             for(int i = 0; i < grounds.Count; i++)
             {
-                if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Bottom}))
+                //if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Bottom}))
+                //{
+                //    graCheck = false; 
+                //    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) };
+                //    this.VelY = 0;
+                //    _jumped = false;
+                //    break;
+                //}
+                //if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Top }))
+                //{
+                //    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (- this.Top + this.Pos.Y) };
+                //    this.VelY = 0;
+                //    break;
+                //}
+                //if (grounds[i].IsCollided(new Point2D() { X = this.Right, Y = this.Pos.Y }))
+                //{
+                //    this.Pos = new Point2D() { X = grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y };
+                //    this.VelX = 0;
+                //    break;
+                //}
+                //if (grounds[i].IsCollided(new Point2D() { X = this.Left, Y = this.Pos.Y }))
+                //{
+                //    this.Pos = new Point2D() { X = grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y };
+                //    this.VelX = 0;
+                //    break;
+                //}
+                string collide = this.IsCollideAt(grounds[i]);
+                if (collide == "bottom")
                 {
-                    graCheck = false; 
+                    graCheck = false;
                     this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) };
                     this.VelY = 0;
                     _jumped = false;
-                    break;
-                }
-                if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Top }))
+                } else
+                if (collide == "top")
                 {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (- this.Top + this.Pos.Y) };
+                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (-this.Top + this.Pos.Y) };
                     this.VelY = 0;
-                    break;
-                }
-                if (grounds[i].IsCollided(new Point2D() { X = this.Right, Y = this.Pos.Y }))
+                } else
+                if (collide == "right")
                 {
                     this.Pos = new Point2D() { X = grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y };
                     this.VelX = 0;
-                    break;
-                }
-                if (grounds[i].IsCollided(new Point2D() { X = this.Left, Y = this.Pos.Y }))
+                } else
+                if (collide == "left")
                 {
                     this.Pos = new Point2D() { X = grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y };
                     this.VelX = 0;
-                    break;
                 }
             }
             if(graCheck)
