@@ -11,7 +11,7 @@ namespace Cyberpunk77022
     {
         float _a = (float)1;
         bool _jumped = false;
-        public Player(Point2D pos, float sizeX, float sizeY, Color color) : base(pos,sizeX,sizeY,color,true,0,0) { 
+        public Player(Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
         }
 
         public void Update(List<Ground> grounds)

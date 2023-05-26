@@ -18,10 +18,12 @@ namespace Cyberpunk77022
         float _a = (float)0.1;
         float _velX = 0;
         float _velY = 0;
+        Camera _camera;
 
 
-        public Object(Point2D pos, float sizeX, float sizeY, Color color, bool gravity, float velX, float velY)
+        public Object(Camera camera, Point2D pos, float sizeX, float sizeY, Color color, bool gravity, float velX, float velY)
         {
+            _camera = camera;
             _pos = pos;
             _sizeX = sizeX;
             _sizeY = sizeY;
@@ -42,7 +44,7 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            SplashKit.FillRectangle(_color, (float)_pos.X - _sizeX / 2, (float)_pos.Y - _sizeY / 2, _sizeX, _sizeY);
+            SplashKit.FillRectangle(_color, (float)_pos.X - _sizeX / 2 - _camera.Pos.X, (float)_pos.Y - _sizeY / 2 - _camera.Pos.Y, _sizeX, _sizeY);
         }
 
         public bool IsCollided(Point2D Pos)
