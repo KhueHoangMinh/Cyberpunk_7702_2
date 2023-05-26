@@ -21,7 +21,7 @@ namespace Cyberpunk77022
 
         public void Update(Point2D dest)
         {
-            _pos  = new Point2D() { X = this.Pos.X + (dest.X - this.Middle.X)*0.1, Y = this.Pos.Y + (dest.Y - this.Middle.Y) * 0.1 };
+            _pos  = new Point2D() { X = this.Pos.X + (dest.X - this.Middle.X)*0.1, Y = this.Pos.Y + (dest.Y - this.Middle.Y) * 0.1 - 25 };
         }
 
         public Point2D Middle

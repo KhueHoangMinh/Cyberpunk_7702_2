@@ -27,6 +27,24 @@ namespace Cyberpunk77022
                     _jumped = false;
                     break;
                 }
+                if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Top }))
+                {
+                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (- this.Top + this.Pos.Y) };
+                    this.VelY = 0;
+                    break;
+                }
+                if (grounds[i].IsCollided(new Point2D() { X = this.Right, Y = this.Pos.Y }))
+                {
+                    this.Pos = new Point2D() { X = grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y };
+                    this.VelX = 0;
+                    break;
+                }
+                if (grounds[i].IsCollided(new Point2D() { X = this.Left, Y = this.Pos.Y }))
+                {
+                    this.Pos = new Point2D() { X = grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y };
+                    this.VelX = 0;
+                    break;
+                }
             }
             if(graCheck)
             {

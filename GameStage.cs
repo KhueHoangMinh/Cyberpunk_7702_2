@@ -25,9 +25,10 @@ namespace Cyberpunk77022
             outEf = new OutEffect(width, height);
             camera = new Camera(width, height);
             player = new Player(camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.AliceBlue);
-            Ground ground1 = new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 400, Color.Brown);
             grounds = new List<Ground>();
-            grounds.Add(ground1);
+            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 400, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 50, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = width / 2 + 200, Y = 650 }, 300, 50, Color.Brown));
         }
 
         public void Update()
