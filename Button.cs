@@ -16,6 +16,7 @@ namespace Cyberpunk77022
         Color _color;
         Color _background;
         string _text;
+        SoundEffect _soundEffect;
         bool _clicked = false;
 
         public Button(string text, Color color, float x, float y, float sizeX, float sizeY) { 
@@ -28,15 +29,22 @@ namespace Cyberpunk77022
             _sizeX = sizeX;
             _sizeY = sizeY;
             SplashKit.LoadFont("font", "Roboto-Bold.ttf");
+            SplashKit.LoadSoundEffect("click", "click.mp3");
+            _soundEffect = SplashKit.SoundEffectNamed("click");
         }
 
-        public void Update()
+        public void Update(Action action)
         {
             if(Hover())
             {
-                if(_background.R <= 0.99 && _background.R < _color.R + 0.3) _background.R += (float)0.01;
-                if (_background.G <= 0.99 && _background.G < _color.G + 0.3) _background.G += (float)0.01;
-                if (_background.B <= 0.99 && _background.B < _color.B + 0.3) _background.B += (float)0.01;
+                if(_background.R <= 0.99 && _background.R < _color.R + 0.5) _background.R += (float)0.01;
+                if (_background.G <= 0.99 && _background.G < _color.G + 0.5) _background.G += (float)0.01;
+                if (_background.B <= 0.99 && _background.B < _color.B + 0.5) _background.B += (float)0.01;
+                if(SplashKit.MouseClicked(MouseButton.LeftButton))
+                {
+                    _soundEffect.Play();
+                    action();
+                }
             } else
             {
                 if (_background.R >= 0.01 && _background.R > _color.R + 0.01) _background.R -= (float)0.01;
@@ -44,6 +52,8 @@ namespace Cyberpunk77022
                 if (_background.B >= 0.01 && _background.B > _color.B + 0.01) _background.B -= (float)0.01;
             }
         }
+
+
 
         public bool Hover()
         {
@@ -60,8 +70,8 @@ namespace Cyberpunk77022
         public void Draw()
         {
             SplashKit.FillRectangle(_background,_x-_sizeX/2,_y-_sizeY/2,_sizeX,_sizeY);
-            SplashKit.FillRectangle(_background, _x - _sizeX / 4, _y - _sizeY / 4, _sizeX/2, _sizeY/2);
-            SplashKit.DrawText(_text, _color, "font", 40, _x - SplashKit.TextWidth(_text,"font",40)/2, _y - SplashKit.TextHeight(_text, "font", 40) / 2);
+            SplashKit.DrawRectangle(_background, _x - _sizeX / 2, _y - _sizeY / 2, _sizeX, _sizeY);
+            SplashKit.DrawText(_text, _color, "font", 50, _x - SplashKit.TextWidth(_text,"font",50)/2, _y - SplashKit.TextHeight(_text, "font", 50) / 2);
         }
     }
 }
