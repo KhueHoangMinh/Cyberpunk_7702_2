@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,6 +56,79 @@ namespace Cyberpunk77022
             } else
             {
                 return false;
+            }
+        }
+
+        public string IsCollideAt(Object obj)
+        {
+            if(obj.Pos.X > this.Left - (obj.Right - obj.Left)/2 && obj.Pos.X < this.Right + (obj.Right - obj.Left) / 2 && obj.Pos.Y > this.Top - (obj.Bottom - obj.Top)/2 && obj.Pos.Y < this.Bottom + (obj.Bottom - obj.Top) / 2)
+            {
+
+                Object areaTop;
+                Object areaBottom;
+                Object areaLeft;
+                Object areaRight;
+                if (this.Top > obj.Top)
+                {
+                    areaTop = this;
+                }
+                else
+                {
+                    areaTop = obj;
+                }
+
+                if (this.Left > obj.Left)
+                {
+                    areaLeft = this;
+                }
+                else
+                {
+                    areaLeft = obj;
+                }
+
+                if (this.Bottom < obj.Bottom)
+                {
+                    areaBottom = this;
+                }
+                else
+                {
+                    areaBottom = obj;
+                }
+
+                if (this.Right < obj.Right)
+                {
+                    areaRight = this;
+                }
+                else
+                {
+                    areaRight = obj;
+                }
+
+                if (Math.Abs(areaTop.Top - areaBottom.Bottom) > Math.Abs(areaLeft.Left - areaRight.Right))
+                {
+                    if (areaLeft == obj)
+                    {
+                        return "right";
+                    }
+                    else
+                    {
+                        return "left";
+                    }
+                }
+                else
+                {
+                    if (areaTop == obj)
+                    {
+                        return "bottom";
+                    }
+                    else
+                    {
+                        return "top";
+                    }
+                }
+            } else
+            {
+                return "no";
             }
         }
 

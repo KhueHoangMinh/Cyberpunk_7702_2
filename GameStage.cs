@@ -17,6 +17,7 @@ namespace Cyberpunk77022
         bool _closing = false;
         Player player;
         List<Ground> grounds;
+        List<Bullet> bullets;
         Camera camera;
 
         public GameStage(Window window, int width, int height, Action<string> ChangeStatus)
@@ -24,21 +25,33 @@ namespace Cyberpunk77022
             inEf = new InEffect(width, height);
             outEf = new OutEffect(width, height);
             camera = new Camera(width, height);
-            player = new Player(camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.AliceBlue);
+            player = new Player(this,window, camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.Blue);
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 400, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 50, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = width / 2 + 200, Y = 650 }, 300, 50, Color.Brown));
+            bullets = new List<Bullet>();
         }
 
         public void Update()
         {
-            player.Update(grounds);
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Update();
+                if (bullets[i].Pos.X < -10000 || bullets[i].Pos.X > 10000 || bullets[i].Pos.Y < -10000 || bullets[i].Pos.Y > 10000)
+                {
+                    bullets.Remove(bullets[i]);
+                }
+                for (int j = 0; j < grounds.Count; j++)
+                {
+                    if (grounds[i].IsCollided(bullets[i].Pos))
+                    {
+                        bullets.Remove(bullets[i]);
+                        break;
+                    }
+                }
+            }
+            player.Update(grounds, bullets);
             camera.Update(player.Pos);
-            //for (int i = 0; i < grounds.Count; i++)
-            //{
-            //    grounds[i].Update(camera);
-            //}
         }
 
         public Player GetPlayer
@@ -48,16 +61,31 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            player?.Draw();
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                bullets[i].Draw();
+            }
+            player.Draw();
             for(int i = 0; i < grounds.Count; i++)
             {
                 grounds[i].Draw();
             }
+            player.DrawGun();
             inEf.Draw();
             if(_closing)
             {
                 outEf.Draw();
             }
+        }
+
+        public void AddBullet(Bullet bullet)
+        {
+            bullets.Add(bullet);
+        }
+
+        public void RemoveBullet(Bullet bullet) 
+        {  
+            bullets.Remove(bullet);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Cyberpunk77022
 {
     public class Camera
     {
-        Point2D _pos = new Point2D() { X = 0, Y = 0 };
+        Point2D _pos = new Point2D() { X = -100, Y = -100 };
         int _width;
         int _height;
 

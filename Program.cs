@@ -22,9 +22,11 @@ namespace Cyberpunk77022
             {
                 state = NewState;
             };
+            DrawingOptions drawingOptions = new DrawingOptions();
             HomeStage home = new HomeStage(window, WIDTH, HEIGHT, ChangeState);
             GameStage game = new GameStage(window, WIDTH, HEIGHT, ChangeState);
-
+            drawingOptions.ScaleX = (float)3;
+            
 
             for (int i = 0; i < stars.Length; i++)
             {
