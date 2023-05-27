@@ -72,7 +72,7 @@ namespace Cyberpunk77022
 
         public void Shoot()
         {
-            _game.AddBullet(new Bullet(_camera,_GunOf.Pos, 20));
+            _game.AddBullet(new Bullet(_camera,_GunOf.Pos,100, 50));
         }
     }
 }

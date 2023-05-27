@@ -37,19 +37,26 @@ namespace Cyberpunk77022
             for (int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].Update();
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
                 if (bullets[i].Pos.X < -10000 || bullets[i].Pos.X > 10000 || bullets[i].Pos.Y < -10000 || bullets[i].Pos.Y > 10000)
                 {
                     bullets.Remove(bullets[i]);
                 }
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
                 for (int j = 0; j < grounds.Count; j++)
                 {
-                    if (grounds[i].IsCollided(bullets[i].Pos))
+                    if (grounds[j].IsCollided(bullets[i].Pos))
                     {
                         bullets.Remove(bullets[i]);
                         break;
                     }
                 }
             }
+            Console.WriteLine(bullets.Count);
             player.Update(grounds, bullets);
             camera.Update(player.Pos);
         }

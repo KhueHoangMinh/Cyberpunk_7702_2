@@ -21,19 +21,19 @@ namespace Cyberpunk77022
         float _width = 20;
         float _height = 50;
 
-        public Bullet(Camera camera, Point2D initPos, float speed)
+        public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
             
         {
             _color = Color.Yellow;
             _camera = camera;
-            _initPos = initPos;
-            _Pos = initPos;
             _color =  Color.Yellow;
-            float a = (float)(SplashKit.MousePosition().X - initPos.X + camera.Pos.X);
-            float b = (float)(SplashKit.MousePosition().Y - initPos.Y + camera.Pos.Y);
+            float a = (float)(SplashKit.MousePosition().X - BasePos.X + camera.Pos.X);
+            float b = (float)(SplashKit.MousePosition().Y - BasePos.Y + camera.Pos.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
             _VelX = (float)(speed * a/c);
             _VelY = (float)(speed * b/c);
+            _initPos = new Point2D() { X = BasePos.X + GunLength * a/c, Y = BasePos.Y + GunLength * b / c };
+            _Pos = _initPos;
             _corners = new Quad();
         }
 
