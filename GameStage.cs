@@ -24,7 +24,7 @@ namespace Cyberpunk77022
             inEf = new InEffect(width, height);
             outEf = new OutEffect(width, height);
             camera = new Camera(width, height);
-            player = new Player(camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.AliceBlue);
+            player = new Player(window, camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.Blue);
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 400, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 50, Color.Brown));
@@ -35,10 +35,6 @@ namespace Cyberpunk77022
         {
             player.Update(grounds);
             camera.Update(player.Pos);
-            //for (int i = 0; i < grounds.Count; i++)
-            //{
-            //    grounds[i].Update(camera);
-            //}
         }
 
         public Player GetPlayer
@@ -48,11 +44,12 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            player?.Draw();
+            player.Draw();
             for(int i = 0; i < grounds.Count; i++)
             {
                 grounds[i].Draw();
             }
+            player.DrawGun();
             inEf.Draw();
             if(_closing)
             {

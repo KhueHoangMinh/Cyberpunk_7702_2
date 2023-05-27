@@ -33,13 +33,16 @@ namespace Cyberpunk77022
 
             SplashKit.LoadBitmap("logo", "logo.png");
             logo = SplashKit.BitmapNamed("logo");
-            drawingOptions = new DrawingOptions
+            drawingOptions = new DrawingOptions()
             {
                 Dest = window,
                 ScaleX = (float)1.5,
                 ScaleY = (float)1.5,
+                //AnchorOffsetX = -logo.Width / 2,
+                //AnchorOffsetY = -logo.Height / 2,
 
             };
+            //drawingOptions.Angle = 80;
             _width = width;
             _height = height;
             inEf = new InEffect(width,height);

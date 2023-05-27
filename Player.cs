@@ -11,7 +11,9 @@ namespace Cyberpunk77022
     {
         float _a = (float)1;
         bool _jumped = false;
-        public Player(Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
+        Gun _PlayerGun;
+        public Player(Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
+            _PlayerGun = new Gun(window, this, camera);
         }
 
         public void Update(List<Ground> grounds)
@@ -19,37 +21,11 @@ namespace Cyberpunk77022
             bool graCheck = true;
             for(int i = 0; i < grounds.Count; i++)
             {
-                //if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Bottom}))
-                //{
-                //    graCheck = false; 
-                //    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) };
-                //    this.VelY = 0;
-                //    _jumped = false;
-                //    break;
-                //}
-                //if (grounds[i].IsCollided(new Point2D() { X = this.Pos.X, Y = this.Top }))
-                //{
-                //    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (- this.Top + this.Pos.Y) };
-                //    this.VelY = 0;
-                //    break;
-                //}
-                //if (grounds[i].IsCollided(new Point2D() { X = this.Right, Y = this.Pos.Y }))
-                //{
-                //    this.Pos = new Point2D() { X = grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y };
-                //    this.VelX = 0;
-                //    break;
-                //}
-                //if (grounds[i].IsCollided(new Point2D() { X = this.Left, Y = this.Pos.Y }))
-                //{
-                //    this.Pos = new Point2D() { X = grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y };
-                //    this.VelX = 0;
-                //    break;
-                //}
                 string collide = this.IsCollideAt(grounds[i]);
                 if (collide == "bottom")
                 {
                     graCheck = false;
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) };
+                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
                     this.VelY = 0;
                     _jumped = false;
                 } else
@@ -89,5 +65,9 @@ namespace Cyberpunk77022
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
         }
 
+        public void DrawGun() 
+        {
+            _PlayerGun.Draw();
+        }
     }
 }

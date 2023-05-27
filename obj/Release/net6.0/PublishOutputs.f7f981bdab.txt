@@ -1,0 +1,5 @@
+C:\Users\Admin\Downloads\Cyberpunk77022.exe
+C:\Users\Admin\Downloads\Cyberpunk77022.dll
+C:\Users\Admin\Downloads\Cyberpunk77022.deps.json
+C:\Users\Admin\Downloads\Cyberpunk77022.runtimeconfig.json
+C:\Users\Admin\Downloads\Cyberpunk77022.pdb
