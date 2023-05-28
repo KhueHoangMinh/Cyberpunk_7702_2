@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,8 +19,8 @@ namespace Cyberpunk77022
         float _VelY;
         Point2D _Pos;
         Quad _corners;
-        float _width = 20;
-        float _height = 50;
+        float _width = 15;
+        float _height = 40;
 
         public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
             
@@ -35,6 +36,7 @@ namespace Cyberpunk77022
             _initPos = new Point2D() { X = BasePos.X + GunLength * a/c, Y = BasePos.Y + GunLength * b / c };
             _Pos = _initPos;
             _corners = new Quad();
+            _angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
         }
 
         public void Update()
@@ -44,7 +46,36 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 10);
+            //SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 10);
+            SplashKit.FillQuad(_color, calQuad());
+        }
+
+        public Quad calQuad()
+        {
+            float delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
+            float beta = (float)(_angle - Math.Atan(_width / _height));
+            float x = (float)_Pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
+            float y = (float)_Pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
+            float sinAngle = (float)Math.Sin(_angle);
+            float cosAngle = (float)Math.Cos(_angle);
+            return new Quad()
+            {
+                Points = new Point2D[4] {
+                    new Point2D() { X = x, Y = y },
+                    new Point2D() {
+                        X = x + _height * cosAngle,
+                        Y = y - _height * sinAngle
+                    },
+                    new Point2D() {
+                        X = x + _width * sinAngle,
+                        Y = y + _width * cosAngle
+                    },
+                    new Point2D() {
+                        X = x + _width * sinAngle + _height * cosAngle,
+                        Y = y + _width * cosAngle - _height * sinAngle
+                    }
+                }
+            };
         }
 
         public Point2D Pos

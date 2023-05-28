@@ -12,9 +12,10 @@ namespace Cyberpunk77022
 {
     public class HomeStage
     {
-
-        float x = 200;
-        float y = 200;
+        float a = 200;
+        float b = 200;
+        float x;
+        float y;
         float w = 50;
         float h = 200;
         float angle = 0;
@@ -95,14 +96,6 @@ namespace Cyberpunk77022
             startBtn.Draw();
             shopBtn.Draw();
             aboutBtn.Draw();
-
-            angle = (float)(Math.Atan((SplashKit.MousePosition().X - 200) / (SplashKit.MousePosition().Y - 200)));
-
-            SplashKit.FillQuad(Color.White, new Quad() { Points = new Point2D[4] {
-                new Point2D() { X = x, Y = y },
-                new Point2D() { X = x + h * Math.Sin(90-angle), Y = y + h * Math.Cos(90 - angle) },
-                new Point2D() { X =  x + w * Math.Sin(angle), Y = y + w * Math.Cos(angle) },
-                new Point2D() { X = x + w * Math.Sin(angle) + h * Math.Sin(90-angle), Y = y + w * Math.Cos(angle) + h * Math.Cos(90 - angle)}}});
 
             inEf.Draw();
             if(_closing)
