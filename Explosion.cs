@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Cyberpunk77022
 {
-    internal class Explosion
+    public class Explosion
     {
     }
 }

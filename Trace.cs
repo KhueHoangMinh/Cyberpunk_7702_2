@@ -17,6 +17,8 @@ namespace Cyberpunk77022
         Bullet _tracing;
         Point2D _Pos;
         Color _color;
+        float sinAngle;
+        float cosAngle;
         public Trace(Camera camera, Bullet tracing)
         {
             _camera = camera;
@@ -28,6 +30,8 @@ namespace Cyberpunk77022
             _Pos = new Point2D() { X = (_tracing.Pos.X - _initPoint.X)/2, Y = (_tracing.Pos.Y - _initPoint.Y) / 2 };
             _color = Color.White;
             _color.A = (float)0.6;
+            sinAngle = (float)Math.Sin(_angle);
+            cosAngle = (float)Math.Cos(_angle);
         }
 
         public void Update()
@@ -57,8 +61,6 @@ namespace Cyberpunk77022
             float beta = (float)(_angle - Math.Atan(_width / _height));
             float x = (float)_Pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
             float y = (float)_Pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
-            float sinAngle = (float)Math.Sin(_angle);
-            float cosAngle = (float)Math.Cos(_angle);
             return new Quad()
             {
                 Points = new Point2D[4] {

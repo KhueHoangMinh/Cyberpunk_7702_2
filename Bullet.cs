@@ -21,6 +21,10 @@ namespace Cyberpunk77022
         Quad _corners;
         float _width = 15;
         float _height = 40;
+        float delta;
+        float beta;
+        float sinAngle;
+        float cosAngle;
 
         public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
             
@@ -37,6 +41,10 @@ namespace Cyberpunk77022
             _Pos = _initPos;
             _corners = new Quad();
             _angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
+            delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
+            beta = (float)(_angle - Math.Atan(_width / _height));
+            sinAngle = (float)Math.Sin(_angle);
+            cosAngle = (float)Math.Cos(_angle);
         }
 
         public void Update()
@@ -52,12 +60,8 @@ namespace Cyberpunk77022
 
         public Quad calQuad()
         {
-            float delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
-            float beta = (float)(_angle - Math.Atan(_width / _height));
             float x = (float)_Pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
             float y = (float)_Pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
-            float sinAngle = (float)Math.Sin(_angle);
-            float cosAngle = (float)Math.Cos(_angle);
             return new Quad()
             {
                 Points = new Point2D[4] {
