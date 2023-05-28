@@ -19,6 +19,10 @@ namespace Cyberpunk77022
         float DisplayWidth;
         float scale;
         GameStage _game;
+        float _shock = 0;
+        long _ShootTime;
+        // 0.5 secs
+        float _fireRate = 5000000;
 
         public Gun(GameStage game, Window window, Object GunOf, Camera camera)
         {
@@ -43,17 +47,21 @@ namespace Cyberpunk77022
                 //AnchorOffsetY = (float)(_GunOf.Pos.Y - _camera.Pos.Y - _pos.Y),
                 Angle = 0,
             };
+            _ShootTime = DateTime.UtcNow.Ticks - (long)_fireRate;
         }
         public void Update()
         {
+
+            _shock = _shock*(float)0.9;
+            float angle = (float)Math.Atan((SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y) / (SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X)) + _shock;
             if(SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
             {
-                drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * (float)Math.Atan((SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y) / (SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X));
+                drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = false;
                 drawingOptions.AnchorOffsetX = -pistol.Width / 2;
             } else
             {
-                drawingOptions.Angle = - 360 + (float)(360 / (Math.PI * 2)) * (float)Math.Atan((SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y) / (SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X));
+                drawingOptions.Angle = - 360 + (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = true;
                 drawingOptions.AnchorOffsetX = pistol.Width / 2;
             }
@@ -72,7 +80,21 @@ namespace Cyberpunk77022
 
         public void Shoot()
         {
-            _game.AddBullet(new Bullet(_camera,_GunOf.Pos,100, 50));
+            if(DateTime.UtcNow.Ticks - _ShootTime >= _fireRate)
+            {
+                _ShootTime = DateTime.UtcNow.Ticks;
+                if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
+                {
+                    _shock -= 2;
+                }
+                else
+                {
+                    _shock += 2;
+                }
+                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 50);
+                _game.AddBullet(NewBullet);
+                _game.AddTrace(new Trace(_camera, NewBullet));
+            }
         }
     }
 }

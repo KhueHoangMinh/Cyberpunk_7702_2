@@ -2,52 +2,53 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Cyberpunk77022
 {
-    public class Bullet
+    public class Trace
     {
-        float _speed;
-        float _angle;
-        Point2D _initPos;
-        Color _color;
         Camera _camera;
-        float _VelX;
-        float _VelY;
+        float _width;
+        float _height;
+        float _angle;
+        Point2D _initPoint;
+        Bullet _tracing;
         Point2D _Pos;
-        Quad _corners;
-        float _width = 15;
-        float _height = 40;
-
-        public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
-            
+        Color _color;
+        public Trace(Camera camera, Bullet tracing)
         {
-            _color = Color.Yellow;
             _camera = camera;
-            _color =  Color.Yellow;
-            float a = (float)(SplashKit.MousePosition().X - BasePos.X + camera.Pos.X);
-            float b = (float)(SplashKit.MousePosition().Y - BasePos.Y + camera.Pos.Y);
-            float c = (float)Math.Sqrt(a * a + b * b);
-            _VelX = (float)(speed * a/c);
-            _VelY = (float)(speed * b/c);
-            _initPos = new Point2D() { X = BasePos.X + GunLength * a/c, Y = BasePos.Y + GunLength * b / c };
-            _Pos = _initPos;
-            _corners = new Quad();
-            _angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
+            _width = tracing.Width;
+            _height = (float)0.1;
+            _tracing = tracing;
+            _angle = tracing.Angle;
+            _initPoint = tracing.InitPos;
+            _Pos = new Point2D() { X = (_tracing.Pos.X - _initPoint.X)/2, Y = (_tracing.Pos.Y - _initPoint.Y) / 2 };
+            _color = Color.White;
+            _color.A = (float)0.6;
         }
 
         public void Update()
         {
-            _Pos = new Point2D() { X = this.Pos.X + _VelX, Y = this.Pos.Y + _VelY };
+            if(_tracing != null)
+            {
+                _Pos = new Point2D() { X = _initPoint.X + (_tracing.Pos.X - _initPoint.X) / 2, Y = _initPoint.Y + (_tracing.Pos.Y - _initPoint.Y) / 2 };
+                _height = (float)Math.Sqrt((_tracing.Pos.X - _initPoint.X) * (_tracing.Pos.X - _initPoint.X) + (_tracing.Pos.Y - _initPoint.Y) * (_tracing.Pos.Y - _initPoint.Y));
+            }
+            _width -= (float)0.05;
+            if(_color.A >= (float)0.005) _color.A -= (float)0.005;
         }
 
         public void Draw()
         {
-            //SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 10);
             SplashKit.FillQuad(_color, calQuad());
+        }
+
+        public Color GetColor
+        {
+            get { return _color; }
         }
 
         public Quad calQuad()
@@ -77,26 +78,5 @@ namespace Cyberpunk77022
                 }
             };
         }
-
-        public Point2D Pos
-        {
-            get { return _Pos; }
-        }
-
-        public Point2D InitPos
-        {
-            get { return _initPos; }
-        }
-
-        public float Width
-        {
-            get { return _width; }
-        }
-        public float Height
-        {
-            get { return _height; }
-        }
-
-        public float Angle { get { return _angle; } }
     }
 }
