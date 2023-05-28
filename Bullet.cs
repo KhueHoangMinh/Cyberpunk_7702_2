@@ -25,6 +25,7 @@ namespace Cyberpunk77022
         float beta;
         float sinAngle;
         float cosAngle;
+        bool _isCollided = false;
 
         public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
             
@@ -62,24 +63,49 @@ namespace Cyberpunk77022
         {
             float x = (float)_Pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
             float y = (float)_Pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
+            float heightxcos = _height * cosAngle;
+            float heightxsin = _height * sinAngle;
+            float widthxcos = _width * cosAngle;
+            float widthxsin = _width * sinAngle;
             return new Quad()
             {
                 Points = new Point2D[4] {
-                    new Point2D() { X = x, Y = y },
+                    new Point2D() { X = x, Y = y},
                     new Point2D() {
-                        X = x + _height * cosAngle,
-                        Y = y - _height * sinAngle
+                        X = x + heightxcos,
+                        Y = y - heightxsin
                     },
                     new Point2D() {
-                        X = x + _width * sinAngle,
-                        Y = y + _width * cosAngle
+                        X = x + widthxsin,
+                        Y = y + widthxcos
                     },
                     new Point2D() {
-                        X = x + _width * sinAngle + _height * cosAngle,
-                        Y = y + _width * cosAngle - _height * sinAngle
+                        X = x + widthxsin+ heightxcos,
+                        Y = y + widthxcos - heightxsin
                     }
                 }
             };
+        }
+
+        public bool IsCollided
+        {
+            get
+            {
+                return _isCollided;
+            }
+            set 
+            {
+                _isCollided = value; 
+            }
+        }
+
+        public float VelX
+        {
+            get { return _VelX; }
+        }
+        public float VelY
+        {
+            get { return _VelY; }
         }
 
         public Point2D Pos

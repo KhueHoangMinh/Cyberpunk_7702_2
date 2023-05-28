@@ -91,9 +91,9 @@ namespace Cyberpunk77022
                 {
                     _shock += 2;
                 }
-                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 50);
+                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 30);
                 _game.AddBullet(NewBullet);
-                _game.AddTrace(new Trace(_camera, NewBullet));
+                _game.AddTrace(new Trace(_window, _camera, NewBullet));
             }
         }
     }

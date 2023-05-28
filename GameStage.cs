@@ -55,6 +55,7 @@ namespace Cyberpunk77022
             {
                 if (bullets[i].Pos.X < -10000 || bullets[i].Pos.X > 10000 || bullets[i].Pos.Y < -10000 || bullets[i].Pos.Y > 10000)
                 {
+                    bullets[i].IsCollided = true;
                     bullets.Remove(bullets[i]);
                 }
             }
@@ -64,6 +65,7 @@ namespace Cyberpunk77022
                 {
                     if (grounds[j].IsCollided(bullets[i].Pos))
                     {
+                        bullets[i].IsCollided = true;
                         bullets.Remove(bullets[i]);
                         break;
                     }
