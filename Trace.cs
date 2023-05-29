@@ -33,8 +33,7 @@ namespace Cyberpunk77022
             _angle = tracing.Angle;
             _initPoint = tracing.InitPos;
             _Pos = new Point2D() { X = (_tracing.Pos.X - _initPoint.X)/2, Y = (_tracing.Pos.Y - _initPoint.Y) / 2 };
-            //_color = Color.Random();
-            _color = Color.White;
+            _color = Color.Random();
             _color.A = (float)0.6;
             sinAngle = (float)Math.Sin(_angle);
             cosAngle = (float)Math.Cos(_angle);

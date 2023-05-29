@@ -30,7 +30,7 @@ namespace Cyberpunk77022
             _window = window;
             _GunOf = GunOf;
             _camera = camera;
-            SplashKit.LoadBitmap("pistol", "guns/pistol1.png");
+            SplashKit.LoadBitmap("pistol", "guns/pistol.png");
             pistol = SplashKit.BitmapNamed("pistol");
             DisplayWidth = 100;
             scale = (float)(DisplayWidth / pistol.Width);

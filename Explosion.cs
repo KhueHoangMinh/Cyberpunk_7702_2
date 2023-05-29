@@ -22,7 +22,6 @@ namespace Cyberpunk77022
             _maxrad = maxrad;
             _pos = pos;
             _color = color;
-            _color = Color.White;
             _color.A = (float)0.8;
         }
 
