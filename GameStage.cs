@@ -30,7 +30,7 @@ namespace Cyberpunk77022
             player = new Player(this,window, camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.Blue);
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 880 }, 300, 50, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 10, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
