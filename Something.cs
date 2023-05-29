@@ -9,7 +9,7 @@ namespace Cyberpunk77022
 {
     public class Something
     {
-        Color _color = Color.RandomRGB(2);
+        Color _color = Color.Random();
         float _x = new Random().Next(0, 1920);
         float _y = new Random().Next(0, 1080);
         float _sizeX = (float)(new Random().Next(200, 1200));
@@ -26,15 +26,16 @@ namespace Cyberpunk77022
         {
             _initX = _x;
             _initY = _y;
+            _color.A = 0.03f;
         }
         public void Update(string state, int width, int height, Point2D coord)
         {
-            if (_color.R == 1) clrDirRed = false;
-            if (_color.G == 1) clrDirGreen = false;
-            if (_color.B == 1) clrDirBlue = false;
-            if (_color.R == 0) clrDirRed = true;
-            if (_color.G == 0) clrDirGreen = true;
-            if (_color.B == 0) clrDirBlue = true;
+            if (_color.R >= 0.99) clrDirRed = false;
+            if (_color.G >= 0.99) clrDirGreen = false;
+            if (_color.B >= 0.99) clrDirBlue = false;
+            if (_color.R <= 0.01) clrDirRed = true;
+            if (_color.G <= 0.01) clrDirGreen = true;
+            if (_color.B <= 0.01) clrDirBlue = true;
             if (clrDirRed)
             {
                 _color.R += (float)0.01;

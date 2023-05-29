@@ -13,6 +13,7 @@ namespace Cyberpunk77022
         Object _GunOf;
         Camera _camera;
         Window _window;
+        SoundEffect singleshot;
         Bitmap pistol;
         Point2D _pos;
         DrawingOptions drawingOptions;
@@ -30,7 +31,8 @@ namespace Cyberpunk77022
             _window = window;
             _GunOf = GunOf;
             _camera = camera;
-            SplashKit.LoadBitmap("pistol", "guns/pistol.png");
+            singleshot = SplashKit.SoundEffectNamed("singleshot");
+            //singleshot.
             pistol = SplashKit.BitmapNamed("pistol");
             DisplayWidth = 100;
             scale = (float)(DisplayWidth / pistol.Width);
@@ -80,6 +82,7 @@ namespace Cyberpunk77022
             if(DateTime.UtcNow.Ticks - _ShootTime >= _fireRate)
             {
                 _ShootTime = DateTime.UtcNow.Ticks;
+                singleshot.Play();
                 if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
                 {
                     _shock -= 2;
@@ -88,7 +91,7 @@ namespace Cyberpunk77022
                 {
                     _shock += 2;
                 }
-                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 30);
+                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 50);
                 _game.AddExplosion(new Explosion(_camera, new Random().Next(8,10), new Random().Next(30, 50), new Point2D()
                 {
                     X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),

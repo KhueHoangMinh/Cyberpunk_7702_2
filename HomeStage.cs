@@ -39,8 +39,6 @@ namespace Cyberpunk77022
         Action<string> _ChangeState;
         public HomeStage(Window window, int width, int height, Action<string> ChangeState)
         {
-
-            SplashKit.LoadBitmap("logo", "logo.png");
             drawingOptions = new DrawingOptions()
             {
                 Dest = window,

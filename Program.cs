@@ -9,9 +9,47 @@ namespace Cyberpunk77022
     
     public class Program
     {
+        public Bitmap[] Bitmaps
+        {
+            get
+            {
+                return new Bitmap[] {
+                    SplashKit.BitmapNamed("logo")
+                };
+            }
+        }
 
+        public SoundEffect[] SoundEffects
+        {
+            get
+            {
+                return new SoundEffect[] {
+                    SplashKit.SoundEffectNamed("click"),
+                    SplashKit.SoundEffectNamed("singleshot"),
+                };
+            }
+        }
+        public Font[] Fonts
+        {
+            get
+            {
+                return new Font[] {
+                    SplashKit.FontNamed("font"),
+                };
+            }
+        }
         static void Main()
         {
+            SplashKit.LoadBitmap("logo", "logo.png");
+            SplashKit.LoadBitmap("pistol", "guns/pistol.png");
+
+            SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
+            SplashKit.LoadSoundEffect("click", "click.mp3");
+
+            SplashKit.LoadFont("font", "Roboto-Bold.ttf");
+
+
+
             int WIDTH = 1920;
             int HEIGHT = 1080;
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);
@@ -79,7 +117,7 @@ namespace Cyberpunk77022
                         break;
                 }
                 //SplashKit.Delay(8);
-                SplashKit.RefreshScreen(80);
+                SplashKit.RefreshScreen(75);
             } while (!SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey));
 
         }
