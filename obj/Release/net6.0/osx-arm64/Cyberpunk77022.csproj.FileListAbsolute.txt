@@ -1,0 +1,15 @@
+C:\msys64\home\Admin\Cyberpunk77022\bin\Release\net6.0\osx-arm64\Cyberpunk77022
+C:\msys64\home\Admin\Cyberpunk77022\bin\Release\net6.0\osx-arm64\Cyberpunk77022.deps.json
+C:\msys64\home\Admin\Cyberpunk77022\bin\Release\net6.0\osx-arm64\Cyberpunk77022.runtimeconfig.json
+C:\msys64\home\Admin\Cyberpunk77022\bin\Release\net6.0\osx-arm64\Cyberpunk77022.dll
+C:\msys64\home\Admin\Cyberpunk77022\bin\Release\net6.0\osx-arm64\Cyberpunk77022.pdb
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.csproj.AssemblyReference.cache
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.GeneratedMSBuildEditorConfig.editorconfig
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.AssemblyInfoInputs.cache
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.AssemblyInfo.cs
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.csproj.CoreCompileInputs.cache
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.dll
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\refint\Cyberpunk77022.dll
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.pdb
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\Cyberpunk77022.genruntimeconfig.cache
+C:\msys64\home\Admin\Cyberpunk77022\obj\Release\net6.0\osx-arm64\ref\Cyberpunk77022.dll

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "SA+ZmwDaZydww0p19qs6gtrc49wIQyFQGRoA19ttCi1+JfDXdc8Kdz7V5GJ8bQrmmrbBeV8UXEH8P5jsk31OzQ==",
+  "success": true,
+  "projectFilePath": "C:\\msys64\\home\\Admin\\Cyberpunk77022\\Cyberpunk77022.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.netcore.app.host.osx-arm64\\6.0.16\\microsoft.netcore.app.host.osx-arm64.6.0.16.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -15,8 +15,8 @@ namespace Cyberpunk77022
             int WIDTH = 1920;
             int HEIGHT = 1080;
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);
-            Star[] stars = new Star[30];
-            Something[] sths = new Something[10];
+            List<Star> stars = new List<Star>();
+            List<Something> sths = new List<Something>();
             string state = "home";
             Action<string> ChangeState = (string NewState) =>
             {
@@ -26,24 +26,24 @@ namespace Cyberpunk77022
             HomeStage home = new HomeStage(window, WIDTH, HEIGHT, ChangeState);
             GameStage game = new GameStage(window, WIDTH, HEIGHT, ChangeState);
             drawingOptions.ScaleX = (float)3;
-            
 
-            for (int i = 0; i < stars.Length; i++)
+
+            for (int i = 0; i < 30; i++)
             {
-                stars[i] = new Star();
+                stars.Add(new Star());
             }
-            for (int i = 0; i < sths.Length; i++)
+            for (int i = 0; i < 10; i++)
             {
-                sths[i] = new Something();
+                sths.Add(new Something());
             }
+
             SplashKit.CurrentWindowToggleFullscreen();
             do
             {
                 SplashKit.ProcessEvents();
+                SplashKit.ClearScreen(Color.Black);
 
-                SplashKit.FillRectangle(Color.Black, 0, 0, WIDTH, HEIGHT);
-
-                for (int i = 0; i < stars.Length; i++)
+                for (int i = 0; i < stars.Count; i++)
                 {
                     if(state == "game")
                     {
@@ -55,7 +55,7 @@ namespace Cyberpunk77022
                     }
                     stars[i].Draw();
                 }
-                for (int i = 0; i < sths.Length; i++)
+                for (int i = 0; i < sths.Count; i++)
                 {
                     if (state == "game")
                     {
@@ -78,9 +78,8 @@ namespace Cyberpunk77022
                         game.Draw();
                         break;
                 }
-
+                //SplashKit.Delay(8);
                 SplashKit.RefreshScreen(80);
-                SplashKit.ClearScreen();
             } while (!SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey));
 
         }

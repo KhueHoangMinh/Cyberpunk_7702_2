@@ -22,7 +22,7 @@ namespace Cyberpunk77022
         float _shock = 0;
         long _ShootTime;
         // 0.5 secs
-        float _fireRate = 5000000;
+        float _fireRate = 2000000;
 
         public Gun(GameStage game, Window window, Object GunOf, Camera camera)
         {
@@ -30,11 +30,10 @@ namespace Cyberpunk77022
             _window = window;
             _GunOf = GunOf;
             _camera = camera;
-            SplashKit.LoadBitmap("pistol", "guns/pistol.png");
+            SplashKit.LoadBitmap("pistol", "guns/pistol1.png");
             pistol = SplashKit.BitmapNamed("pistol");
             DisplayWidth = 100;
             scale = (float)(DisplayWidth / pistol.Width);
-            //_drawingOptions.Angle = (float)80;
             _pos = new Point2D() { X = (pistol.Width - DisplayWidth)/2, Y = (pistol.Height - pistol.Height*scale) / 2, };
             drawingOptions = new DrawingOptions()
             {
@@ -43,8 +42,6 @@ namespace Cyberpunk77022
                 ScaleY = scale,
                 AnchorOffsetX = -pistol.Width/2,
                 AnchorOffsetY = 0,
-                //AnchorOffsetX = (float)(_GunOf.Pos.X - _camera.Pos.X - _pos.X),
-                //AnchorOffsetY = (float)(_GunOf.Pos.Y - _camera.Pos.Y - _pos.Y),
                 Angle = 0,
             };
             _ShootTime = DateTime.UtcNow.Ticks - (long)_fireRate;
@@ -70,11 +67,11 @@ namespace Cyberpunk77022
         {
             if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
             {
-                SplashKit.DrawBitmap(pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
+                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
             else
             {
-                SplashKit.DrawBitmap(pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
+                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
         }
 
@@ -92,6 +89,21 @@ namespace Cyberpunk77022
                     _shock += 2;
                 }
                 Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 30);
+                _game.AddExplosion(new Explosion(_camera, new Random().Next(8,10), new Random().Next(30, 50), new Point2D()
+                {
+                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                } , Color.Random()));
+                _game.AddExplosion(new Explosion(_camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                {
+                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                }, Color.Random()));
+                _game.AddExplosion(new Explosion(_camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                {
+                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                }, Color.Random()));
                 _game.AddBullet(NewBullet);
                 _game.AddTrace(new Trace(_window, _camera, NewBullet));
             }

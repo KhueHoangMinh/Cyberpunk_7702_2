@@ -32,7 +32,7 @@ namespace Cyberpunk77022
         {
             _color = Color.Yellow;
             _camera = camera;
-            _color =  Color.Yellow;
+            _color =  Color.White;
             float a = (float)(SplashKit.MousePosition().X - BasePos.X + camera.Pos.X);
             float b = (float)(SplashKit.MousePosition().Y - BasePos.Y + camera.Pos.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
