@@ -23,7 +23,9 @@ namespace Cyberpunk77022
         float _shock = 0;
         long _ShootTime;
         // 0.5 secs
-        float _fireRate = 2000000;
+        float _fireRate = 5000000;
+        bool smoking = false;
+        Point2D nozzle;
 
         public Gun(GameStage game, Window window, Object GunOf, Camera camera)
         {
@@ -47,10 +49,32 @@ namespace Cyberpunk77022
                 Angle = 0,
             };
             _ShootTime = DateTime.UtcNow.Ticks - (long)_fireRate;
+            float a = (float)(SplashKit.MousePosition().X - _GunOf.Pos.X + camera.Pos.X);
+            float b = (float)(SplashKit.MousePosition().Y - _GunOf.Pos.Y + camera.Pos.Y);
+            float c = (float)Math.Sqrt(a * a + b * b);
+            nozzle = new Point2D() { X = _GunOf.Pos.X + 100 * a / c, Y = _GunOf.Pos.Y + 100 * b / c };
         }
         public void Update()
         {
-
+            if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
+            { 
+                smoking = true;
+            }
+            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 20000000 && new Random().Next(1,10) <= 3)
+            {
+                float a = (float)(SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X);
+                float b = (float)(SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y);
+                float c = (float)Math.Sqrt(a * a + b * b);
+                nozzle = new Point2D() { X = _GunOf.Pos.X + 100 * a / c, Y = _GunOf.Pos.Y + 100 * b / c };
+                _game.AddSmoke(new Smoke(_camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
+                {
+                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                }, Color.White));
+            } else if(DateTime.UtcNow.Ticks - _ShootTime > 8000000)
+            {
+                smoking = false;
+            }
             _shock = _shock*(float)0.9;
             float angle = (float)Math.Atan((SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y) / (SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X)) + _shock;
             if(SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
@@ -81,6 +105,7 @@ namespace Cyberpunk77022
         {
             if(DateTime.UtcNow.Ticks - _ShootTime >= _fireRate)
             {
+                smoking = false;
                 _ShootTime = DateTime.UtcNow.Ticks;
                 singleshot.Play();
                 if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
@@ -91,22 +116,15 @@ namespace Cyberpunk77022
                 {
                     _shock += 2;
                 }
-                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 50);
-                _game.AddExplosion(new Explosion(_camera, new Random().Next(8,10), new Random().Next(30, 50), new Point2D()
+                Bullet NewBullet = new Bullet(_camera, _GunOf.Pos, 100, 40);
+                for(int i = 0; i < 3; i++)
                 {
-                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                } , Color.Random()));
-                _game.AddExplosion(new Explosion(_camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
-                {
-                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                }, Color.Random()));
-                _game.AddExplosion(new Explosion(_camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
-                {
-                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                }, Color.Random()));
+                    _game.AddExplosion(new Explosion(_camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                        Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                    }, Color.Random()));
+                }
                 _game.AddBullet(NewBullet);
                 _game.AddTrace(new Trace(_window, _camera, NewBullet));
             }

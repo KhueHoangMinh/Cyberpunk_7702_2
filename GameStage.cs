@@ -20,6 +20,7 @@ namespace Cyberpunk77022
         List<Bullet> bullets;
         Queue<Trace> traces;
         Queue<Explosion> explosions;
+        Queue<Smoke> smokes;
         Camera camera;
 
         public GameStage(Window window, int width, int height, Action<string> ChangeStatus)
@@ -30,11 +31,12 @@ namespace Cyberpunk77022
             player = new Player(this,window, camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.Blue);
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 10, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
-            
+            smokes = new Queue<Smoke>();
+
         }
 
         public void Update()
@@ -70,7 +72,7 @@ namespace Cyberpunk77022
                     if (grounds[j].IsCollided(bullets[i].Pos))
                     {
                         bullets[i].IsCollided = true;
-                        explosions.Enqueue(new Explosion(camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D() { 
+                        explosions.Enqueue(new Explosion(camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D() { 
                             X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
                             Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
                         }, Color.Random()));
@@ -80,6 +82,18 @@ namespace Cyberpunk77022
                 }
             }
             player.Update(grounds, bullets);
+            foreach (Smoke smoke in smokes)
+            {
+                smoke.Update();
+            }
+            foreach(Smoke smoke in smokes)
+            {
+                if (smoke.GetColor.A <= 0.01)
+                {
+                    smokes.Dequeue();
+                    break;
+                }
+            }
             foreach (Explosion explosion in explosions)
             {
                 explosion.Update();
@@ -117,6 +131,10 @@ namespace Cyberpunk77022
             }
             player.DrawGun();
 
+            foreach (Smoke smoke in smokes)
+            {
+                smoke.Draw();
+            }
             foreach (Explosion explosion in explosions)
             {
                 explosion.Draw();
@@ -155,6 +173,15 @@ namespace Cyberpunk77022
         public void RemoveExplosion(Explosion explosion)
         {
             explosions.Dequeue();
+        }
+        public void AddSmoke(Smoke smoke)
+        {
+            smokes.Enqueue(smoke);
+        }
+
+        public void RemoveSmoke(Smoke smoke)
+        {
+            smokes.Dequeue();
         }
     }
 }
