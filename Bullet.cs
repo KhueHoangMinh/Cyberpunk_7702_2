@@ -26,6 +26,7 @@ namespace Cyberpunk77022
         float sinAngle;
         float cosAngle;
         bool _isCollided = false;
+        float range = 2000;
 
         public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
             

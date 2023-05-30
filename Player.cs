@@ -54,7 +54,7 @@ namespace Cyberpunk77022
             {
                 this.VelX += _a;
             }
-            if (SplashKit.KeyTyped(KeyCode.WKey) && !_jumped)
+            if (SplashKit.KeyDown(KeyCode.WKey) && !_jumped)
             {
                 this.VelY = -10;
             }

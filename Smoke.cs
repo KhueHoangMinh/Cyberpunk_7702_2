@@ -31,7 +31,7 @@ namespace Cyberpunk77022
             _pos.Y -= _velY;
             _velY = _velY * 0.98f;
             if (_color.A >= 0.01) _color.A -= (float)0.01;
-            _rad += (float)1;
+            _rad += (float)1.5;
         }
 
         public void Draw()

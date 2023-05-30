@@ -28,8 +28,6 @@ namespace Cyberpunk77022
             _y = y;
             _sizeX = sizeX;
             _sizeY = sizeY;
-            SplashKit.LoadFont("font", "Roboto-Bold.ttf");
-            SplashKit.LoadSoundEffect("click", "click.mp3");
             _soundEffect = SplashKit.SoundEffectNamed("click");
         }
 

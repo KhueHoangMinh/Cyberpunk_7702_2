@@ -23,7 +23,7 @@ namespace Cyberpunk77022
         float _shock = 0;
         long _ShootTime;
         // 0.5 secs
-        float _fireRate = 5000000;
+        float _fireRate = 1000000;
         bool smoking = false;
         Point2D nozzle;
 
@@ -48,7 +48,7 @@ namespace Cyberpunk77022
                 AnchorOffsetY = 0,
                 Angle = 0,
             };
-            _ShootTime = DateTime.UtcNow.Ticks - (long)_fireRate;
+            _ShootTime = 999999999;
             float a = (float)(SplashKit.MousePosition().X - _GunOf.Pos.X + camera.Pos.X);
             float b = (float)(SplashKit.MousePosition().Y - _GunOf.Pos.Y + camera.Pos.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
@@ -60,7 +60,7 @@ namespace Cyberpunk77022
             { 
                 smoking = true;
             }
-            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 20000000 && new Random().Next(1,10) <= 3)
+            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,10) <= 3)
             {
                 float a = (float)(SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X);
                 float b = (float)(SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y);

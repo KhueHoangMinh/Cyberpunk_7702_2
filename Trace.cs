@@ -57,7 +57,7 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            SplashKit.FillTriangleOnWindow(_window, _color, calQuad());
+            SplashKit.FillTriangle(_color, calQuad());
         }
 
         public Color GetColor
