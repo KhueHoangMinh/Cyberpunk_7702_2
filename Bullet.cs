@@ -19,7 +19,7 @@ namespace Cyberpunk77022
         float _VelY;
         Point2D _Pos;
         Quad _corners;
-        float _width = 15;
+        float _width = 10;
         float _height = 40;
         float delta;
         float beta;
