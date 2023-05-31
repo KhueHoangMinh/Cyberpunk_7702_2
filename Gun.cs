@@ -76,27 +76,22 @@ namespace Cyberpunk77022
                 smoking = false;
             }
             _shock = _shock*(float)0.9;
+        }
+        public void Draw()
+        {
             float angle = (float)Math.Atan((SplashKit.MousePosition().Y - _GunOf.Pos.Y + _camera.Pos.Y) / (SplashKit.MousePosition().X - _GunOf.Pos.X + _camera.Pos.X)) + _shock;
-            if(SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
+            if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
             {
                 drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = false;
                 drawingOptions.AnchorOffsetX = -pistol.Width / 2;
-            } else
-            {
-                drawingOptions.Angle = - 360 + (float)(360 / (Math.PI * 2)) * angle;
-                drawingOptions.FlipY = true;
-                drawingOptions.AnchorOffsetX = pistol.Width / 2;
-            }
-        }
-        public void Draw()
-        {
-            if (SplashKit.MousePosition().X > _GunOf.Pos.X - _camera.Pos.X)
-            {
                 SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
             else
             {
+                drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
+                drawingOptions.FlipY = true;
+                drawingOptions.AnchorOffsetX = pistol.Width / 2;
                 SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
         }
