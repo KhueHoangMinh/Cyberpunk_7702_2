@@ -15,10 +15,14 @@ namespace Cyberpunk77022
         Gun _PlayerGun;
         GameStage _game;
         Camera _camera;
+        float _health;
+        float _maxHealth;
         public Player(GameStage game,Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
             _PlayerGun = new Gun(game, window, this, camera);
             _game = game;
             _camera = camera;
+            _maxHealth = 100;
+            _health = _maxHealth;
         }
 
         public void Update(List<Ground> grounds, List<Bullet> bullets)
@@ -104,9 +108,27 @@ namespace Cyberpunk77022
             }
         }
 
+        public void GetHit(Bullet bullet)
+        {
+           _health -= bullet.Damage;
+        }
+
         public void DrawGun() 
         {
             _PlayerGun.Draw();
+        }
+
+        public void DrawHealth()
+        {
+            SplashKit.FillRectangle(Color.Gray, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
+            SplashKit.FillRectangle(Color.Green, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _health / _maxHealth, 10);
+        }
+        public float Health
+        {
+            get
+            {
+                return _health;
+            }
         }
     }
 }

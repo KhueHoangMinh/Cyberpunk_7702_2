@@ -9,23 +9,27 @@ namespace Cyberpunk77022
 {
     public abstract class Enemy : Object
     {
-        float _a = (float)0.5;
+        float _a = (float)0.1;
         bool _jumped = false;
         Gun _EnemyGun;
         GameStage _game;
         Camera _camera;
         Point2D dest;
+        float _health;
+        float _maxHealth;
         public Enemy(GameStage game, Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _EnemyGun = new Gun(game, window, this, camera);
             _game = game;
             _camera = camera;
+            _maxHealth = 100;
+            _health = _maxHealth;
             dest = new Point2D() { X = new Random().Next(200, 500), Y = new Random().Next(200, 500) };
-            if(new Random().Next(0,1) < 1)
+            if(new Random().Next(0,10) < 5)
             {
                 dest.X *= -1;
             }
-            if (new Random().Next(0, 1) < 1)
+            if (new Random().Next(0, 10) < 5)
             {
                 dest.Y *= -1;
             }
@@ -70,7 +74,8 @@ namespace Cyberpunk77022
             {
                 this.VelX -= _a;
             }
-            else if (_game.GetPlayer.Pos.X + dest.X > this.Pos.X)
+            else 
+                //(_game.GetPlayer.Pos.X + dest.X > this.Pos.X)
             {
                 this.VelX += _a;
             }
@@ -111,7 +116,8 @@ namespace Cyberpunk77022
             VelX = VelX / (float)1.06;
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
             _EnemyGun.Update(_game.GetPlayer.Pos);
-            if (SplashKit.MouseDown(MouseButton.LeftButton))
+            if(false)
+                //(SplashKit.MouseDown(MouseButton.LeftButton))
             {
                 _EnemyGun.Shoot();
             }
@@ -120,6 +126,23 @@ namespace Cyberpunk77022
         public void DrawGun()
         {
             _EnemyGun.Draw();
+        }
+
+        public void DrawHealth()
+        {
+            SplashKit.FillRectangle(Color.Gray,this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
+            SplashKit.FillRectangle(Color.Red, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left)*_health/_maxHealth, 10);
+        }
+        public void GetHit(Bullet bullet)
+        {
+            _health -= bullet.Damage;
+        }
+        public float Health
+        {
+            get
+            {
+                return _health;
+            }
         }
     }
 

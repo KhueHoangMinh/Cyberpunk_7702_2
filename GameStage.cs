@@ -32,7 +32,7 @@ namespace Cyberpunk77022
             inEf = new InEffect(width, height);
             outEf = new OutEffect(width, height);
             camera = new Camera(width, height);
-            player = new Player(this,window, camera, new Point2D() { X = 50, Y = 50}, 100, 100, Color.Blue);
+            player = new Player(this,window, camera, new Point2D() { X = width/2, Y = 50}, 100, 100, Color.Blue);
             enemies = new List<Enemy>()
             {
                 new NormalEnemy(this,window, camera, new Point2D() { X = 300, Y = 50}, 50, 50, Color.Red),
@@ -57,7 +57,7 @@ namespace Cyberpunk77022
             {
                 trace.Update();
             }
-            while (TracePop > 0)
+            while (TracePop > 0 && traces.Count > 0)
             {
                 traces.Dequeue();
                 TracePop--;
@@ -81,9 +81,31 @@ namespace Cyberpunk77022
                         break;
                     }
                 }
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
+                for (int j = 0; j < enemies.Count; j++)
+                {
+                    if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
+                    {
+                        bullets[i].IsCollided = true;
+                        enemies[j].GetHit(bullets[i]);
+                        explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                        {
+                            X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                            Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                        }, Color.Random()));
+                        bullets.Remove(bullets[i]);
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < bullets.Count; i++)
+            {
                 if (player.IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Enemy)
                 {
                     bullets[i].IsCollided = true;
+                    player.GetHit(bullets[i]);
                     explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
                     {
                         X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
@@ -91,25 +113,9 @@ namespace Cyberpunk77022
                     }, Color.Random()));
                     bullets.Remove(bullets[i]);
                     break;
-                } else
-                {
-                    for (int j = 0; j < enemies.Count; j++)
-                    {
-                        if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
-                        {
-                            bullets[i].IsCollided = true;
-                            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                            }, Color.Random()));
-                            bullets.Remove(bullets[i]);
-                            break;
-                        }
-                    }
                 }
             }
-            player.Update(grounds, bullets);
+                player.Update(grounds, bullets);
 
             for (int i = 0; i < enemies.Count; i++)
             {
@@ -119,7 +125,7 @@ namespace Cyberpunk77022
             {
                 smoke.Update();
             }
-            while (SmokePop > 0)
+            while (SmokePop > 0 && smokes.Count > 0)
             {
                 smokes.Dequeue();
                 SmokePop--;
@@ -128,7 +134,7 @@ namespace Cyberpunk77022
             {
                 explosion.Update();
             }
-            while (ExploPop > 0)
+            while (ExploPop > 0 && explosions.Count > 0)
             {
                 explosions.Dequeue();
                 ExploPop--;
@@ -160,9 +166,12 @@ namespace Cyberpunk77022
             {
                 grounds[i].Draw();
             }
+            player.DrawHealth();
             player.DrawGun();
+
             for (int i = 0; i < enemies.Count; i++)
             {
+                enemies[i].DrawHealth();
                 enemies[i].DrawGun();
             }
 
