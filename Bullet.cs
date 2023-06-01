@@ -10,15 +10,15 @@ namespace Cyberpunk77022
 {
     public class Bullet
     {
-        float _speed;
+        GameStage _game;
         float _angle;
         Point2D _initPos;
         Color _color;
         Camera _camera;
+        Gun _gun;
         float _VelX;
         float _VelY;
         Point2D _Pos;
-        Quad _corners;
         float _width = 10;
         float _height = 40;
         float delta;
@@ -26,22 +26,23 @@ namespace Cyberpunk77022
         float sinAngle;
         float cosAngle;
         bool _isCollided = false;
-        float range = 2000;
+        float range = 800;
 
-        public Bullet(Camera camera, Point2D BasePos, float GunLength, float speed)
+        public Bullet(GameStage game, Camera camera, Gun gun, float GunLength, float speed)
             
         {
+            _game = game;
             _color = Color.Yellow;
             _camera = camera;
+            _gun = gun;
             _color =  Color.Yellow;
-            float a = (float)(SplashKit.MousePosition().X - BasePos.X + camera.Pos.X);
-            float b = (float)(SplashKit.MousePosition().Y - BasePos.Y + camera.Pos.Y);
+            float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
+            float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
             _VelX = (float)(speed * a/c);
             _VelY = (float)(speed * b/c);
-            _initPos = new Point2D() { X = BasePos.X + GunLength * a/c, Y = BasePos.Y + GunLength * b / c };
+            _initPos = new Point2D() { X = gun.BasePoint.X + GunLength * a/c, Y = gun.BasePoint.Y + GunLength * b / c };
             _Pos = _initPos;
-            _corners = new Quad();
             _angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
             delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
             beta = (float)(_angle - Math.Atan(_width / _height));
@@ -52,11 +53,19 @@ namespace Cyberpunk77022
         public void Update()
         {
             _Pos = new Point2D() { X = this.Pos.X + _VelX, Y = this.Pos.Y + _VelY };
+            if((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > range * range)
+            {
+                _game.RemoveBullet(this);
+                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                {
+                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                }, Color.Random()));
+            }
         }
 
         public void Draw()
         {
-            //SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 10);
             SplashKit.FillQuad(_color, calQuad());
         }
 
@@ -129,5 +138,13 @@ namespace Cyberpunk77022
         }
 
         public float Angle { get { return _angle; } }
+
+        public Gun Gun
+        {
+            get
+            {
+                return _gun;
+            }
+        }
     }
 }

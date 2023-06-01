@@ -9,6 +9,7 @@ namespace Cyberpunk77022
 {
     public class Trace
     {
+        GameStage _game;
         Window _window;
         Camera _camera;
         float _width;
@@ -23,8 +24,9 @@ namespace Cyberpunk77022
         float _maxHeight = 200;
         float _VelX;
         float _VelY;
-        public Trace(Window window, Camera camera, Bullet tracing)
+        public Trace(GameStage game, Window window, Camera camera, Bullet tracing)
         {
+            _game = game;
             _window = window;
             _camera = camera;
             _width = tracing.Width;
@@ -52,7 +54,13 @@ namespace Cyberpunk77022
                     _initPoint.Y += _VelY;
             }
 
-            if(_color.A >= (float)0.005) _color.A -= (float)0.005;
+            if (_color.A >= (float)0.005)
+            {
+                _color.A -= (float)0.005;
+            } else
+            {
+                _game.RemoveTrace();
+            }
         }
 
         public void Draw()

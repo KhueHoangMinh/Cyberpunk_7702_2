@@ -9,14 +9,16 @@ namespace Cyberpunk77022
 {
     public class Explosion
     {
+        GameStage _game;
         Camera _camera;
         float _rad;
         float _maxrad;
         Point2D _pos;
         Color _color;
 
-        public Explosion(Camera camera,float rad, float maxrad, Point2D pos, Color color)
+        public Explosion(GameStage game,Camera camera,float rad, float maxrad, Point2D pos, Color color)
         {
+            _game = game;
             _camera = camera;
             _rad = rad;
             _maxrad = maxrad;
@@ -27,7 +29,13 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            if (_color.A >= 0.02) _color.A -= (float)0.02;
+            if (_color.A >= 0.02)
+            {
+                _color.A -= (float)0.02;
+            } else
+            {
+                _game.RemoveExplosion();
+            }
             _rad += (float)1;
         }
 

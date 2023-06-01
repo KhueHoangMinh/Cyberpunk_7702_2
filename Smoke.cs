@@ -9,6 +9,7 @@ namespace Cyberpunk77022
 {
     public class Smoke
     {
+        GameStage _game;
         Camera _camera;
         float _rad;
         float _maxrad;
@@ -16,8 +17,9 @@ namespace Cyberpunk77022
         Color _color;
         float _velY = 3;
 
-        public Smoke(Camera camera, float rad, float maxrad, Point2D pos, Color color)
+        public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color)
         {
+            _game = game;
             _camera = camera;
             _rad = rad;
             _maxrad = maxrad;
@@ -30,7 +32,13 @@ namespace Cyberpunk77022
         {
             _pos.Y -= _velY;
             _velY = _velY * 0.98f;
-            if (_color.A >= 0.01) _color.A -= (float)0.01;
+            if (_color.A >= 0.01)
+            {
+                _color.A -= (float)0.01;
+            } else
+            {
+                _game.RemoveSmoke();
+            }
             _rad += (float)1.5;
         }
 
