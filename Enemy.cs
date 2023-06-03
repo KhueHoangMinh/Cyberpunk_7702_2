@@ -9,8 +9,12 @@ namespace Cyberpunk77022
 {
     public abstract class Enemy : Object
     {
-        float _a = (float)0.1;
+        float _speed;
         bool _jumped = false;
+        long _jumpedAt;
+        long _firedAt;
+        long _jumpTime;
+        long _fireRate;
         Gun _EnemyGun;
         GameStage _game;
         Camera _camera;
@@ -33,9 +37,18 @@ namespace Cyberpunk77022
             {
                 dest.Y *= -1;
             }
+            _speed = (float)(new Random().NextDouble() + 0.5);
+            _jumpTime = new Random().Next(3000000, 5000000);
+            _fireRate = new Random().Next(3000000, 5000000);
+            _jumpedAt = -_jumpTime;
+            _firedAt = -_fireRate;
         }
         public void Update(List<Ground> grounds, List<Bullet> bullets)
         {
+            if(_health <= 0)
+            {
+                _game.RemoveEnemy(this);
+            }
             _jumped = true;
             string collide = "no";
             for (int i = 0; i < grounds.Count; i++)
@@ -70,17 +83,18 @@ namespace Cyberpunk77022
                 }
             }
             base.Gravity();
+            VelX = 0;
             if (_game.GetPlayer.Pos.X + dest.X < this.Pos.X)
             {
-                this.VelX -= _a;
+                this.VelX -= _speed;
             }
-            else 
-                //(_game.GetPlayer.Pos.X + dest.X > this.Pos.X)
+            else if(_game.GetPlayer.Pos.X + dest.X > this.Pos.X)
             {
-                this.VelX += _a;
+                this.VelX += _speed;
             }
-            if (false)
+            if (DateTime.UtcNow.Ticks - _jumpedAt >= _jumpTime && !_jumped && new Random().Next(0,19) < 5)
             {
+                _jumpedAt = DateTime.UtcNow.Ticks;
                 this.VelY = -10;
                 for (int i = 0; i < 3; i++)
                 {
@@ -112,14 +126,19 @@ namespace Cyberpunk77022
 
                     }
                 }
+            } else
+            {
+                //_jumpedAt = DateTime.UtcNow.Ticks;
             }
-            VelX = VelX / (float)1.06;
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
             _EnemyGun.Update(_game.GetPlayer.Pos);
-            if(false)
-                //(SplashKit.MouseDown(MouseButton.LeftButton))
+            if(DateTime.UtcNow.Ticks - _firedAt >= _fireRate && new Random().Next(0, 19) < 5)
             {
+                _firedAt = DateTime.UtcNow.Ticks;
                 _EnemyGun.Shoot();
+            } else
+            {
+                //_firedAt = DateTime.UtcNow.Ticks;
             }
         }
 

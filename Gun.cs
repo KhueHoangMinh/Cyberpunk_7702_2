@@ -23,7 +23,7 @@ namespace Cyberpunk77022
         float _shock = 0;
         long _ShootTime;
         // 0.5 secs
-        float _fireRate = 1000000;
+        float _fireRate = 5000000;
         bool smoking = false;
         Point2D nozzle;
         Point2D _aimPoint;
