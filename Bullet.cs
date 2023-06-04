@@ -29,7 +29,7 @@ namespace Cyberpunk77022
         float range = 800;
         float _damage;
 
-        public Bullet(GameStage game, Camera camera, Gun gun, float GunLength, float speed)
+        public Bullet(GameStage game, Camera camera, Gun gun, float GunLength, float speed, float damage)
             
         {
             _game = game;
@@ -49,7 +49,7 @@ namespace Cyberpunk77022
             beta = (float)(_angle - Math.Atan(_width / _height));
             sinAngle = (float)Math.Sin(_angle);
             cosAngle = (float)Math.Cos(_angle);
-            _damage = 5;
+            _damage = damage;
         }
 
         public void Update()

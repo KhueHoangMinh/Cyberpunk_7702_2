@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
@@ -27,6 +28,10 @@ namespace Cyberpunk77022
         Queue<Smoke> smokes;
         int SmokePop = 0;
         Camera camera;
+        int round = 0;
+        long _clearAt;
+        bool _resting = true;
+        long _restTime = 1000000;
 
         public GameStage(Manager manager)
         {
@@ -35,14 +40,7 @@ namespace Cyberpunk77022
             outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
             camera = new Camera(_manager.Window.Width, _manager.Window.Height);
             player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, Color.Blue);
-            enemies = new List<Enemy>()
-            {
-                new NormalEnemy(this, camera, new Point2D() { X = 300, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this, camera, new Point2D() { X = 100, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this, camera, new Point2D() { X = 500, Y = 100}, 50, 50, Color.Red),
-                new NormalEnemy(this, camera, new Point2D() { X = 800, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this, camera, new Point2D() { X = 1000, Y = 0}, 50, 50, Color.Red),
-            };
+            enemies = new List<Enemy>();
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = _manager.Window.Height }, _manager.Window.Width, 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
@@ -50,13 +48,32 @@ namespace Cyberpunk77022
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
             smokes = new Queue<Smoke>();
-
+            _clearAt = DateTime.UtcNow.Ticks;
         }
 
         public void Update()
         {
             if(!_closing )
             {
+                if(enemies.Count == 0)
+                {
+                    if(_resting)
+                    {
+                        round++;
+                        _clearAt = DateTime.UtcNow.Ticks;
+                        _resting = false;
+                    } else
+                    {
+                        if(DateTime.UtcNow.Ticks - _clearAt >= _restTime)
+                        {
+                            for(int i = 0; i < Math.Ceiling((decimal)round/3); i++)
+                            {
+                                enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10,1000), Y = new Random().Next(10, 100) }, 50, 50, Color.Red));
+                            }
+                            _resting = true;
+                        }
+                    }
+                }
                 foreach (Trace trace in traces)
                 {
                     trace.Update();
@@ -198,20 +215,19 @@ namespace Cyberpunk77022
             {
                 explosion.Draw();
             }
+            SplashKit.DrawText(_manager.Score.ToString(), Color.White, "font", 50, _manager.Window.Width / 2 - SplashKit.TextWidth(_manager.Score.ToString(), "font", 50) / 2, 20);
             inEf.Draw();
             if (_closing)
             {
                 outEf.Draw();
             }
         }
-
         public Manager Manager { get { return _manager; } }
         public void AddBullet(Bullet bullet)
         {
             bullets.Add(bullet);
         }
-
-        public void RemoveBullet(Bullet bullet) 
+        public void RemoveBullet(Bullet bullet)
         {  
             bullets.Remove(bullet);
         }
@@ -223,6 +239,7 @@ namespace Cyberpunk77022
         public void RemoveEnemy(Enemy enemy)
         {
             enemies.Remove(enemy);
+            _manager.Score++;
         }
 
         public void AddTrace(Trace trace)

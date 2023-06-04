@@ -110,6 +110,29 @@ namespace Cyberpunk77022
             end = new EndStage(this);
             state = "end";
         }
+
+        public int Score
+        {
+            get { return score; } 
+            set 
+            { 
+                score = value;
+                if(score >= BestScore)
+                {
+                    bestScore = score;
+                }
+            }
+        }
+
+        public int Coin
+        {
+            get { return  coin; } set { coin = value; }
+        }
+
+        public int BestScore
+        {
+            get { return bestScore; } set { bestScore = value; }
+        }
         public string State
         {
             get { return state; }

@@ -22,15 +22,15 @@ namespace Cyberpunk77022
         GameStage _game;
         float _shock = 0;
         long _ShootTime;
-        // 0.5 secs
         float _fireRate = 5000000;
         bool smoking = false;
         Point2D nozzle;
         Point2D _aimPoint;
         float angle;
         float _range = 2000;
+        float _damage;
 
-        public Gun(GameStage game, Window window, Object GunOf, Camera camera)
+        public Gun(GameStage game, Window window, Object GunOf, Camera camera, float damage)
         {
             _game = game;
             _window = window;
@@ -57,6 +57,7 @@ namespace Cyberpunk77022
             float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
             nozzle = new Point2D() { X = _GunOf.Pos.X + 100 * a / c, Y = _GunOf.Pos.Y + 100 * b / c };
+            _damage = damage;
         }
         public void Update(Point2D aimPoint)
         {
@@ -116,7 +117,7 @@ namespace Cyberpunk77022
                 {
                     _shock += 2;
                 }
-                Bullet NewBullet = new Bullet(_game, _camera, this, 100, 40);
+                Bullet NewBullet = new Bullet(_game, _camera, this, 100, 40, _damage);
                 for(int i = 0; i < 3; i++)
                 {
                     _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()

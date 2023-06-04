@@ -26,14 +26,14 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Gun(_game, _manager.Window, this, camera);
+            _EnemyGun = new Gun(_game, _manager.Window, this, camera,1);
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;
             dest = new Point2D() { X = new Random().Next(200, 300), Y = new Random().Next(200, 300) };
             _speed = (float)(new Random().NextDouble() + 0.5);
-            _jumpTime = new Random().Next(3000000, 5000000);
-            _fireRate = new Random().Next(3000000, 5000000);
+            _jumpTime = new Random().Next(30000000, 50000000);
+            _fireRate = new Random().Next(30000000, 50000000);
             _jumpedAt = -_jumpTime;
             _firedAt = -_fireRate;
         }
@@ -162,6 +162,7 @@ namespace Cyberpunk77022
         public void GetHit(Bullet bullet)
         {
             _health -= bullet.Damage;
+            this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
         public float Health
         {
