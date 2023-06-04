@@ -17,7 +17,7 @@ namespace Cyberpunk77022
         Color _background;
         string _text;
         SoundEffect _soundEffect;
-        bool _clicked = false;
+        bool _hovering = false;
 
         public Button(string text, Color color, float x, float y, float sizeX, float sizeY) { 
             _text = text;
@@ -31,7 +31,15 @@ namespace Cyberpunk77022
             _soundEffect = SplashKit.SoundEffectNamed("click");
         }
 
-        public void Update(Action action)
+        public bool Hovering
+        {
+            get
+            {
+                return _hovering;
+            }
+        }
+
+        public void Update()
         {
             if(Hover())
             {
@@ -41,13 +49,14 @@ namespace Cyberpunk77022
                 if(SplashKit.MouseClicked(MouseButton.LeftButton))
                 {
                     _soundEffect.Play();
-                    action();
                 }
+                _hovering = true;
             } else
             {
                 if (_background.R >= 0.01 && _background.R > _color.R + 0.01) _background.R -= (float)0.01;
                 if (_background.G >= 0.01 && _background.G > _color.G + 0.01) _background.G -= (float)0.01;
                 if (_background.B >= 0.01 && _background.B > _color.B + 0.01) _background.B -= (float)0.01;
+                _hovering = false;
             }
         }
 

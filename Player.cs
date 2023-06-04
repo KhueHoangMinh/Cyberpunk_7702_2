@@ -12,14 +12,16 @@ namespace Cyberpunk77022
     {
         float _a = (float)1;
         bool _jumped = false;
+        Manager _manager;
         Gun _PlayerGun;
         GameStage _game;
         Camera _camera;
         float _health;
         float _maxHealth;
-        public Player(GameStage game,Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
-            _PlayerGun = new Gun(game, window, this, camera);
+        public Player(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
+            _manager = game.Manager;
             _game = game;
+            _PlayerGun = new Gun(_game, _manager.Window, this, camera);
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;

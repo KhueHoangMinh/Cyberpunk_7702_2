@@ -12,6 +12,7 @@ namespace Cyberpunk77022
 {
     public class GameStage
     {
+        Manager _manager;
         InEffect inEf;
         OutEffect outEf;
         bool _closing = false;
@@ -27,23 +28,24 @@ namespace Cyberpunk77022
         int SmokePop = 0;
         Camera camera;
 
-        public GameStage(Window window, int width, int height, Action<string> ChangeStatus)
+        public GameStage(Manager manager)
         {
-            inEf = new InEffect(width, height);
-            outEf = new OutEffect(width, height);
-            camera = new Camera(width, height);
-            player = new Player(this,window, camera, new Point2D() { X = width/2, Y = 50}, 100, 100, Color.Blue);
+            _manager = manager;
+            inEf = new InEffect(_manager.Window.Width, _manager.Window.Height);
+            outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
+            camera = new Camera(_manager.Window.Width, _manager.Window.Height);
+            player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, Color.Blue);
             enemies = new List<Enemy>()
             {
-                new NormalEnemy(this,window, camera, new Point2D() { X = 300, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this,window, camera, new Point2D() { X = 100, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this,window, camera, new Point2D() { X = 500, Y = 100}, 50, 50, Color.Red),
-                new NormalEnemy(this,window, camera, new Point2D() { X = 800, Y = 50}, 50, 50, Color.Red),
-                new NormalEnemy(this,window, camera, new Point2D() { X = 1000, Y = 0}, 50, 50, Color.Red),
+                new NormalEnemy(this, camera, new Point2D() { X = 300, Y = 50}, 50, 50, Color.Red),
+                new NormalEnemy(this, camera, new Point2D() { X = 100, Y = 50}, 50, 50, Color.Red),
+                new NormalEnemy(this, camera, new Point2D() { X = 500, Y = 100}, 50, 50, Color.Red),
+                new NormalEnemy(this, camera, new Point2D() { X = 800, Y = 50}, 50, 50, Color.Red),
+                new NormalEnemy(this, camera, new Point2D() { X = 1000, Y = 0}, 50, 50, Color.Red),
             };
             grounds = new List<Ground>();
-            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = height }, width, 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = width / 2, Y = 780 }, 300, 50, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = _manager.Window.Height }, _manager.Window.Width, 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
@@ -53,43 +55,62 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            foreach(Trace trace in traces)
+            if(!_closing )
             {
-                trace.Update();
-            }
-            while (TracePop > 0 && traces.Count > 0)
-            {
-                traces.Dequeue();
-                TracePop--;
-            }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                bullets[i].Update();
-            }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                for (int j = 0; j < grounds.Count; j++)
+                foreach (Trace trace in traces)
                 {
-                    if (grounds[j].IsCollided(bullets[i].Pos))
+                    trace.Update();
+                }
+                while (TracePop > 0 && traces.Count > 0)
+                {
+                    traces.Dequeue();
+                    TracePop--;
+                }
+                for (int i = 0; i < bullets.Count; i++)
+                {
+                    bullets[i].Update();
+                }
+                for (int i = 0; i < bullets.Count; i++)
+                {
+                    for (int j = 0; j < grounds.Count; j++)
                     {
-                        bullets[i].IsCollided = true;
-                        explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D() { 
-                            X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                            Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                        }, Color.Random()));
-                        bullets.Remove(bullets[i]);
-                        break;
+                        if (grounds[j].IsCollided(bullets[i].Pos))
+                        {
+                            bullets[i].IsCollided = true;
+                            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                            {
+                                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                            }, Color.Random()));
+                            bullets.Remove(bullets[i]);
+                            break;
+                        }
                     }
                 }
-            }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                for (int j = 0; j < enemies.Count; j++)
+                for (int i = 0; i < bullets.Count; i++)
                 {
-                    if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
+                    for (int j = 0; j < enemies.Count; j++)
+                    {
+                        if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
+                        {
+                            bullets[i].IsCollided = true;
+                            enemies[j].GetHit(bullets[i]);
+                            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                            {
+                                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                            }, Color.Random()));
+                            bullets.Remove(bullets[i]);
+                            break;
+                        }
+                    }
+                }
+                for (int i = 0; i < bullets.Count; i++)
+                {
+                    if (player.IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Enemy)
                     {
                         bullets[i].IsCollided = true;
-                        enemies[j].GetHit(bullets[i]);
+                        player.GetHit(bullets[i]);
                         explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
                         {
                             X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
@@ -99,47 +120,41 @@ namespace Cyberpunk77022
                         break;
                     }
                 }
-            }
-            for (int i = 0; i < bullets.Count; i++)
-            {
-                if (player.IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Enemy)
+                player.Update(grounds, bullets);
+                if(player.Health <= 0) { 
+                    this.EndGame();
+                }
+
+                for (int i = 0; i < enemies.Count; i++)
                 {
-                    bullets[i].IsCollided = true;
-                    player.GetHit(bullets[i]);
-                    explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                        Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                    }, Color.Random()));
-                    bullets.Remove(bullets[i]);
-                    break;
+                    enemies[i].Update(grounds, bullets);
+                }
+                foreach (Smoke smoke in smokes)
+                {
+                    smoke.Update();
+                }
+                while (SmokePop > 0 && smokes.Count > 0)
+                {
+                    smokes.Dequeue();
+                    SmokePop--;
+                }
+                foreach (Explosion explosion in explosions)
+                {
+                    explosion.Update();
+                }
+                while (ExploPop > 0 && explosions.Count > 0)
+                {
+                    explosions.Dequeue();
+                    ExploPop--;
+                }
+                camera.Update(player.Pos);
+            } else
+            {
+                if (outEf._completed)
+                {
+                    _manager.NewEnd();
                 }
             }
-                player.Update(grounds, bullets);
-
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                enemies[i].Update(grounds, bullets);
-            }
-            foreach (Smoke smoke in smokes)
-            {
-                smoke.Update();
-            }
-            while (SmokePop > 0 && smokes.Count > 0)
-            {
-                smokes.Dequeue();
-                SmokePop--;
-            }
-            foreach (Explosion explosion in explosions)
-            {
-                explosion.Update();
-            }
-            while (ExploPop > 0 && explosions.Count > 0)
-            {
-                explosions.Dequeue();
-                ExploPop--;
-            }
-            camera.Update(player.Pos);
         }
 
         public Player GetPlayer
@@ -190,6 +205,7 @@ namespace Cyberpunk77022
             }
         }
 
+        public Manager Manager { get { return _manager; } }
         public void AddBullet(Bullet bullet)
         {
             bullets.Add(bullet);
@@ -235,6 +251,11 @@ namespace Cyberpunk77022
         public void RemoveSmoke()
         {
             SmokePop++;
+        }
+
+        public void EndGame()
+        {
+            _closing = true;
         }
     }
 }

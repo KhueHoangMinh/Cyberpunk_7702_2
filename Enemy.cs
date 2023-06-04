@@ -15,28 +15,22 @@ namespace Cyberpunk77022
         long _firedAt;
         long _jumpTime;
         long _fireRate;
+        Manager _manager;
         Gun _EnemyGun;
         GameStage _game;
         Camera _camera;
         Point2D dest;
         float _health;
         float _maxHealth;
-        public Enemy(GameStage game, Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
+        public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
-            _EnemyGun = new Gun(game, window, this, camera);
+            _manager = game.Manager;
             _game = game;
+            _EnemyGun = new Gun(_game, _manager.Window, this, camera);
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;
-            dest = new Point2D() { X = new Random().Next(200, 500), Y = new Random().Next(200, 500) };
-            if(new Random().Next(0,10) < 5)
-            {
-                dest.X *= -1;
-            }
-            if (new Random().Next(0, 10) < 5)
-            {
-                dest.Y *= -1;
-            }
+            dest = new Point2D() { X = new Random().Next(200, 300), Y = new Random().Next(200, 300) };
             _speed = (float)(new Random().NextDouble() + 0.5);
             _jumpTime = new Random().Next(3000000, 5000000);
             _fireRate = new Random().Next(3000000, 5000000);
@@ -84,13 +78,26 @@ namespace Cyberpunk77022
             }
             base.Gravity();
             VelX = 0;
-            if (_game.GetPlayer.Pos.X + dest.X < this.Pos.X)
+            if (_game.GetPlayer.Pos.X < this.Pos.X)
             {
-                this.VelX -= _speed;
+                if(-_game.GetPlayer.Pos.X + this.Pos.X > dest.X)
+                {
+                    this.VelX = -_speed;
+                } else if(-_game.GetPlayer.Pos.X + this.Pos.X < dest.X)
+                {
+                    this.VelX = _speed;
+                }
             }
-            else if(_game.GetPlayer.Pos.X + dest.X > this.Pos.X)
+            else if(_game.GetPlayer.Pos.X > this.Pos.X)
             {
-                this.VelX += _speed;
+                if (_game.GetPlayer.Pos.X - this.Pos.X > dest.X)
+                {
+                    this.VelX = _speed;
+                }
+                else if (_game.GetPlayer.Pos.X - this.Pos.X < dest.X)
+                {
+                    this.VelX = -_speed;
+                }
             }
             if (DateTime.UtcNow.Ticks - _jumpedAt >= _jumpTime && !_jumped && new Random().Next(0,19) < 5)
             {
@@ -167,7 +174,7 @@ namespace Cyberpunk77022
 
     public class NormalEnemy : Enemy
     {
-        public NormalEnemy(GameStage game, Window window, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(game, window, camera, pos, sizeX, sizeY, color) { 
+        public NormalEnemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(game, camera, pos, sizeX, sizeY, color) { 
         
         }
     }

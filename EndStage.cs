@@ -10,7 +10,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
-    public class HomeStage
+    public class EndStage
     {
         float a = 200;
         float b = 200;
@@ -33,7 +33,7 @@ namespace Cyberpunk77022
         bool _closing = false;
         string _nextState;
         Action<string> _ChangeState;
-        public HomeStage(Manager manager)
+        public EndStage(Manager manager)
         {
             _manager = manager;
             drawingOptions = new DrawingOptions()
@@ -56,9 +56,9 @@ namespace Cyberpunk77022
             startBtn.Update();
             shopBtn.Update();
             aboutBtn.Update();
-            if(SplashKit.MouseClicked(MouseButton.LeftButton))
+            if (SplashKit.MouseClicked(MouseButton.LeftButton))
             {
-                if(startBtn.Hovering)
+                if (startBtn.Hovering)
                 {
                     _closing = true;
                     _nextState = "game";
@@ -74,16 +74,16 @@ namespace Cyberpunk77022
                     _nextState = "about";
                 }
             }
-            if(outEf._completed)
+            if (outEf._completed)
             {
-                if(_nextState == "game")
+                if (_nextState == "game")
                 {
                     _manager.NewGame();
                 }
             }
         }
 
-        public void Draw() 
+        public void Draw()
         {
 
             SplashKit.DrawBitmap(SplashKit.BitmapNamed("logo"), _manager.Window.Width / 2 - SplashKit.BitmapNamed("logo").Width / 2, 100, drawingOptions);
@@ -92,7 +92,7 @@ namespace Cyberpunk77022
             aboutBtn.Draw();
 
             inEf.Draw();
-            if(_closing)
+            if (_closing)
             {
                 outEf.Draw();
             }

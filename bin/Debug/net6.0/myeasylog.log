@@ -4,3 +4,8 @@
 2023-05-23 23:33:23,054 WARNING [default] Attempting to get height of invalid window
 2023-05-29 23:58:34,788 WARNING [default] Unable to locate file for logo (C:\msys64\home\Admin\Cyberpunk77022\bin\Debug\net6.0\images\logo.png)
 2023-05-30 22:16:39,354 WARNING [default] Unable to locate file for logo (C:\msys64\home\Admin\Cyberpunk77022\bin\Debug\net6.0\images\logo.png)
+2023-06-04 00:24:32,019 WARNING [default] Attempting to toggle fullscreen of invalid window
+2023-06-04 00:29:06,261 WARNING [default] Attempting to toggle fullscreen of invalid window
+2023-06-04 00:32:58,930 WARNING [default] Attempting to toggle fullscreen of invalid window
+2023-06-04 00:35:18,544 WARNING [default] Attempting to toggle fullscreen of invalid window
+2023-06-04 00:36:48,514 WARNING [default] Attempting to toggle fullscreen of invalid window
