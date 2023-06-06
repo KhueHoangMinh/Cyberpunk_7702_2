@@ -32,6 +32,11 @@ namespace Cyberpunk77022
         long _clearAt;
         bool _resting = true;
         long _restTime = 1000000;
+        Button pauseBtn;
+        Button resumeBtn;
+        Button quitBtn;
+        Color _background;
+        bool paused = false;
 
         public GameStage(Manager manager)
         {
@@ -49,11 +54,17 @@ namespace Cyberpunk77022
             explosions = new Queue<Explosion>();
             smokes = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
+            pauseBtn = new Button("||", Color.Red, _manager.Window.Width-80, 80, 70, 70);
+            resumeBtn = new Button("Resume", Color.Green, _manager.Window.Width / 2, _manager.Window.Height/2-50, 250, 150);
+            quitBtn = new Button("QUIT", Color.Red, _manager.Window.Width / 2, _manager.Window.Height/2 + 150, 250, 150);
+            _manager.Score = 0;
+            _background = Color.Black;
+            _background.A = 0.5f;
         }
 
         public void Update()
         {
-            if(!_closing )
+            if(!_closing && !paused)
             {
                 if(enemies.Count == 0)
                 {
@@ -165,11 +176,34 @@ namespace Cyberpunk77022
                     ExploPop--;
                 }
                 camera.Update(player.Pos);
+                pauseBtn.Update();
+                if (pauseBtn.Hovering)
+                {
+                    if (SplashKit.MouseDown(MouseButton.LeftButton))
+                    {
+                        paused = !paused;
+                    }
+                }
             } else
             {
                 if (outEf._completed)
                 {
                     _manager.NewEnd();
+                }
+                if(paused)
+                {
+                    resumeBtn.Update();
+                    quitBtn.Update();
+                    if(SplashKit.MouseDown(MouseButton.LeftButton))
+                    {
+                        if(resumeBtn.Hovering)
+                        {
+                            paused = false;
+                        } else if (quitBtn.Hovering)
+                        {
+                            this.EndGame();
+                        }
+                    }
                 }
             }
         }
@@ -216,6 +250,16 @@ namespace Cyberpunk77022
                 explosion.Draw();
             }
             SplashKit.DrawText(_manager.Score.ToString(), Color.White, "font", 50, _manager.Window.Width / 2 - SplashKit.TextWidth(_manager.Score.ToString(), "font", 50) / 2, 20);
+            pauseBtn.Draw();
+            if(paused)
+            {
+                SplashKit.FillRectangle(_background, 0, 0, _manager.Window.Width, _manager.Window.Height);
+                SplashKit.FillRectangle(Color.Gray,_manager.Window.Width/2-300, _manager.Window.Height/2-300,600,600);
+                SplashKit.DrawText("Paused", Color.White, "font", 60, _manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, _manager.Window.Height / 2 - 250);
+                resumeBtn.Draw();
+                quitBtn.Draw();
+            }
+
             inEf.Draw();
             if (_closing)
             {

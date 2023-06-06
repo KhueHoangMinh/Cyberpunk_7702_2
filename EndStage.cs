@@ -26,7 +26,7 @@ namespace Cyberpunk77022
         Manager _manager;
         Button startBtn;
         Button shopBtn;
-        Button aboutBtn;
+        Button homeBtn;
         Action<string> setClosing;
         InEffect inEf;
         OutEffect outEf;
@@ -36,18 +36,11 @@ namespace Cyberpunk77022
         public EndStage(Manager manager)
         {
             _manager = manager;
-            drawingOptions = new DrawingOptions()
-            {
-                Dest = manager.Window,
-                ScaleX = (float)1.5,
-                ScaleY = (float)1.5,
-
-            };
             inEf = new InEffect(_manager.Window.Width, _manager.Window.Height);
             outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
             startBtn = new Button("START", Color.Red, _manager.Window.Width / 2, 400, 250, 150);
             shopBtn = new Button("SHOP", Color.Red, _manager.Window.Width / 2, 650, 250, 150);
-            aboutBtn = new Button("ABOUT", Color.Red, _manager.Window.Width / 2, 900, 250, 150);
+            homeBtn = new Button("HOME", Color.Red, _manager.Window.Width / 2, 900, 250, 150);
 
         }
 
@@ -55,7 +48,7 @@ namespace Cyberpunk77022
         {
             startBtn.Update();
             shopBtn.Update();
-            aboutBtn.Update();
+            homeBtn.Update();
             if (SplashKit.MouseClicked(MouseButton.LeftButton))
             {
                 if (startBtn.Hovering)
@@ -68,10 +61,10 @@ namespace Cyberpunk77022
                     _closing = true;
                     _nextState = "shop";
                 }
-                if (aboutBtn.Hovering)
+                if (homeBtn.Hovering)
                 {
                     _closing = true;
-                    _nextState = "about";
+                    _nextState = "home";
                 }
             }
             if (outEf._completed)
@@ -80,16 +73,25 @@ namespace Cyberpunk77022
                 {
                     _manager.NewGame();
                 }
+                if (_nextState == "shop")
+                {
+                    _manager.NewGame();
+                }
+                if (_nextState == "home")
+                {
+                    _manager.NewHome();
+                }
             }
         }
 
         public void Draw()
         {
-
-            SplashKit.DrawBitmap(SplashKit.BitmapNamed("logo"), _manager.Window.Width / 2 - SplashKit.BitmapNamed("logo").Width / 2, 100, drawingOptions);
+            SplashKit.DrawText("Your score:", Color.White, "font", 30, _manager.Window.Width / 2 - SplashKit.TextWidth("Your score:", "font", 30) / 2, 70);
+            SplashKit.DrawText(_manager.Score.ToString(), Color.White, "font", 120, _manager.Window.Width / 2 - SplashKit.TextWidth(_manager.Score.ToString(), "font", 120) / 2, 100);
+            SplashKit.DrawText("Best score: " + _manager.BestScore, Color.Red, "font", 30, _manager.Window.Width / 2 - SplashKit.TextWidth("Best score: " + _manager.BestScore, "font", 30) / 2, 230);
             startBtn.Draw();
             shopBtn.Draw();
-            aboutBtn.Draw();
+            homeBtn.Draw();
 
             inEf.Draw();
             if (_closing)
