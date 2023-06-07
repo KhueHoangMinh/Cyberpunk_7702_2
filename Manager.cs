@@ -24,7 +24,13 @@ namespace Cyberpunk77022
         public Manager(Window window)
         {
             SplashKit.LoadBitmap("logo", "logo.png");
-            SplashKit.LoadBitmap("pistol", "guns/gun1.png");
+            SplashKit.LoadBitmap("pistol", "guns/pistol.png");
+            SplashKit.LoadBitmap("gun1", "guns/gun1.png");
+            SplashKit.LoadBitmap("gun2", "guns/gun2.png");
+            SplashKit.LoadBitmap("gun3", "guns/gun3.png");
+            SplashKit.LoadBitmap("gun4", "guns/gun4.png");
+            SplashKit.LoadBitmap("gun5", "guns/gun5.png");
+            SplashKit.LoadBitmap("gun6", "guns/gun6.png");
 
             SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
             SplashKit.LoadSoundEffect("click", "click.mp3");

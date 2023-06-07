@@ -26,7 +26,7 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Gun(_game, _manager.Window, this, camera,1);
+            _EnemyGun = new Pistol1(_game, this, 1);
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;

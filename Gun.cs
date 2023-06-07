@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cyberpunk77022
 {
-    public class Gun
+    public abstract class Gun
     {
         Object _GunOf;
         Camera _camera;
@@ -17,7 +17,7 @@ namespace Cyberpunk77022
         Bitmap pistol;
         Point2D _pos;
         DrawingOptions drawingOptions;
-        float DisplayWidth;
+        float _DisplayWidth;
         float scale;
         GameStage _game;
         float _shock = 0;
@@ -29,22 +29,26 @@ namespace Cyberpunk77022
         float angle;
         float _range = 2000;
         float _damage;
+        float _recoil;
+        float _butt;
+        float _nozzleLength;
 
-        public Gun(GameStage game, Window window, Object GunOf, Camera camera, float damage)
+        public Gun(GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
         {
             _game = game;
-            _window = window;
+            _window = game.Manager.Window;
             _GunOf = GunOf;
-            _camera = camera;
-            singleshot = SplashKit.SoundEffectNamed("singleshot");
-            //singleshot.
-            pistol = SplashKit.BitmapNamed("pistol");
-            DisplayWidth = 100;
-            scale = (float)(DisplayWidth / pistol.Width);
-            _pos = new Point2D() { X = (pistol.Width - DisplayWidth)/2, Y = (pistol.Height - pistol.Height*scale) / 2, };
+            _camera = game.Camera;
+            singleshot = SplashKit.SoundEffectNamed(soundName);
+            pistol = SplashKit.BitmapNamed(bitmapName);
+            _DisplayWidth = DisplayWidth;
+            _butt = butt;
+            _nozzleLength = _DisplayWidth - _butt;
+            scale = (float)(_DisplayWidth / pistol.Width);
+            _pos = new Point2D() { X = (pistol.Width - _DisplayWidth)/2, Y = (pistol.Height - pistol.Height*scale) / 2, };
             drawingOptions = new DrawingOptions()
             {
-                Dest = window,
+                Dest = _window,
                 ScaleX = scale,
                 ScaleY = scale,
                 AnchorOffsetX = -pistol.Width/2,
@@ -53,25 +57,24 @@ namespace Cyberpunk77022
             };
             _ShootTime = 999999999;
             _aimPoint = new Point2D();
+            nozzle = new Point2D();
+            _damage = damage;
+            _fireRate = fireRate;
+            _recoil = recoil;
+        }
+        public virtual void Update(Point2D aimPoint)
+        {
+            _aimPoint = aimPoint;
             float a = (float)(_aimPoint.X - _GunOf.Pos.X);
             float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
             float c = (float)Math.Sqrt(a * a + b * b);
-            nozzle = new Point2D() { X = _GunOf.Pos.X + 100 * a / c, Y = _GunOf.Pos.Y + 100 * b / c };
-            _damage = damage;
-        }
-        public void Update(Point2D aimPoint)
-        {
-            _aimPoint = aimPoint;
+            nozzle = new Point2D() { X = _GunOf.Pos.X + _nozzleLength * a / c, Y = _GunOf.Pos.Y + _nozzleLength * b / c };
             if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
             { 
                 smoking = true;
             }
             if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,10) <= 3)
             {
-                float a = (float)(_aimPoint.X - _GunOf.Pos.X);
-                float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
-                float c = (float)Math.Sqrt(a * a + b * b);
-                nozzle = new Point2D() { X = _GunOf.Pos.X + 100 * a / c, Y = _GunOf.Pos.Y + 100 * b / c };
                 _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
                 {
                     X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
@@ -83,26 +86,29 @@ namespace Cyberpunk77022
             }
             _shock = _shock*(float)0.9;
         }
-        public void Draw()
+        public virtual void Draw()
         {
             angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
+            
             if (_aimPoint.X > _GunOf.Pos.X)
             {
                 drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = false;
-                drawingOptions.AnchorOffsetX = -pistol.Width / 2;
+                drawingOptions.AnchorOffsetX = (-pistol.Width + _butt) / 2;
+                _pos.X = (pistol.Width - _DisplayWidth) / 2 + _butt;
                 SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
             else
             {
                 drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = true;
-                drawingOptions.AnchorOffsetX = pistol.Width / 2;
-                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
+                drawingOptions.AnchorOffsetX = (pistol.Width - _butt) / 2;
+                _pos.X = (pistol.Width - _DisplayWidth) / 2 - _butt;
+                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - _DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
             }
         }
 
-        public void Shoot()
+        public virtual void Shoot()
         {
             if(DateTime.UtcNow.Ticks - _ShootTime >= _fireRate)
             {
@@ -111,24 +117,29 @@ namespace Cyberpunk77022
                 singleshot.Play();
                 if (_aimPoint.X > _GunOf.Pos.X)
                 {
-                    _shock -= 2;
+                    _shock -= _recoil;
                 }
                 else
                 {
-                    _shock += 2;
+                    _shock += _recoil;
                 }
-                Bullet NewBullet = new Bullet(_game, _camera, this, 100, 40, _damage);
-                for(int i = 0; i < 3; i++)
-                {
-                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                        Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                    }, Color.Random()));
-                }
-                _game.AddBullet(NewBullet);
-                _game.AddTrace(new Trace(_game, _window, _camera, NewBullet));
+                this.ShootAction();
             }
+        }
+
+        public virtual void ShootAction()
+        {
+            Bullet NewBullet = new Bullet(_game, this, 40, _damage);
+            for (int i = 0; i < 3; i++)
+            {
+                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                {
+                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                }, Color.Random()));
+            }
+            _game.AddBullet(NewBullet);
+            _game.AddTrace(new Trace(_game, _window, _camera, NewBullet));
         }
 
         public Point2D BasePoint
@@ -150,6 +161,36 @@ namespace Cyberpunk77022
         {
             get {
                 return _GunOf;
+            }
+        }
+
+        public Point2D Nozzle
+        {
+            get
+            {
+                return nozzle;
+            }
+        }
+
+        public float Angle
+        {
+            get
+            {
+                return angle;
+            }
+        }
+
+        public bool Reverse
+        {
+            get
+            {
+                if(_aimPoint.X > _GunOf.Pos.X)
+                {
+                    return false;
+                } else
+                {
+                    return true;
+                }
             }
         }
     }

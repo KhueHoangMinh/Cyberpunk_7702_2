@@ -29,26 +29,32 @@ namespace Cyberpunk77022
         float range = 800;
         float _damage;
 
-        public Bullet(GameStage game, Camera camera, Gun gun, float GunLength, float speed, float damage)
+        public Bullet(GameStage game, Gun gun, float speed, float damage)
             
         {
             _game = game;
             _color = Color.Yellow;
-            _camera = camera;
+            _camera = game.Camera;
             _gun = gun;
             _color =  Color.Yellow;
-            float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
-            float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
-            float c = (float)Math.Sqrt(a * a + b * b);
-            _VelX = (float)(speed * a/c);
-            _VelY = (float)(speed * b/c);
-            _initPos = new Point2D() { X = gun.BasePoint.X + GunLength * a/c, Y = gun.BasePoint.Y + GunLength * b / c };
-            _Pos = _initPos;
-            _angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
-            delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
-            beta = (float)(_angle - Math.Atan(_width / _height));
+            //float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
+            //float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
+            //float c = (float)Math.Sqrt(a * a + b * b);
+            _angle = (float)Math.PI * 2 - gun.Angle;
             sinAngle = (float)Math.Sin(_angle);
             cosAngle = (float)Math.Cos(_angle);
+            _VelX = (float)(speed * ((float)Math.Sin(_angle + Math.PI / 2)));
+            _VelY = (float)(speed * ((float)Math.Cos(_angle + Math.PI / 2)));
+            if(gun.Reverse)
+            {
+                _VelX *= -1;
+                _VelY *= -1;
+            }
+            _initPos = gun.Nozzle;
+            _Pos = _initPos;
+            //_angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
+            delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
+            beta = (float)(_angle - Math.Atan(_width / _height));
             _damage = damage;
         }
 

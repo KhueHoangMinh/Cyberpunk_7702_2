@@ -267,6 +267,8 @@ namespace Cyberpunk77022
             }
         }
         public Manager Manager { get { return _manager; } }
+
+        public Camera Camera { get { return camera; } }
         public void AddBullet(Bullet bullet)
         {
             bullets.Add(bullet);
