@@ -24,6 +24,7 @@ namespace Cyberpunk77022
         float _maxHeight = 200;
         float _VelX;
         float _VelY;
+        bool _reverse = false;
         public Trace(GameStage game, Window window, Camera camera, Bullet tracing)
         {
             _game = game;
@@ -41,6 +42,7 @@ namespace Cyberpunk77022
             cosAngle = (float)Math.Cos(_angle);
             _VelX = tracing.VelX * 0.2f;
             _VelY = tracing.VelY * 0.2f;
+            _reverse = _tracing.Gun.Reverse;
         }
 
         public void Update()
@@ -83,7 +85,7 @@ namespace Cyberpunk77022
             float widthxsin = _width * sinAngle;
             float x = (float)_Pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
             float y = (float)_Pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
-            if (_VelX > 0)
+            if (!_reverse)
             {
                 return new Triangle()
                 {

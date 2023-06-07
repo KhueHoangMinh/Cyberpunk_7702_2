@@ -21,7 +21,7 @@ namespace Cyberpunk77022
         public Player(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX,sizeY,color,true,0,0) { 
             _manager = game.Manager;
             _game = game;
-            _PlayerGun = new Sniper2(_game, this, 40);
+            _PlayerGun = new Shotgun1(_game, this, 40);
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;

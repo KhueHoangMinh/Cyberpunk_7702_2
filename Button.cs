@@ -18,6 +18,7 @@ namespace Cyberpunk77022
         string _text;
         SoundEffect _soundEffect;
         bool _hovering = false;
+        bool _active = false;
 
         public Button(string text, Color color, float x, float y, float sizeX, float sizeY) { 
             _text = text;
@@ -41,7 +42,8 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            if(Hover())
+            bool hovering = Hover();
+            if(hovering || _active)
             {
                 if(_background.R <= 0.99 && _background.R < _color.R + 0.5) _background.R += (float)0.01;
                 if (_background.G <= 0.99 && _background.G < _color.G + 0.5) _background.G += (float)0.01;
@@ -50,14 +52,13 @@ namespace Cyberpunk77022
                 {
                     _soundEffect.Play();
                 }
-                _hovering = true;
             } else
             {
                 if (_background.R >= 0.01 && _background.R > _color.R + 0.01) _background.R -= (float)0.01;
                 if (_background.G >= 0.01 && _background.G > _color.G + 0.01) _background.G -= (float)0.01;
                 if (_background.B >= 0.01 && _background.B > _color.B + 0.01) _background.B -= (float)0.01;
-                _hovering = false;
             }
+            _hovering = hovering;
         }
 
 
@@ -79,6 +80,23 @@ namespace Cyberpunk77022
             SplashKit.FillRectangle(_background,_x-_sizeX/2,_y-_sizeY/2,_sizeX,_sizeY);
             SplashKit.DrawRectangle(_background, _x - _sizeX / 2, _y - _sizeY / 2, _sizeX, _sizeY);
             SplashKit.DrawText(_text, _color, "font", 50, _x - SplashKit.TextWidth(_text,"font",50)/2, _y - SplashKit.TextHeight(_text, "font", 50) / 2);
+        }
+
+        public bool Active
+        {
+            get { return _active; }
+            set { _active = value; }
+        }
+
+        public float X
+        {
+            get { return _x; }
+            set { _x = value; }
+        }
+        public float Y
+        {
+            get { return _y; }
+            set { _y = value; }
         }
     }
 }

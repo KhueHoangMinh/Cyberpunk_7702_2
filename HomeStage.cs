@@ -12,27 +12,15 @@ namespace Cyberpunk77022
 {
     public class HomeStage
     {
-        float a = 200;
-        float b = 200;
-        float x;
-        float y;
-        float w = 50;
-        float h = 200;
-        float angle = 0;
-
-
-        Bitmap logo;
         DrawingOptions drawingOptions;
         Manager _manager;
         Button startBtn;
         Button shopBtn;
         Button aboutBtn;
-        Action<string> setClosing;
         InEffect inEf;
         OutEffect outEf;
         bool _closing = false;
         string _nextState;
-        Action<string> _ChangeState;
         public HomeStage(Manager manager)
         {
             _manager = manager;
@@ -79,6 +67,10 @@ namespace Cyberpunk77022
                 if(_nextState == "game")
                 {
                     _manager.NewGame();
+                }
+                if(_nextState == "shop")
+                {
+                    _manager.NewShop("home");
                 }
             }
         }

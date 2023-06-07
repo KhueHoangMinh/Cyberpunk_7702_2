@@ -12,27 +12,14 @@ namespace Cyberpunk77022
 {
     public class EndStage
     {
-        float a = 200;
-        float b = 200;
-        float x;
-        float y;
-        float w = 50;
-        float h = 200;
-        float angle = 0;
-
-
-        Bitmap logo;
-        DrawingOptions drawingOptions;
         Manager _manager;
         Button startBtn;
         Button shopBtn;
         Button homeBtn;
-        Action<string> setClosing;
         InEffect inEf;
         OutEffect outEf;
         bool _closing = false;
         string _nextState;
-        Action<string> _ChangeState;
         public EndStage(Manager manager)
         {
             _manager = manager;
@@ -75,7 +62,7 @@ namespace Cyberpunk77022
                 }
                 if (_nextState == "shop")
                 {
-                    _manager.NewGame();
+                    _manager.NewShop("end");
                 }
                 if (_nextState == "home")
                 {

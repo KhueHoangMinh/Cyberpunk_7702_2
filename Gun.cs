@@ -88,7 +88,19 @@ namespace Cyberpunk77022
         }
         public virtual void Draw()
         {
-            angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
+            if (_aimPoint.X != _GunOf.Pos.X)
+            {
+                angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
+            } else
+            {
+                if(_aimPoint.Y > _GunOf.Pos.Y)
+                {
+                    angle = -(float)Math.PI / 2 + _shock;
+                } else
+                {
+                    angle = (float)Math.PI / 2 + _shock;
+                }
+            }
             
             if (_aimPoint.X > _GunOf.Pos.X)
             {
@@ -129,7 +141,7 @@ namespace Cyberpunk77022
 
         public virtual void ShootAction()
         {
-            Bullet NewBullet = new Bullet(_game, this, 40, _damage);
+            Bullet NewBullet = new Bullet(_game, this, 800, 40, _damage);
             for (int i = 0; i < 3; i++)
             {
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
@@ -180,6 +192,11 @@ namespace Cyberpunk77022
             }
         }
 
+        public GameStage Game
+        {
+            get { return _game; }
+        }
+
         public bool Reverse
         {
             get
@@ -192,6 +209,11 @@ namespace Cyberpunk77022
                     return true;
                 }
             }
+        }
+
+        public float Damage
+        {
+            get { return _damage; }
         }
     }
 }

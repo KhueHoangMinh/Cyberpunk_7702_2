@@ -20,6 +20,7 @@ namespace Cyberpunk77022
         HomeStage home;
         GameStage game;
         EndStage end;
+        ShopStage shop;
 
         public Manager(Window window)
         {
@@ -45,6 +46,7 @@ namespace Cyberpunk77022
             home = new HomeStage(this);
             game = new GameStage(this);
             end = new EndStage(this);
+            shop = new ShopStage(this, "home");
 
             for (int i = 0; i < 30; i++)
             {
@@ -97,6 +99,10 @@ namespace Cyberpunk77022
                     end.Update();
                     end.Draw();
                     break;
+                case "shop":
+                    shop.Update();
+                    shop.Draw();
+                    break;
             }
 
         }
@@ -115,6 +121,12 @@ namespace Cyberpunk77022
         {
             end = new EndStage(this);
             state = "end";
+        }
+
+        public void NewShop(string prevStage)
+        {
+            shop = new ShopStage(this, prevStage);
+            state = "shop";
         }
 
         public int Score
@@ -153,5 +165,7 @@ namespace Cyberpunk77022
         public GameStage GameStage { get { return game; } }
 
         public EndStage EndStage { get { return end; } }
+
+        public ShopStage ShopStage { get { return shop; } }
     }
 }

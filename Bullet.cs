@@ -18,6 +18,7 @@ namespace Cyberpunk77022
         Gun _gun;
         float _VelX;
         float _VelY;
+        float _speed;
         Point2D _Pos;
         float _width = 10;
         float _height = 40;
@@ -26,10 +27,10 @@ namespace Cyberpunk77022
         float sinAngle;
         float cosAngle;
         bool _isCollided = false;
-        float range = 800;
+        float _range = 800;
         float _damage;
 
-        public Bullet(GameStage game, Gun gun, float speed, float damage)
+        public Bullet(GameStage game, Gun gun, float range, float speed, float damage)
             
         {
             _game = game;
@@ -37,6 +38,8 @@ namespace Cyberpunk77022
             _camera = game.Camera;
             _gun = gun;
             _color =  Color.Yellow;
+            _range = range;
+            _speed = speed;
             //float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
             //float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
             //float c = (float)Math.Sqrt(a * a + b * b);
@@ -61,7 +64,7 @@ namespace Cyberpunk77022
         public void Update()
         {
             _Pos = new Point2D() { X = this.Pos.X + _VelX, Y = this.Pos.Y + _VelY };
-            if((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > range * range)
+            if((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
             {
                 _game.RemoveBullet(this);
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
@@ -145,7 +148,22 @@ namespace Cyberpunk77022
             get { return _height; }
         }
 
-        public float Angle { get { return _angle; } }
+        public float Angle { 
+            get { return _angle; } 
+            set 
+            { 
+                _angle = value;
+                sinAngle = (float)Math.Sin(_angle);
+                cosAngle = (float)Math.Cos(_angle);
+                _VelX = (float)(_speed * ((float)Math.Sin(_angle + Math.PI / 2)));
+                _VelY = (float)(_speed * ((float)Math.Cos(_angle + Math.PI / 2)));
+                if (_gun.Reverse)
+                {
+                    _VelX *= -1;
+                    _VelY *= -1;
+                }
+            }
+        }
 
         public float Damage
         {
