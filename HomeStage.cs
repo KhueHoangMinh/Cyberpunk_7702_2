@@ -31,8 +31,8 @@ namespace Cyberpunk77022
                 ScaleY = (float)1.5,
 
             };
-            inEf = new InEffect(_manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
+            inEf = new InEffect(0, 0, _manager.Window.Width, _manager.Window.Height);
+            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
             startBtn = new Button("START", Color.Red, _manager.Window.Width / 2, 400, 250, 150);
             shopBtn = new Button("SHOP", Color.Red, _manager.Window.Width / 2, 650, 250, 150);
             aboutBtn = new Button("ABOUT", Color.Red, _manager.Window.Width / 2, 900, 250, 150);

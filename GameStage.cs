@@ -41,8 +41,8 @@ namespace Cyberpunk77022
         public GameStage(Manager manager)
         {
             _manager = manager;
-            inEf = new InEffect(_manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
+            inEf = new InEffect(0, 0, _manager.Window.Width, _manager.Window.Height);
+            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
             camera = new Camera(_manager.Window.Width, _manager.Window.Height);
             player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, Color.Blue);
             enemies = new List<Enemy>();

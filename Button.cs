@@ -14,6 +14,7 @@ namespace Cyberpunk77022
         float _sizeX;
         float _sizeY;
         Color _color;
+        Color _textColor;
         Color _background;
         string _text;
         SoundEffect _soundEffect;
@@ -23,6 +24,7 @@ namespace Cyberpunk77022
         public Button(string text, Color color, float x, float y, float sizeX, float sizeY) { 
             _text = text;
             _color = color;
+            _textColor = color;
             _background = color;
             _background.A = (float)0.2;
             _x = x; 
@@ -79,7 +81,7 @@ namespace Cyberpunk77022
         {
             SplashKit.FillRectangle(_background,_x-_sizeX/2,_y-_sizeY/2,_sizeX,_sizeY);
             SplashKit.DrawRectangle(_background, _x - _sizeX / 2, _y - _sizeY / 2, _sizeX, _sizeY);
-            SplashKit.DrawText(_text, _color, "font", 50, _x - SplashKit.TextWidth(_text,"font",50)/2, _y - SplashKit.TextHeight(_text, "font", 50) / 2);
+            SplashKit.DrawText(_text, _textColor, "font", 50, _x - SplashKit.TextWidth(_text,"font",50)/2, _y - SplashKit.TextHeight(_text, "font", 50) / 2);
         }
 
         public bool Active
@@ -98,5 +100,7 @@ namespace Cyberpunk77022
             get { return _y; }
             set { _y = value; }
         }
+
+        public Color Color { get { return _textColor; } set {  _textColor = value; } }
     }
 }

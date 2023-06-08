@@ -111,6 +111,9 @@ namespace Cyberpunk77022
     {
         ShopStage _shop;
         List<Item> _items;
+        InEffect inEf;
+        OutEffect outEf;
+        bool _closing = false;
         float _height;
         float _actualHeight;
         float _scrollY = 0;
@@ -121,6 +124,8 @@ namespace Cyberpunk77022
             _shop = shop; 
             _height = height;
             _items = new List<Item>();
+            inEf = new InEffect(0, _y, _shop.Manager.Window.Width, _shop.Manager.Window.Height);
+            outEf = new OutEffect(0, _y, _shop.Manager.Window.Width, _shop.Manager.Window.Height);
             _y = y;
             float width = _shop.Manager.Window.Width / 3;
             for (int i = 0; i < items.Length; i++)
@@ -135,7 +140,14 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            _scrollY += (float)SplashKit.MouseWheelScroll().Y*5;
+            _scrollY += (float)SplashKit.MouseWheelScroll().Y*30;
+            if(_scrollY >= 0)
+            {
+                _scrollY = 0;
+            } else if(_scrollY <= -_actualHeight + _height)
+            {
+                _scrollY = -_actualHeight + _height;
+            }
             for (int i = 0; i < _items.Count; i++)
             {
                 _items[i].Update();
@@ -147,6 +159,37 @@ namespace Cyberpunk77022
             for(int i = 0; i < _items.Count; i++)
             {
                 _items[i].Draw();
+            }
+            SplashKit.FillRectangle(Color.RGBAColor(0, 0, 0, 30), _shop.Manager.Window.Width - 10, Y, 10, _height);
+            SplashKit.FillRectangle(Color.Gray, _shop.Manager.Window.Width - 10, Y + -_scrollY * _height / _actualHeight, 10, _height * _height / _actualHeight);
+            inEf.Draw();
+            if (_closing)
+            {
+                outEf.Draw();
+            }
+        }
+
+        public void ResetEffect()
+        {
+            _closing = false;
+            inEf = new InEffect(0, _y, _shop.Manager.Window.Width, _shop.Manager.Window.Height);
+            outEf = new OutEffect(0, _y, _shop.Manager.Window.Width, _shop.Manager.Window.Height);
+        }
+
+        public bool Closing
+        {
+            get
+            {
+                return _closing;
+            }
+            set { _closing = value; }
+        }
+
+        public bool EffectComplete
+        {
+            get
+            {
+                return outEf._completed;
             }
         }
 
@@ -175,6 +218,7 @@ namespace Cyberpunk77022
         InEffect inEf;
         OutEffect outEf;
         bool _closing = false;
+        string _nextShowing;
         string _nextState;
         string _prevState;
         string _showing = "weapon";
@@ -182,13 +226,16 @@ namespace Cyberpunk77022
         public ShopStage(Manager manager, string prevState)
         {
             _manager = manager;
-            inEf = new InEffect(_manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(_manager.Window.Width, _manager.Window.Height);
+            inEf = new InEffect(0,0,_manager.Window.Width, _manager.Window.Height);
+            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
             backBtn = new Button("<", Color.Red, 80, 80, 70, 70);
             float width = _manager.Window.Width / 3;
-            weaponBtn = new Button("Weapon", Color.Green, width/2, 180, width, 50);
-            skinBtn = new Button("Skin", Color.Green, width + width/2, 180, width, 50);
-            skillBtn = new Button("Skill", Color.Green, width*2 + width/2, 180, width, 50);
+            weaponBtn = new Button("Weapon", Color.Gray, width/2, 180, width, 50);
+            weaponBtn.Color = Color.White;
+            skinBtn = new Button("Skin", Color.Gray, width + width/2, 180, width, 50);
+            skinBtn.Color = Color.White;
+            skillBtn = new Button("Skill", Color.Gray, width*2 + width/2, 180, width, 50);
+            skillBtn.Color = Color.White;
             weaponPage = new Page(this, new string[6]
             {
                 "gun1",
@@ -197,6 +244,12 @@ namespace Cyberpunk77022
                 "gun4",
                 "gun5",
                 "gun6",
+            }, _manager.Window.Height - 205, 205);
+            skinPage = new Page(this, new string[0]
+            {
+            }, _manager.Window.Height - 205, 205);
+            skillPage = new Page(this, new string[0]
+            {
             }, _manager.Window.Height - 205, 205);
             _prevState = prevState;
         }
@@ -215,12 +268,15 @@ namespace Cyberpunk77022
             {
                 case "weapon":
                     weaponBtn.Active = true;
+                    weaponPage.Update();
                     break;
                 case "skin":
                     skinBtn.Active = true;
+                    skinPage.Update();
                     break;
                 case "skill":
                     skillBtn.Active = true;
+                    skillPage.Update();
                     break;
             }
             if (SplashKit.MouseClicked(MouseButton.LeftButton))
@@ -232,18 +288,60 @@ namespace Cyberpunk77022
                 } else
                 if (weaponBtn.Hovering)
                 {
-                    _showing = "weapon";
+                    switch (_showing)
+                    {
+                        case "weapon":
+                            weaponPage.Closing = true;
+                            break;
+                        case "skin":
+                            skinPage.Closing = true;
+                            break;
+                        case "skill":
+                            skillPage.Closing = true;
+                            break;
+                    }
+                    _nextShowing = "weapon";
                 } else
                 if (skinBtn.Hovering)
                 {
-                    _showing = "skin";
+                    switch (_showing)
+                    {
+                        case "weapon":
+                            weaponPage.Closing = true;
+                            break;
+                        case "skin":
+                            skinPage.Closing = true;
+                            break;
+                        case "skill":
+                            skillPage.Closing = true;
+                            break;
+                    }
+                    _nextShowing = "skin";
                 } else
                 if (skillBtn.Hovering)
                 {
-                    _showing = "skill";
+                    switch (_showing)
+                    {
+                        case "weapon":
+                            weaponPage.Closing = true;
+                            break;
+                        case "skin":
+                            skinPage.Closing = true;
+                            break;
+                        case "skill":
+                            skillPage.Closing = true;
+                            break;
+                    }
+                    _nextShowing = "skill";
                 }
             }
-            weaponPage.Update();
+            if (weaponPage.EffectComplete || skinPage.EffectComplete || skillPage.EffectComplete)
+            {
+                weaponPage.ResetEffect();
+                skinPage.ResetEffect();
+                skillPage.ResetEffect();
+                _showing = _nextShowing;
+            }
             if (outEf._completed)
             {
                 if (_nextState == "home")
@@ -267,6 +365,18 @@ namespace Cyberpunk77022
             weaponBtn.Draw();
             skinBtn.Draw();
             skillBtn.Draw();
+            switch (_showing)
+            {
+                case "weapon":
+                    weaponPage.Draw();
+                    break;
+                case "skin":
+                    skinPage.Draw();
+                    break;
+                case "skill":
+                    skillPage.Draw();
+                    break;
+            }
 
             inEf.Draw();
             if (_closing)
