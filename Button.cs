@@ -50,7 +50,7 @@ namespace Cyberpunk77022
                 if(_background.R <= 0.99 && _background.R < _color.R + 0.5) _background.R += (float)0.01;
                 if (_background.G <= 0.99 && _background.G < _color.G + 0.5) _background.G += (float)0.01;
                 if (_background.B <= 0.99 && _background.B < _color.B + 0.5) _background.B += (float)0.01;
-                if(SplashKit.MouseClicked(MouseButton.LeftButton))
+                if(SplashKit.MouseClicked(MouseButton.LeftButton) && hovering)
                 {
                     _soundEffect.Play();
                 }
