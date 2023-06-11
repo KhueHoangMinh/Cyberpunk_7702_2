@@ -65,10 +65,10 @@ namespace Cyberpunk77022
         public virtual void Update(Point2D aimPoint)
         {
             _aimPoint = aimPoint;
-            float a = (float)(_aimPoint.X - _GunOf.Pos.X);
-            float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
-            float c = (float)Math.Sqrt(a * a + b * b);
-            nozzle = new Point2D() { X = _GunOf.Pos.X + _nozzleLength * a / c, Y = _GunOf.Pos.Y + _nozzleLength * b / c };
+            //float a = (float)(_aimPoint.X - _GunOf.Pos.X);
+            //float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
+            //float c = (float)Math.Sqrt(a * a + b * b);
+            //nozzle = new Point2D() { X = _GunOf.Pos.X + _nozzleLength * a / c, Y = _GunOf.Pos.Y + _nozzleLength * b / c };
             if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
             { 
                 smoking = true;
@@ -101,9 +101,10 @@ namespace Cyberpunk77022
                     angle = (float)Math.PI / 2 + _shock;
                 }
             }
-            
             if (_aimPoint.X > _GunOf.Pos.X)
             {
+                nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
                 drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = false;
                 drawingOptions.AnchorOffsetX = (-pistol.Width + _butt) / 2;
@@ -112,6 +113,8 @@ namespace Cyberpunk77022
             }
             else
             {
+                nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
                 drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = true;
                 drawingOptions.AnchorOffsetX = (pistol.Width - _butt) / 2;
@@ -141,7 +144,7 @@ namespace Cyberpunk77022
 
         public virtual void ShootAction()
         {
-            Bullet NewBullet = new Bullet(_game, this, 800, 40, _damage);
+            Bullet NewBullet = new Bullet(_game, this, 800, 100, _damage);
             for (int i = 0; i < 3; i++)
             {
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()

@@ -22,6 +22,7 @@ namespace Cyberpunk77022
         Point2D dest;
         float _health;
         float _maxHealth;
+        float _minusHealth = 0;
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
@@ -156,12 +157,16 @@ namespace Cyberpunk77022
 
         public void DrawHealth()
         {
+            _minusHealth *= 0.92f;
             SplashKit.FillRectangle(Color.Gray,this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
             SplashKit.FillRectangle(Color.Red, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left)*_health/_maxHealth, 10);
+            SplashKit.FillRectangle(Color.RGBAColor(255,0,0,90), this.Left + (this.Right - this.Left) * _health / _maxHealth - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _minusHealth / _maxHealth, 10);
         }
         public void GetHit(Bullet bullet)
         {
+            _minusHealth = _health;
             _health -= bullet.Damage;
+            _minusHealth -= _health;
             this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
         public float Health

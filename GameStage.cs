@@ -44,7 +44,7 @@ namespace Cyberpunk77022
             inEf = new InEffect(0, 0, _manager.Window.Width, _manager.Window.Height);
             outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
             camera = new Camera(_manager.Window.Width, _manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, Color.Blue);
+            player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, _manager.Gun, _manager.Skin, _manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = _manager.Window.Height }, _manager.Window.Width, 100, Color.Brown));
@@ -175,7 +175,7 @@ namespace Cyberpunk77022
                     explosions.Dequeue();
                     ExploPop--;
                 }
-                camera.Update(player.Pos);
+                camera.Update(player.Gun.Nozzle);
                 pauseBtn.Update();
                 if (pauseBtn.Hovering)
                 {

@@ -165,5 +165,11 @@ namespace Cyberpunk77022
         {
             get { return (float)_pos.X - _sizeX/2; }
         }
+
+        public Color Color
+        {
+            get { return _color; }
+            set { _color = value; }
+        }
     }
 }

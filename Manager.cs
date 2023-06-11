@@ -10,7 +10,7 @@ namespace Cyberpunk77022
     public class Manager
     {
 
-        static int coin = 0;
+        static int coin = 1000;
         static int score = 0;
         static int bestScore = 0;
         List<Star> stars;
@@ -21,6 +21,9 @@ namespace Cyberpunk77022
         GameStage game;
         EndStage end;
         ShopStage shop;
+        string _gun = "Default Gun";
+        string _skin = "Default Skin";
+        string _skill = null;
 
         public Manager(Window window)
         {
@@ -155,6 +158,22 @@ namespace Cyberpunk77022
         {
             get { return state; }
             set { state = value; }
+        }
+
+        public string Gun
+        {
+            get { return _gun; }
+            set { Console.WriteLine(value); _gun = value; }
+        }
+        public string Skin
+        {
+            get { return _skin; }
+            set { _skin = value; }
+        }
+        public string Skill
+        {
+            get { return _skill; }
+            set { _skill = value; }
         }
         public Window Window
         {

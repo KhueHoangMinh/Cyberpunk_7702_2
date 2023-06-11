@@ -30,6 +30,10 @@ namespace Cyberpunk77022
         float _range = 800;
         float _damage;
 
+
+        float checkUnitX;
+        float checkUnitY;
+
         public Bullet(GameStage game, Gun gun, float range, float speed, float damage)
             
         {
@@ -48,10 +52,14 @@ namespace Cyberpunk77022
             cosAngle = (float)Math.Cos(_angle);
             _VelX = (float)(speed * ((float)Math.Sin(_angle + Math.PI / 2)));
             _VelY = (float)(speed * ((float)Math.Cos(_angle + Math.PI / 2)));
-            if(gun.Reverse)
+            checkUnitX = 2 * ((float)Math.Sin(_angle + Math.PI / 2));
+            checkUnitY = 2 * ((float)Math.Cos(_angle + Math.PI / 2));
+            if (gun.Reverse)
             {
                 _VelX *= -1;
                 _VelY *= -1;
+                checkUnitX *= -1;
+                checkUnitY *= -1;
             }
             _initPos = gun.Nozzle;
             _Pos = _initPos;
@@ -63,8 +71,16 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            _Pos = new Point2D() { X = this.Pos.X + _VelX, Y = this.Pos.Y + _VelY };
-            if((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
+            float StartX = (float)_Pos.X;
+            float StartY = (float)_Pos.Y;
+            while (Math.Abs(_VelX) > Math.Abs(_Pos.X - StartX) && Math.Abs(_VelY) > Math.Abs(_Pos.Y - StartY))
+            {
+                _Pos.X += checkUnitX;
+                _Pos.Y += checkUnitY;
+            }
+            _Pos.X = StartX + _VelX;
+            _Pos.Y = StartY + _VelY;
+            if ((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
             {
                 _game.RemoveBullet(this);
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()

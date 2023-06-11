@@ -18,6 +18,7 @@ namespace Cyberpunk77022
         Point2D _initPoint;
         Bullet _tracing;
         Point2D _Pos;
+        Point2D _Dest;
         Color _color;
         float sinAngle;
         float cosAngle;
@@ -36,6 +37,7 @@ namespace Cyberpunk77022
             _angle = tracing.Angle;
             _initPoint = tracing.InitPos;
             _Pos = new Point2D() { X = (_tracing.Pos.X - _initPoint.X)/2, Y = (_tracing.Pos.Y - _initPoint.Y) / 2 };
+            _Dest = new Point2D();
             _color = Color.Random();
             _color.A = (float)0.4;
             sinAngle = (float)Math.Sin(_angle);
@@ -47,10 +49,14 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            _Pos = new Point2D() { X = _initPoint.X + (_tracing.Pos.X - _initPoint.X) / 2, Y = _initPoint.Y + (_tracing.Pos.Y - _initPoint.Y) / 2 };
-            _height = (float)Math.Sqrt((_tracing.Pos.X - _initPoint.X) * (_tracing.Pos.X - _initPoint.X) + (_tracing.Pos.Y - _initPoint.Y) * (_tracing.Pos.Y - _initPoint.Y));
+            if(_tracing != null)
+            {
+                _Dest = _tracing.Pos;
+            }
+            _Pos = new Point2D() { X = _initPoint.X + (_Dest.X - _initPoint.X) / 2, Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2 };
+            _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
             
-            if((_height > _maxHeight || _tracing.IsCollided) && _height > 5)
+            if(_height > 5)
             {
                     _initPoint.X += _VelX;
                     _initPoint.Y += _VelY;
