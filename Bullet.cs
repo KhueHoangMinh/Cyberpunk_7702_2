@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,6 +70,65 @@ namespace Cyberpunk77022
             _damage = damage;
         }
 
+
+        public void CheckCollide()
+        {
+            if ((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
+            {
+                this.IsCollided = true;
+                _game.RemoveBullet(this);
+                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                {
+                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                }, Color.Random()));
+            }
+
+            for (int j = 0; j < _game.Grounds.Count; j++)
+            {
+                if (_game.Grounds[j].IsCollided(this.Pos))
+                {
+                    this.IsCollided = true;
+                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                    }, Color.Random()));
+                    _game.RemoveBullet(this);
+                    break;
+                }
+            }
+
+            for (int j = 0; j < _game.Enemies.Count; j++)
+            {
+                if (_game.Enemies[j].IsCollided(this.Pos) && this.Gun.GunOf is Player)
+                {
+                    this.IsCollided = true;
+                    _game.Enemies[j].GetHit(this);
+                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                    }, Color.Random()));
+                    _game.RemoveBullet(this);
+                    break;
+                }
+            }
+
+
+            if (_game.GetPlayer.IsCollided(this.Pos) && this.Gun.GunOf is Enemy)
+            {
+                this.IsCollided = true;
+                _game.GetPlayer.GetHit(this);
+                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                {
+                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                }, Color.Random()));
+                _game.RemoveBullet(this);
+            }
+        }
+
         public void Update()
         {
             float StartX = (float)_Pos.X;
@@ -77,17 +137,17 @@ namespace Cyberpunk77022
             {
                 _Pos.X += checkUnitX;
                 _Pos.Y += checkUnitY;
-            }
-            _Pos.X = StartX + _VelX;
-            _Pos.Y = StartY + _VelY;
-            if ((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
-            {
-                _game.RemoveBullet(this);
-                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                CheckCollide();
+                if(this.IsCollided)
                 {
-                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                }, Color.Random()));
+                    break;
+                }
+            }
+            if (!this.IsCollided)
+            {
+                _Pos.X = StartX + _VelX;
+                _Pos.Y = StartY + _VelY;
+                CheckCollide();
             }
         }
 

@@ -26,6 +26,9 @@ namespace Cyberpunk77022
         float _VelX;
         float _VelY;
         bool _reverse = false;
+
+        float checkUnitX;
+        float checkUnitY;
         public Trace(GameStage game, Window window, Camera camera, Bullet tracing)
         {
             _game = game;
@@ -45,6 +48,14 @@ namespace Cyberpunk77022
             _VelX = tracing.VelX * 0.2f;
             _VelY = tracing.VelY * 0.2f;
             _reverse = _tracing.Gun.Reverse;
+
+            checkUnitX = 1 * ((float)Math.Sin(_angle + Math.PI / 2));
+            checkUnitY = 1 * ((float)Math.Cos(_angle + Math.PI / 2));
+            if (_reverse)
+            {
+                checkUnitX *= -1;
+                checkUnitY *= -1;
+            }
         }
 
         public void Update()
@@ -55,12 +66,20 @@ namespace Cyberpunk77022
             }
             _Pos = new Point2D() { X = _initPoint.X + (_Dest.X - _initPoint.X) / 2, Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2 };
             _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
-            
-            if(_height > 5)
-            {
-                    _initPoint.X += _VelX;
-                    _initPoint.Y += _VelY;
-            }
+            //Point2D DestStop = _initPoint;
+            //DestStop.X += _VelX;
+            //DestStop.Y += _VelY;
+            //while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - DestStop.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - DestStop.Y))
+            //{
+            //    if (_height > 2)
+            //    {
+            //        _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
+            //        _initPoint.X += checkUnitX;
+            //        _initPoint.Y += checkUnitY;
+            //    }
+            //}
+            _initPoint.X += checkUnitX;
+            _initPoint.Y += checkUnitY;
 
             if (_color.A >= (float)0.005)
             {

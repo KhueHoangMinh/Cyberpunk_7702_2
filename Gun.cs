@@ -32,6 +32,9 @@ namespace Cyberpunk77022
         float _recoil;
         float _butt;
         float _nozzleLength;
+        float _speed = 100;
+        float _initVelX;
+        float _initVelY;
 
         public Gun(GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
         {
@@ -75,11 +78,20 @@ namespace Cyberpunk77022
             }
             if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,10) <= 3)
             {
+                _initVelX = (float)(5 * ((float)Math.Sin(angle + Math.PI / 2)));
+                _initVelY = (float)(5 * ((float)Math.Cos(angle + Math.PI / 2)));
+                if (this.Reverse)
+                {
+                    _initVelX *= -1;
+                }else
+                {
+                    _initVelY *= -1;
+                }
                 _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
                 {
                     X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
                     Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                }, Color.White));
+                }, Color.White,_initVelX,_initVelY));
             } else if(DateTime.UtcNow.Ticks - _ShootTime > 8000000)
             {
                 smoking = false;
@@ -144,7 +156,7 @@ namespace Cyberpunk77022
 
         public virtual void ShootAction()
         {
-            Bullet NewBullet = new Bullet(_game, this, 800, 100, _damage);
+            Bullet NewBullet = new Bullet(_game, this, 800, _speed, _damage);
             for (int i = 0; i < 3; i++)
             {
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()

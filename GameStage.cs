@@ -98,56 +98,56 @@ namespace Cyberpunk77022
                 {
                     bullets[i].Update();
                 }
-                for (int i = 0; i < bullets.Count; i++)
-                {
-                    for (int j = 0; j < grounds.Count; j++)
-                    {
-                        if (grounds[j].IsCollided(bullets[i].Pos))
-                        {
-                            bullets[i].IsCollided = true;
-                            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                            }, Color.Random()));
-                            bullets.Remove(bullets[i]);
-                            break;
-                        }
-                    }
-                }
-                for (int i = 0; i < bullets.Count; i++)
-                {
-                    for (int j = 0; j < enemies.Count; j++)
-                    {
-                        if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
-                        {
-                            bullets[i].IsCollided = true;
-                            enemies[j].GetHit(bullets[i]);
-                            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                            }, Color.Random()));
-                            bullets.Remove(bullets[i]);
-                            break;
-                        }
-                    }
-                }
-                for (int i = 0; i < bullets.Count; i++)
-                {
-                    if (player.IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Enemy)
-                    {
-                        bullets[i].IsCollided = true;
-                        player.GetHit(bullets[i]);
-                        explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                        {
-                            X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
-                            Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
-                        }, Color.Random()));
-                        bullets.Remove(bullets[i]);
-                        break;
-                    }
-                }
+                //for (int i = 0; i < bullets.Count; i++)
+                //{
+                //    for (int j = 0; j < grounds.Count; j++)
+                //    {
+                //        if (grounds[j].IsCollided(bullets[i].Pos))
+                //        {
+                //            bullets[i].IsCollided = true;
+                //            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                //            {
+                //                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                //                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                //            }, Color.Random()));
+                //            bullets.Remove(bullets[i]);
+                //            break;
+                //        }
+                //    }
+                //}
+                //for (int i = 0; i < bullets.Count; i++)
+                //{
+                //    for (int j = 0; j < enemies.Count; j++)
+                //    {
+                //        if (enemies[j].IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Player)
+                //        {
+                //            bullets[i].IsCollided = true;
+                //            enemies[j].GetHit(bullets[i]);
+                //            explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                //            {
+                //                X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                //                Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                //            }, Color.Random()));
+                //            bullets.Remove(bullets[i]);
+                //            break;
+                //        }
+                //    }
+                //}
+                //for (int i = 0; i < bullets.Count; i++)
+                //{
+                //    if (player.IsCollided(bullets[i].Pos) && bullets[i].Gun.GunOf is Enemy)
+                //    {
+                //        bullets[i].IsCollided = true;
+                //        player.GetHit(bullets[i]);
+                //        explosions.Enqueue(new Explosion(this, camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+                //        {
+                //            X = (double)new Random().Next((int)bullets[i].Pos.X - 10, (int)bullets[i].Pos.X + 10),
+                //            Y = (double)new Random().Next((int)bullets[i].Pos.Y - 10, (int)bullets[i].Pos.Y + 10),
+                //        }, Color.Random()));
+                //        bullets.Remove(bullets[i]);
+                //        break;
+                //    }
+                //}
                 player.Update(grounds, bullets);
                 if(player.Health <= 0) { 
                     this.EndGame();
@@ -269,6 +269,18 @@ namespace Cyberpunk77022
         public Manager Manager { get { return _manager; } }
 
         public Camera Camera { get { return camera; } }
+
+        public List<Ground> Grounds { 
+            get { return grounds; }
+        }
+        public List<Enemy> Enemies
+        {
+            get { return enemies; }
+        }
+        public List<Bullet> Bullets
+        {
+            get { return bullets; }
+        }
         public void AddBullet(Bullet bullet)
         {
             bullets.Add(bullet);

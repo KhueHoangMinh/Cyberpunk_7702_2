@@ -16,8 +16,10 @@ namespace Cyberpunk77022
         Point2D _pos;
         Color _color;
         float _velY = 3;
+        float _initVelX;
+        float _initVelY;
 
-        public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color)
+        public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color, float initVelX, float initVelY)
         {
             _game = game;
             _camera = camera;
@@ -26,12 +28,22 @@ namespace Cyberpunk77022
             _pos = pos;
             _color = color;
             _color.A = (float)0.5;
+            _initVelX = initVelX;
+            _initVelY = initVelY;
+        }
+
+        public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color) : this(game,camera,rad,maxrad,pos,color,0,0)
+        {
         }
 
         public void Update()
         {
+            _pos.X += _initVelX;
+            _pos.Y += _initVelY;
             _pos.Y -= _velY;
             _velY = _velY * 0.98f;
+            _initVelX *= 0.92f;
+            _initVelY *= 0.92f;
             if (_color.A >= 0.01)
             {
                 _color.A -= (float)0.01;
