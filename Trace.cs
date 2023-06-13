@@ -64,22 +64,23 @@ namespace Cyberpunk77022
             {
                 _Dest = _tracing.Pos;
             }
-            _Pos = new Point2D() { X = _initPoint.X + (_Dest.X - _initPoint.X) / 2, Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2 };
+            _Pos.X = _initPoint.X + (_Dest.X - _initPoint.X) / 2;
+            _Pos.Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2;
             _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
-            //Point2D DestStop = _initPoint;
-            //DestStop.X += _VelX;
-            //DestStop.Y += _VelY;
-            //while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - DestStop.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - DestStop.Y))
-            //{
-            //    if (_height > 2)
-            //    {
-            //        _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
-            //        _initPoint.X += checkUnitX;
-            //        _initPoint.Y += checkUnitY;
-            //    }
-            //}
-            _initPoint.X += checkUnitX;
-            _initPoint.Y += checkUnitY;
+            Point2D Start = _initPoint;
+            while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - Start.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - Start.Y))
+            {
+                if (_height > 2)
+                {
+                    _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
+                    _initPoint.X += checkUnitX;
+                    _initPoint.Y += checkUnitY;
+                } else
+                {
+                    break;
+                }
+            }
+            //_initPoint = DestStop;
 
             if (_color.A >= (float)0.005)
             {
