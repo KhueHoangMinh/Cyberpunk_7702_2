@@ -35,14 +35,16 @@ namespace Cyberpunk77022
         float checkUnitX;
         float checkUnitY;
 
+        Trace _trace;
+
         public Bullet(GameStage game, Gun gun, float range, float speed, float damage)
             
         {
             _game = game;
-            _color = Color.Yellow;
+            _color = Color.Random();
+            //_color.A = 0;
             _camera = game.Camera;
             _gun = gun;
-            _color =  Color.Yellow;
             _range = range;
             _speed = speed;
             //float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
@@ -68,6 +70,8 @@ namespace Cyberpunk77022
             delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
             beta = (float)(_angle - Math.Atan(_width / _height));
             _damage = damage;
+            _trace = new Trace(_game, _game.Manager.Window, _camera, this);
+            _game.AddTrace(_trace);
         }
 
 
@@ -81,7 +85,7 @@ namespace Cyberpunk77022
                 {
                     X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
                     Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                }, Color.Random()));
+                }, this.Color));
             }
 
             for (int j = 0; j < _game.Grounds.Count; j++)
@@ -93,7 +97,7 @@ namespace Cyberpunk77022
                     {
                         X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
                         Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                    }, Color.Random()));
+                    }, this.Color));
                     _game.RemoveBullet(this);
                     break;
                 }
@@ -109,7 +113,7 @@ namespace Cyberpunk77022
                     {
                         X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
                         Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                    }, Color.Random()));
+                    }, this.Color));
                     _game.RemoveBullet(this);
                     break;
                 }
@@ -124,7 +128,7 @@ namespace Cyberpunk77022
                 {
                     X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
                     Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                }, Color.Random()));
+                }, this.Color));
                 _game.RemoveBullet(this);
             }
         }
@@ -153,7 +157,8 @@ namespace Cyberpunk77022
 
         public void Draw()
         {
-            SplashKit.FillQuad(_color, calQuad());
+            //SplashKit.FillQuad(_color, calQuad());
+            SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 5);
         }
 
         public Quad calQuad()
@@ -229,6 +234,7 @@ namespace Cyberpunk77022
             set 
             { 
                 _angle = value;
+                _trace.ReCalAngle(_angle);
                 sinAngle = (float)Math.Sin(_angle);
                 cosAngle = (float)Math.Cos(_angle);
                 _VelX = (float)(_speed * ((float)Math.Sin(_angle + Math.PI / 2)));
@@ -247,6 +253,11 @@ namespace Cyberpunk77022
             {
                 return _damage;
             }
+        }
+
+        public Color Color
+        {
+            get { return _color; }
         }
 
         public Gun Gun

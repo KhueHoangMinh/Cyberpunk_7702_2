@@ -166,7 +166,6 @@ namespace Cyberpunk77022
                 }, Color.Random()));
             }
             _game.AddBullet(NewBullet);
-            _game.AddTrace(new Trace(_game, _window, _camera, NewBullet));
         }
 
         public Point2D BasePoint

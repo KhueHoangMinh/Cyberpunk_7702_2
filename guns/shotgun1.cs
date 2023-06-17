@@ -21,7 +21,6 @@ namespace Cyberpunk77022
                 Bullet NewBullet = new Bullet(this.Game, this, new Random().Next(200,400), 40, this.Damage);
                 NewBullet.Angle += (float)new Random().NextDouble() * 0.5f - 0.25f;
                 this.Game.AddBullet(NewBullet);
-                this.Game.AddTrace(new Trace(this.Game, this.Game.Manager.Window, this.Game.Camera, NewBullet));
             }
             for (int i = 0; i < 3; i++)
             {

@@ -6,14 +6,11 @@ using SplashKitSDK;
 
 namespace Cyberpunk77022
 {
-    
     public class Program
     {
 
         static void Main()
         {
-
-
             int WIDTH = 1920;
             int HEIGHT = 1080;
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);

@@ -29,9 +29,9 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            if (_color.A >= 0.02)
+            if (_color.A >= 0.01)
             {
-                _color.A -= (float)0.02;
+                _color.A -= (float)0.01;
             } else
             {
                 _game.RemoveExplosion();

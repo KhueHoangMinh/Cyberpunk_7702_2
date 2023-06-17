@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +25,8 @@ namespace Cyberpunk77022
         string _gun = "Default Gun";
         string _skin = "Default Skin";
         string _skill = null;
+
+        List<string> _userdata = new List<string>();
 
         public Manager(Window window)
         {
@@ -59,8 +62,96 @@ namespace Cyberpunk77022
             {
                 sths.Add(new Something());
             }
+
+            this.Load("../../../userdata.txt");
         }
 
+        public void Load(string filename)
+        {
+            if (File.Exists(filename))
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(filename);
+
+                    _userdata = new List<string>();
+                    for (int i = 1; i <= 18; i++)
+                    {
+                        _userdata.Add(reader.ReadLine());
+                    }
+                    coin = int.Parse(_userdata[0]);
+                    score = int.Parse(_userdata[1]);
+                    bestScore = int.Parse(_userdata[2]);
+
+                    reader.Close();
+                }
+                catch
+                {
+                    Console.WriteLine("Load Failed");
+                }
+            } else
+            {
+                StreamWriter writer = new StreamWriter(filename);
+                //writer.WriteLine("Info");
+                for (int i = 1; i <= 3; i++)
+                {
+                    writer.WriteLine("1000");
+                }
+                //writer.WriteLine("Weapon");
+                for (int i = 1; i <= 7; i++)
+                {
+                    writer.WriteLine("0");
+                }
+                //writer.WriteLine("Skin");
+                for (int i = 1; i <= 6; i++)
+                {
+                    writer.WriteLine("0");
+                }
+                //writer.WriteLine("Skill");
+                for (int i = 1; i <= 2; i++)
+                {
+                    writer.WriteLine("0");
+                }
+                writer.Close();
+                _userdata = new List<string>();
+                for (int i = 1; i <= 18; i++)
+                {
+                    _userdata.Add("0");
+                }
+                coin = int.Parse(_userdata[0]);
+                score = int.Parse(_userdata[1]);
+                bestScore = int.Parse(_userdata[2]);
+            }
+        }
+
+        public void Save(string filename)
+        {
+            StreamWriter writer = new StreamWriter(filename);
+            writer.WriteLine("Info");
+            writer.WriteLine(coin.ToString());
+            writer.WriteLine(score.ToString());
+            writer.WriteLine(bestScore.ToString());
+
+            writer.WriteLine("Weapon");
+            for (int i = 1; i <= 7; i++)
+            {
+                writer.WriteLine("0");
+            }
+
+            writer.WriteLine("Skin");
+            for (int i = 1; i <= 6; i++)
+            {
+                writer.WriteLine("0");
+            }
+
+            writer.WriteLine("Skill");
+            for (int i = 1; i <= 2; i++)
+            {
+                writer.WriteLine("0");
+            }
+
+            writer.Close();
+        }
 
         public void Update()
         {
@@ -186,5 +277,10 @@ namespace Cyberpunk77022
         public EndStage EndStage { get { return end; } }
 
         public ShopStage ShopStage { get { return shop; } }
+
+        public List<string> UserData
+        {
+            get { return _userdata; }
+        }
     }
 }

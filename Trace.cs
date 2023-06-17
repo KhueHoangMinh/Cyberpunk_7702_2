@@ -41,8 +41,9 @@ namespace Cyberpunk77022
             _initPoint = tracing.InitPos;
             _Pos = new Point2D() { X = (_tracing.Pos.X - _initPoint.X)/2, Y = (_tracing.Pos.Y - _initPoint.Y) / 2 };
             _Dest = new Point2D();
-            _color = Color.Random();
-            _color.A = (float)0.4;
+            //_color = Color.Random();
+            _color = tracing.Color;
+            _color.A = (float)0.6;
             sinAngle = (float)Math.Sin(_angle);
             cosAngle = (float)Math.Cos(_angle);
             _VelX = tracing.VelX * 0.2f;
@@ -70,7 +71,7 @@ namespace Cyberpunk77022
             Point2D Start = _initPoint;
             while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - Start.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - Start.Y))
             {
-                if (_height > 2)
+                if (_height > 5)
                 {
                     _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
                     _initPoint.X += checkUnitX;
@@ -82,9 +83,9 @@ namespace Cyberpunk77022
             }
             //_initPoint = DestStop;
 
-            if (_color.A >= (float)0.005)
+            if (_color.A >= (float)0.01)
             {
-                _color.A -= (float)0.005;
+                _color.A -= (float)0.01;
             } else
             {
                 _game.RemoveTrace();
@@ -99,6 +100,21 @@ namespace Cyberpunk77022
         public Color GetColor
         {
             get { return _color; }
+        }
+
+        public void ReCalAngle(float NewAngle)
+        {
+            _angle = NewAngle;
+            sinAngle = (float)Math.Sin(_angle);
+            cosAngle = (float)Math.Cos(_angle);
+            _reverse = _tracing.Gun.Reverse;
+            checkUnitX = 1 * ((float)Math.Sin(_angle + Math.PI / 2));
+            checkUnitY = 1 * ((float)Math.Cos(_angle + Math.PI / 2));
+            if (_reverse)
+            {
+                checkUnitX *= -1;
+                checkUnitY *= -1;
+            }
         }
 
         public Triangle calQuad()
