@@ -23,11 +23,15 @@ namespace Cyberpunk77022
         float _health;
         float _maxHealth;
         float _minusHealth = 0;
+
+        float aX = 0;
+        float aY = 0;
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
             _game = game;
             _EnemyGun = new Pistol1(_game, this, 1);
+            _EnemyGun.SmokeDensity = 5;
             _camera = camera;
             _maxHealth = 100;
             _health = _maxHealth;
@@ -78,6 +82,8 @@ namespace Cyberpunk77022
                 }
             }
             base.Gravity();
+            aX /= 1.06f;
+            aY /= 1.06f;
             VelX = 0;
             if (_game.GetPlayer.Pos.X < this.Pos.X)
             {
@@ -138,7 +144,7 @@ namespace Cyberpunk77022
             {
                 //_jumpedAt = DateTime.UtcNow.Ticks;
             }
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
+            this.Pos = new Point2D() { X = this.Pos.X + this.VelX + aX, Y = this.Pos.Y + this.VelY + aY };
             _EnemyGun.Update(_game.GetPlayer.Pos);
             if(DateTime.UtcNow.Ticks - _firedAt >= _fireRate && new Random().Next(0, 19) < 5)
             {
@@ -167,7 +173,11 @@ namespace Cyberpunk77022
             _minusHealth = _health;
             _health -= bullet.Damage;
             _minusHealth -= _health;
-            this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
+            aX = 10 * bullet.VelX / bullet.Speed;
+            aY = 10 * bullet.VelY / bullet.Speed;
+            aY -= 10;
+            Console.WriteLine(10 * bullet.VelY / bullet.Speed);
+            //this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
         public float Health
         {

@@ -1,8 +1,6 @@
-Info
 1000
 1000
 1000
-Weapon
 0
 0
 0
@@ -10,13 +8,11 @@ Weapon
 0
 0
 0
-Skin
 0
 0
 0
 0
 0
 0
-Skill
 0
 0

@@ -267,5 +267,10 @@ namespace Cyberpunk77022
                 return _gun;
             }
         }
+
+        public float Speed
+        {
+            get { return _speed; }
+        }
     }
 }

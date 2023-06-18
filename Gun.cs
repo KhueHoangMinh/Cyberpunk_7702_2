@@ -35,6 +35,7 @@ namespace Cyberpunk77022
         float _speed = 100;
         float _initVelX;
         float _initVelY;
+        int _smokeDensity = 30;
 
         public Gun(GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
         {
@@ -76,7 +77,7 @@ namespace Cyberpunk77022
             { 
                 smoking = true;
             }
-            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,10) <= 3)
+            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,100) <= _smokeDensity)
             {
                 _initVelX = (float)(5 * ((float)Math.Sin(angle + Math.PI / 2)));
                 _initVelY = (float)(5 * ((float)Math.Cos(angle + Math.PI / 2)));
@@ -223,6 +224,12 @@ namespace Cyberpunk77022
                     return true;
                 }
             }
+        }
+
+        public int SmokeDensity
+        {
+            get { return _smokeDensity; }
+            set { _smokeDensity = value; }
         }
 
         public float Damage
