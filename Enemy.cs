@@ -10,6 +10,7 @@ namespace Cyberpunk77022
     public abstract class Enemy : Object
     {
         float _speed;
+        bool _alive = true;
         bool _jumped = false;
         long _jumpedAt;
         long _firedAt;
@@ -44,8 +45,28 @@ namespace Cyberpunk77022
         }
         public void Update(List<Ground> grounds, List<Bullet> bullets)
         {
-            if(_health <= 0)
+            if(_health < 0 && _alive)
             {
+                _alive = false;
+                this.Color = Color.DarkGray;
+                //_game.RemoveEnemy(this);
+            }
+            if(!_alive)
+            {
+                Color pale = this.Color;
+                pale.A -= 0.01f;
+                this.Color = pale;
+            }
+            if(this.Color.A <= 0)
+            {
+                for(int i = 0; i < 5; i++)
+                {
+                    _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)this.Left, (int)this.Right),
+                        Y = (double)new Random().Next((int)this.Top, (int)this.Bottom),
+                    }, Color.White, 0, 0));
+                }
                 _game.RemoveEnemy(this);
             }
             _jumped = true;
@@ -57,7 +78,15 @@ namespace Cyberpunk77022
                 if (isCollide == "bottom")
                 {
                     this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
-                    if (this.VelY > 0) this.VelY = 0;
+                    //if (this.VelY > 0 && this.VelY < 3)
+                    //{
+                    //    this.VelY = 0;
+                    //}
+                    //else if (this.VelY > 3)
+                    //{
+                    //    this.VelY = -this.VelY * 0.9f;
+                    //}
+                    if(this.VelY > 0) this.VelY = 0;
                     _jumped = false;
                 }
                 else
@@ -85,88 +114,100 @@ namespace Cyberpunk77022
             aX /= 1.06f;
             aY /= 1.06f;
             VelX = 0;
-            if (_game.GetPlayer.Pos.X < this.Pos.X)
+
+            if (_alive)
             {
-                if(-_game.GetPlayer.Pos.X + this.Pos.X > dest.X)
+                if (_game.GetPlayer.Pos.X < this.Pos.X)
                 {
-                    this.VelX = -_speed;
-                } else if(-_game.GetPlayer.Pos.X + this.Pos.X < dest.X)
-                {
-                    this.VelX = _speed;
-                }
-            }
-            else if(_game.GetPlayer.Pos.X > this.Pos.X)
-            {
-                if (_game.GetPlayer.Pos.X - this.Pos.X > dest.X)
-                {
-                    this.VelX = _speed;
-                }
-                else if (_game.GetPlayer.Pos.X - this.Pos.X < dest.X)
-                {
-                    this.VelX = -_speed;
-                }
-            }
-            if (DateTime.UtcNow.Ticks - _jumpedAt >= _jumpTime && !_jumped && new Random().Next(0,19) < 5)
-            {
-                _jumpedAt = DateTime.UtcNow.Ticks;
-                this.VelY = -10;
-                for (int i = 0; i < 3; i++)
-                {
-                    switch (collide)
+                    if (-_game.GetPlayer.Pos.X + this.Pos.X > dest.X)
                     {
-                        case "bottom":
-                            _game.AddExplosion(new Explosion(_game,_camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                                Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
-                            }, Color.White));
-                            break;
-
-                        case "left":
-                            _game.AddExplosion(new Explosion(_game,_camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
-                            break;
-
-                        case "right":
-                            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
-                            break;
-
+                        this.VelX = -_speed;
+                    }
+                    else if (-_game.GetPlayer.Pos.X + this.Pos.X < dest.X)
+                    {
+                        this.VelX = _speed;
                     }
                 }
-            } else
-            {
-                //_jumpedAt = DateTime.UtcNow.Ticks;
+                else if (_game.GetPlayer.Pos.X > this.Pos.X)
+                {
+                    if (_game.GetPlayer.Pos.X - this.Pos.X > dest.X)
+                    {
+                        this.VelX = _speed;
+                    }
+                    else if (_game.GetPlayer.Pos.X - this.Pos.X < dest.X)
+                    {
+                        this.VelX = -_speed;
+                    }
+                }
+                if (DateTime.UtcNow.Ticks - _jumpedAt >= _jumpTime && !_jumped && new Random().Next(0, 19) < 5)
+                {
+                    _jumpedAt = DateTime.UtcNow.Ticks;
+                    this.VelY = -10;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        switch (collide)
+                        {
+                            case "bottom":
+                                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                                {
+                                    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                                    Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
+                                }, Color.White));
+                                break;
+
+                            case "left":
+                                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                                {
+                                    X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
+                                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                }, Color.White));
+                                break;
+
+                            case "right":
+                                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                                {
+                                    X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
+                                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                }, Color.White));
+                                break;
+
+                        }
+                    }
+                }
+                else
+                {
+                    //_jumpedAt = DateTime.UtcNow.Ticks;
+                }
+                _EnemyGun.Update(_game.GetPlayer.Pos);
+                if (DateTime.UtcNow.Ticks - _firedAt >= _fireRate && new Random().Next(0, 19) < 5)
+                {
+                    _firedAt = DateTime.UtcNow.Ticks;
+                    _EnemyGun.Shoot();
+                }
+                else
+                {
+                    //_firedAt = DateTime.UtcNow.Ticks;
+                }
             }
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX + aX, Y = this.Pos.Y + this.VelY + aY };
-            _EnemyGun.Update(_game.GetPlayer.Pos);
-            if(DateTime.UtcNow.Ticks - _firedAt >= _fireRate && new Random().Next(0, 19) < 5)
-            {
-                _firedAt = DateTime.UtcNow.Ticks;
-                _EnemyGun.Shoot();
-            } else
-            {
-                //_firedAt = DateTime.UtcNow.Ticks;
-            }
         }
+
+        public abstract void Behaviour();
 
         public void DrawGun()
         {
-            _EnemyGun.Draw();
+            if(_alive) _EnemyGun.Draw();
         }
 
         public void DrawHealth()
         {
             _minusHealth *= 0.98f;
-            SplashKit.FillRectangle(Color.Gray,this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
-            SplashKit.FillRectangle(Color.Red, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left)*_health/_maxHealth, 10);
-            SplashKit.FillRectangle(Color.RGBAColor(255,0,0,90), this.Left + (this.Right - this.Left) * _health / _maxHealth - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _minusHealth / _maxHealth, 10);
+            if (_alive)
+            {
+                SplashKit.FillRectangle(Color.Gray, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
+                SplashKit.FillRectangle(Color.Red, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _health / _maxHealth, 10);
+                SplashKit.FillRectangle(Color.RGBAColor(255, 0, 0, 90), this.Left + (this.Right - this.Left) * _health / _maxHealth - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _minusHealth / _maxHealth, 10);
+            }
         }
         public void GetHit(Bullet bullet)
         {
@@ -191,6 +232,23 @@ namespace Cyberpunk77022
     {
         public NormalEnemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(game, camera, pos, sizeX, sizeY, color) { 
         
+        }
+
+        public override void Behaviour()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class FlyEnemy : Enemy
+    {
+        public FlyEnemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(game, camera, pos, sizeX, sizeY, color)
+        {
+
+        }
+        public override void Behaviour()
+        {
+            throw new NotImplementedException();
         }
     }
 }

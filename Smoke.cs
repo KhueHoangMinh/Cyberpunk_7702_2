@@ -39,7 +39,7 @@ namespace Cyberpunk77022
             _color.A = (float)0.5;
             _initVelX = initVelX;
             _initVelY = initVelY;
-            rotSpeed = (float)new Random().NextDouble()*0.05f + 0.01f;
+            rotSpeed = (float)new Random().NextDouble()*0.1f - 0.05f;
         }
 
         public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color) : this(game,camera,rad,maxrad,pos,color,0,0)

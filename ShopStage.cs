@@ -61,7 +61,7 @@ namespace Cyberpunk77022
             {
                 case "not_purchased":
                     buyButton.Update();
-                    if(buyButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton))
+                    if(buyButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
                     {
                         if(_page.Shop.Manager.Coin > _price)
                         {
@@ -73,7 +73,7 @@ namespace Cyberpunk77022
                     break;
                 case "purchased":
                     selectButton.Update();
-                    if (selectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton))
+                    if (selectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
                     {
                         _page.Deselect(this);
                         switch(_type)
@@ -94,7 +94,7 @@ namespace Cyberpunk77022
                     break;
                 case "selected":
                     deselectButton.Update();
-                    if (deselectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton))
+                    if (deselectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
                     {
 
                     }
