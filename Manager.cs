@@ -49,6 +49,8 @@ namespace Cyberpunk77022
             stars = new List<Star>();
             sths = new List<Something>();
 
+            this.Load("../../../userdata.txt");
+
             home = new HomeStage(this);
             game = new GameStage(this);
             end = new EndStage(this);
@@ -63,7 +65,6 @@ namespace Cyberpunk77022
                 sths.Add(new Something());
             }
 
-            this.Load("../../../userdata.txt");
         }
 
         public void Load(string filename)
@@ -74,14 +75,15 @@ namespace Cyberpunk77022
                 {
                     StreamReader reader = new StreamReader(filename);
 
+                    coin = int.Parse(reader.ReadLine());
+                    score = int.Parse(reader.ReadLine());
+                    bestScore = int.Parse(reader.ReadLine());
+
                     _userdata = new List<string>();
-                    for (int i = 1; i <= 18; i++)
+                    for (int i = 0; i <= 14; i++)
                     {
                         _userdata.Add(reader.ReadLine());
                     }
-                    coin = int.Parse(_userdata[0]);
-                    score = int.Parse(_userdata[1]);
-                    bestScore = int.Parse(_userdata[2]);
 
                     reader.Close();
                 }
@@ -114,40 +116,36 @@ namespace Cyberpunk77022
                 }
                 writer.Close();
                 _userdata = new List<string>();
-                for (int i = 1; i <= 18; i++)
+                for (int i = 0; i <= 14; i++)
                 {
                     _userdata.Add("0");
                 }
-                coin = int.Parse(_userdata[0]);
-                score = int.Parse(_userdata[1]);
-                bestScore = int.Parse(_userdata[2]);
+                coin = 1000;
+                score = 0;
+                bestScore = 0;
             }
         }
 
         public void Save(string filename)
         {
             StreamWriter writer = new StreamWriter(filename);
-            writer.WriteLine("Info");
             writer.WriteLine(coin.ToString());
             writer.WriteLine(score.ToString());
             writer.WriteLine(bestScore.ToString());
 
-            writer.WriteLine("Weapon");
-            for (int i = 1; i <= 7; i++)
+            for (int i = 0; i <= 6; i++)
             {
-                writer.WriteLine("0");
+                writer.WriteLine(_userdata[i]);
             }
 
-            writer.WriteLine("Skin");
-            for (int i = 1; i <= 6; i++)
+            for (int i = 7; i <= 12; i++)
             {
-                writer.WriteLine("0");
+                writer.WriteLine(_userdata[i]);
             }
 
-            writer.WriteLine("Skill");
-            for (int i = 1; i <= 2; i++)
+            for (int i = 13; i <= 14; i++)
             {
-                writer.WriteLine("0");
+                writer.WriteLine(_userdata[i]);
             }
 
             writer.Close();
@@ -281,6 +279,7 @@ namespace Cyberpunk77022
         public List<string> UserData
         {
             get { return _userdata; }
+            set { _userdata = value; }
         }
     }
 }

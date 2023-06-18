@@ -156,6 +156,7 @@ namespace Cyberpunk77022
                     }
                 }
             }
+            Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
         public Player GetPlayer

@@ -67,6 +67,7 @@ namespace Cyberpunk77022
                         {
                             _state = "purchased";
                             _page.Shop.Manager.Coin -= _price;
+                            _page.Shop.Save();
                         }
                     }
                     break;
@@ -87,6 +88,8 @@ namespace Cyberpunk77022
                                 _page.Shop.Manager.Skill = _name;
                                 break;
                         }
+                        _state = "selected";
+                        _page.Shop.Save();
                     }
                     break;
                 case "selected":
@@ -130,6 +133,12 @@ namespace Cyberpunk77022
             {
                 _state = "purchased";
             }
+        }
+
+        public string State
+        {
+            get { return _state; }
+            set { _state = value; }
         }
     }
 
@@ -312,6 +321,11 @@ namespace Cyberpunk77022
             get { return _y; }
         }
 
+        public List<Item> Items
+        {
+            get { return _items; }
+        }
+
         public ShopStage Shop { get { return _shop; } }
     }
     public abstract class ItemBrief
@@ -320,13 +334,15 @@ namespace Cyberpunk77022
         public string name;
         public string description;
         public int price;
+        public int state = 0;
 
-        public ItemBrief(string type, string name, string description, int price)
+        public ItemBrief(string type, string name, string description, int price, int state)
         {
             this.type = type;
             this.name = name;
             this.description = description;
             this.price = price;
+            this.state = state;
         }
     }
 
@@ -334,7 +350,7 @@ namespace Cyberpunk77022
     {
         public string image;
 
-        public WeaponBrief(string type, string name, string description, int price, string image) : base(type, name, description, price)
+        public WeaponBrief(string type, string name, string description, int price, int state, string image) : base(type, name, description, price,state)
         {
             this.image = image;
         }
@@ -345,7 +361,7 @@ namespace Cyberpunk77022
     {
         public Color color;
 
-        public SkinBrief(string type, string name, string description, int price, Color color) : base(type, name, description, price)
+        public SkinBrief(string type, string name, string description, int price, int state, Color color) : base(type, name, description, price, state)
         {
             this.color = color;
         }
@@ -354,7 +370,7 @@ namespace Cyberpunk77022
     class SkillBrief : ItemBrief
     {
 
-        public SkillBrief(string type, string name, string description, int price) : base(type, name, description, price)
+        public SkillBrief(string type, string name, string description, int price, int state) : base(type, name, description, price, state)
         {
         }
     }
@@ -384,29 +400,29 @@ namespace Cyberpunk77022
 
             WeaponBrief[] weaponList = new WeaponBrief[7]
             {
-                new WeaponBrief("weapon","Default Gun","A pistol",0,"default"),
-                new WeaponBrief("weapon","Gun 1","A pistol",10,"gun1"),
-                new WeaponBrief("weapon","Gun 2","A pistol",120,"gun2"),
-                new WeaponBrief("weapon","Gun 3","A pistol",30,"gun3"),
-                new WeaponBrief("weapon","Gun 4","A pistol",40,"gun4"),
-                new WeaponBrief("weapon","Gun 5","A pistol",60,"gun5"),
-                new WeaponBrief("weapon","Gun 6","A pistol",150,"gun6"),
+                new WeaponBrief("weapon","Default Gun","A pistol",0,1,"default"),
+                new WeaponBrief("weapon","Gun 1","A pistol",10,0,"gun1"),
+                new WeaponBrief("weapon","Gun 2","A pistol",120,0,"gun2"),
+                new WeaponBrief("weapon","Gun 3","A pistol",30,0,"gun3"),
+                new WeaponBrief("weapon","Gun 4","A pistol",40,0,"gun4"),
+                new WeaponBrief("weapon","Gun 5","A pistol",60,0,"gun5"),
+                new WeaponBrief("weapon","Gun 6","A pistol",150,0,"gun6"),
             };
 
             SkinBrief[] skinList = new SkinBrief[6]
             {
-                new SkinBrief("skin","Default Skin","Blue Alien",0,Color.Blue),
-                new SkinBrief("skin","Green","Blue Alien",10,Color.Green),
-                new SkinBrief("skin","Red","Blue Alien",20,Color.Red),
-                new SkinBrief("skin","Yellow","Blue Alien",30,Color.Yellow),
-                new SkinBrief("skin","Gray","Blue Alien",40,Color.Gray),
-                new SkinBrief("skin","Pink","Blue Alien",50,Color.Pink),
+                new SkinBrief("skin","Default Skin","Blue Alien",0,1,Color.Blue),
+                new SkinBrief("skin","Green","Blue Alien",10,0,Color.Green),
+                new SkinBrief("skin","Red","Blue Alien",20,0,Color.Red),
+                new SkinBrief("skin","Yellow","Blue Alien",30,0,Color.Yellow),
+                new SkinBrief("skin","Gray","Blue Alien",40,0,Color.Gray),
+                new SkinBrief("skin","Pink","Blue Alien",50,0,Color.Pink),
             };
 
             SkillBrief[] skillList = new SkillBrief[2]
             {
-                new SkillBrief("skill","Health","Increase health",100),
-                new SkillBrief("skill","Defense","Reduce damage",100),
+                new SkillBrief("skill","Health","Increase health",100,0),
+                new SkillBrief("skill","Defense","Reduce damage",100,0),
             };
 
             _manager = manager;
@@ -424,6 +440,117 @@ namespace Cyberpunk77022
             skinPage = new Page(this, skinList, _manager.Window.Height - 205, 205);
             skillPage = new Page(this, skillList, _manager.Window.Height - 205, 205);
             _prevState = prevState;
+
+            this.Load();
+        }
+
+        public void Load()
+        {
+            for(int i = 0; i < _manager.UserData.Count; i++)
+            {
+                if(i < 7)
+                {
+                    switch(_manager.UserData[i])
+                    {
+                        case "0":
+                            weaponPage.Items[i].State = "not_purchased";
+                            break;
+                        case "1":
+                            weaponPage.Items[i].State = "purchased";
+                            break;
+                        case "2":
+                            weaponPage.Items[i].State = "selected";
+                            _manager.Gun = weaponPage.Items[i]._name;
+                            break;
+                    }
+                } else if (i > 6 && i < 13)
+                {
+                    switch (_manager.UserData[i])
+                    {
+                        case "0":
+                            skinPage.Items[i - 7].State = "not_purchased";
+                            break;
+                        case "1":
+                            skinPage.Items[i - 7].State = "purchased";
+                            break;
+                        case "2":
+                            skinPage.Items[i - 7].State = "selected";
+                            _manager.Skin = skinPage.Items[i - 7]._name;
+                            break;
+                    }
+                } else if ( i > 12 && i < 15)
+                {
+                    switch (_manager.UserData[i])
+                    {
+                        case "0":
+                            skillPage.Items[i - 13].State = "not_purchased";
+                            break;
+                        case "1":
+                            skillPage.Items[i - 13].State = "purchased";
+                            break;
+                        case "2":
+                            skillPage.Items[i - 13].State = "selected";
+                            _manager.Skill = skillPage.Items[i - 13]._name;
+                            break;
+                    }
+                }
+            }
+            
+        }
+
+        public void Save()
+        {
+            List<string> saving = new List<string>();
+            for(int i = 0; i < weaponPage.Items.Count; i++)
+            {
+                switch (weaponPage.Items[i].State)
+                {
+                    case "not_purchased":
+                        saving.Add("0");
+                        break;
+                    case "purchased":
+                        saving.Add("1");
+                        break;
+                    case "selected":
+                        saving.Add("2");
+                        break;
+                }
+            }
+
+            for (int i = 0; i < skinPage.Items.Count; i++)
+            {
+                switch (skinPage.Items[i].State)
+                {
+                    case "not_purchased":
+                        saving.Add("0");
+                        break;
+                    case "purchased":
+                        saving.Add("1");
+                        break;
+                    case "selected":
+                        saving.Add("2");
+                        break;
+                }
+            }
+
+            for (int i = 0; i < skillPage.Items.Count; i++)
+            {
+                switch (skillPage.Items[i].State)
+                {
+                    case "not_purchased":
+                        saving.Add("0");
+                        break;
+                    case "purchased":
+                        saving.Add("1");
+                        break;
+                    case "selected":
+                        saving.Add("2");
+                        break;
+                }
+            }
+
+            _manager.UserData = saving;
+            _manager.Save("../../../userdata.txt");
         }
 
         public void Update()

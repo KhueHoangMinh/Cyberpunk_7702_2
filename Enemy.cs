@@ -176,7 +176,6 @@ namespace Cyberpunk77022
             aX = 10 * bullet.VelX / bullet.Speed;
             aY = 10 * bullet.VelY / bullet.Speed;
             aY -= 10;
-            Console.WriteLine(10 * bullet.VelY / bullet.Speed);
             //this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
         public float Health
