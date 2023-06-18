@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using SplashKitSDK;
@@ -19,6 +20,14 @@ namespace Cyberpunk77022
         float _initVelX;
         float _initVelY;
 
+        float _angle = 0;
+        float delta;
+        float beta;
+        float sinAngle;
+        float cosAngle;
+        float rotSpeed;
+
+
         public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color, float initVelX, float initVelY)
         {
             _game = game;
@@ -30,6 +39,7 @@ namespace Cyberpunk77022
             _color.A = (float)0.5;
             _initVelX = initVelX;
             _initVelY = initVelY;
+            rotSpeed = (float)new Random().NextDouble()*0.05f + 0.01f;
         }
 
         public Smoke(GameStage game, Camera camera, float rad, float maxrad, Point2D pos, Color color) : this(game,camera,rad,maxrad,pos,color,0,0)
@@ -38,6 +48,7 @@ namespace Cyberpunk77022
 
         public void Update()
         {
+            _angle += rotSpeed;
             _pos.X += _initVelX;
             _pos.Y += _initVelY;
             _pos.Y -= _velY;
@@ -52,11 +63,45 @@ namespace Cyberpunk77022
                 _game.RemoveSmoke();
             }
             _rad += (float)1.5;
+
+            delta = (float)((Math.Sqrt(2) * _rad / 2));
+            beta = (float)(_angle - Math.Atan(1));
+            sinAngle = (float)Math.Sin(_angle);
+            cosAngle = (float)Math.Cos(_angle);
         }
 
         public void Draw()
         {
-            SplashKit.FillRectangle(_color, _pos.X - _camera.Pos.X - _rad / 2, _pos.Y - _camera.Pos.Y - _rad / 2, _rad, _rad);
+            SplashKit.FillQuad(_color, calQuad());
+        }
+
+
+        public Quad calQuad()
+        {
+            float x = (float)_pos.X - delta * (float)Math.Cos(beta) - (float)_camera.Pos.X;
+            float y = (float)_pos.Y + delta * (float)Math.Sin(beta) - (float)_camera.Pos.Y;
+            float heightxcos = _rad * cosAngle;
+            float heightxsin = _rad * sinAngle;
+            float widthxcos = _rad * cosAngle;
+            float widthxsin = _rad * sinAngle;
+            return new Quad()
+            {
+                Points = new Point2D[4] {
+                    new Point2D() { X = x, Y = y},
+                    new Point2D() {
+                        X = x + heightxcos,
+                        Y = y - heightxsin
+                    },
+                    new Point2D() {
+                        X = x + widthxsin,
+                        Y = y + widthxcos
+                    },
+                    new Point2D() {
+                        X = x + widthxsin+ heightxcos,
+                        Y = y + widthxcos - heightxsin
+                    }
+                }
+            };
         }
 
         public Color GetColor

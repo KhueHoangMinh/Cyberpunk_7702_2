@@ -156,7 +156,7 @@ namespace Cyberpunk77022
                     }
                 }
             }
-            Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
+            //Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
         public Player GetPlayer
@@ -205,7 +205,7 @@ namespace Cyberpunk77022
             if(paused)
             {
                 SplashKit.FillRectangle(_background, 0, 0, _manager.Window.Width, _manager.Window.Height);
-                SplashKit.FillRectangle(Color.Gray,_manager.Window.Width/2-300, _manager.Window.Height/2-300,600,600);
+                SplashKit.FillRectangle(Color.RGBAColor(0,0,0,0.6),_manager.Window.Width/2-300, _manager.Window.Height/2-300,600,600);
                 SplashKit.DrawText("Paused", Color.White, "font", 60, _manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, _manager.Window.Height / 2 - 250);
                 resumeBtn.Draw();
                 quitBtn.Draw();

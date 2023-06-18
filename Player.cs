@@ -162,7 +162,7 @@ namespace Cyberpunk77022
 
         public void GetHit(Bullet bullet)
         {
-            _game.Camera.Shock(bullet.VelX, bullet.VelY);
+            _game.Camera.Shock(bullet.VelX, bullet.VelY, bullet.Speed);
             _minusHealth = _health;
             if (_skill == "Defense")
             {

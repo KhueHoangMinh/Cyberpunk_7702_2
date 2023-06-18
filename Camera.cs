@@ -32,10 +32,10 @@ namespace Cyberpunk77022
             }
         }
 
-        public void Shock(float VelX,  float VelY)
+        public void Shock(float VelX,  float VelY , float speed)
         {
-            _pos.X = _pos.X + VelX;
-            _pos.Y = _pos.Y + VelY;
+            _pos.X = _pos.X + 10 * VelX / speed;
+            _pos.Y = _pos.Y + 10 * VelY / speed;
         }
 
         public Point2D Pos { 
