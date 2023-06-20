@@ -157,12 +157,6 @@ namespace Cyberpunk77022
         public void Update()
         {
 
-            currentStage.Update();
-
-        }
-
-        public void Draw()
-        {
             for (int i = 0; i < stars.Count; i++)
             {
                 if (currentStage is GameStage)
@@ -173,7 +167,6 @@ namespace Cyberpunk77022
                 {
                     stars[i].Update("test", _window.Width, _window.Height, SplashKit.MousePosition());
                 }
-                stars[i].Draw();
             }
             for (int i = 0; i < sths.Count; i++)
             {
@@ -185,6 +178,19 @@ namespace Cyberpunk77022
                 {
                     sths[i].Update("test", _window.Width, _window.Height, SplashKit.MousePosition());
                 }
+            }
+            currentStage.Update();
+
+        }
+
+        public void Draw()
+        {
+            for (int i = 0; i < stars.Count; i++)
+            {
+                stars[i].Draw();
+            }
+            for (int i = 0; i < sths.Count; i++)
+            {
                 sths[i].Draw();
             }
             currentStage.Draw();
