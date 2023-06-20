@@ -14,7 +14,7 @@ namespace Cyberpunk77022
         {
             int WIDTH = 1920;
             int HEIGHT = 1080;
-            long TIME_BETWEEN_UPDATES = 100000;
+            long TIME_BETWEEN_UPDATES = 120000;
             long TIME_BETWEEN_FRAMES = 0;
             long CURRENT_UPDATE_TICK = 0;
             long CURRENT_FRAME_TICK = 0;
@@ -28,7 +28,6 @@ namespace Cyberpunk77022
                 CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
                 manager.Update();
                 SplashKit.ProcessEvents();
-                SplashKit.Delay((uint)TIME_BETWEEN_UPDATES / 10000);
                 if (DateTime.UtcNow.Ticks - CURRENT_FRAME_TICK >= TIME_BETWEEN_FRAMES)
                 {
                     CURRENT_FRAME_TICK = DateTime.UtcNow.Ticks;
@@ -36,6 +35,7 @@ namespace Cyberpunk77022
                     manager.Draw();
                     SplashKit.RefreshScreen();
                 }
+                SplashKit.Delay((uint)TIME_BETWEEN_UPDATES / 10000);
             } while (!SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey));
 
         }

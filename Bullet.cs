@@ -45,7 +45,7 @@ namespace Cyberpunk77022
             //_color.A = 0;
             _camera = game.Camera;
             _gun = gun;
-            _range = 100000;
+            _range = range;
             _speed = speed;
             //float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
             //float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
