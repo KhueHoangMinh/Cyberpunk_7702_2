@@ -13,8 +13,8 @@ namespace Cyberpunk77022
         {
             int WIDTH = 1920;
             int HEIGHT = 1080;
-            long TIME_BETWEEN_UPDATES = 1000;
-            long TIME_BETWEEN_FRAMES = 10000;
+            long TIME_BETWEEN_UPDATES = 100000;
+            long TIME_BETWEEN_FRAMES = 100000;
             long CURRENT_UPDATE_TICK = 0;
             long CURRENT_FRAME_TICK = 0;
 

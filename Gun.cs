@@ -26,6 +26,7 @@ namespace Cyberpunk77022
         bool smoking = false;
         Point2D nozzle;
         Point2D _aimPoint;
+        Point2D _basePoint;
         float angle;
         float _range = 2000;
         float _damage;
@@ -62,6 +63,7 @@ namespace Cyberpunk77022
             _ShootTime = 999999999;
             _aimPoint = new Point2D();
             nozzle = new Point2D();
+            _basePoint = new Point2D();
             _damage = damage;
             _fireRate = fireRate;
             _recoil = recoil;
@@ -73,6 +75,43 @@ namespace Cyberpunk77022
             //float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
             //float c = (float)Math.Sqrt(a * a + b * b);
             //nozzle = new Point2D() { X = _GunOf.Pos.X + _nozzleLength * a / c, Y = _GunOf.Pos.Y + _nozzleLength * b / c };
+            if (_aimPoint.X != _GunOf.Pos.X)
+            {
+                angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
+            }
+            else
+            {
+                if (_aimPoint.Y > _GunOf.Pos.Y)
+                {
+                    angle = -(float)Math.PI / 2 + _shock;
+                }
+                else
+                {
+                    angle = (float)Math.PI / 2 + _shock;
+                }
+            }
+            if (_aimPoint.X > _GunOf.Pos.X)
+            {
+                nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
+                drawingOptions.FlipY = false;
+                drawingOptions.AnchorOffsetX = (-pistol.Width + _butt) / 2;
+                _pos.X = (pistol.Width - _DisplayWidth) / 2 + _butt;
+                _basePoint.X = _GunOf.Pos.X - _pos.X;
+                _basePoint.Y = _GunOf.Pos.Y - _pos.Y - pistol.Height * scale / 2;
+            }
+            else
+            {
+                nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
+                drawingOptions.FlipY = true;
+                drawingOptions.AnchorOffsetX = (pistol.Width - _butt) / 2;
+                _pos.X = (pistol.Width - _DisplayWidth) / 2 - _butt;
+                _basePoint.X = _GunOf.Pos.X - _pos.X - _DisplayWidth;
+                _basePoint.Y = _GunOf.Pos.Y - _pos.Y - pistol.Height * scale / 2;
+            }
             if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
             { 
                 smoking = true;
@@ -101,39 +140,7 @@ namespace Cyberpunk77022
         }
         public virtual void Draw()
         {
-            if (_aimPoint.X != _GunOf.Pos.X)
-            {
-                angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
-            } else
-            {
-                if(_aimPoint.Y > _GunOf.Pos.Y)
-                {
-                    angle = -(float)Math.PI / 2 + _shock;
-                } else
-                {
-                    angle = (float)Math.PI / 2 + _shock;
-                }
-            }
-            if (_aimPoint.X > _GunOf.Pos.X)
-            {
-                nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
-                nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
-                drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
-                drawingOptions.FlipY = false;
-                drawingOptions.AnchorOffsetX = (-pistol.Width + _butt) / 2;
-                _pos.X = (pistol.Width - _DisplayWidth) / 2 + _butt;
-                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
-            }
-            else
-            {
-                nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
-                nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
-                drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
-                drawingOptions.FlipY = true;
-                drawingOptions.AnchorOffsetX = (pistol.Width - _butt) / 2;
-                _pos.X = (pistol.Width - _DisplayWidth) / 2 - _butt;
-                SplashKit.DrawBitmapOnWindow(_window, pistol, _GunOf.Pos.X - _camera.Pos.X - _pos.X - _DisplayWidth, _GunOf.Pos.Y - _camera.Pos.Y - _pos.Y - pistol.Height * scale / 2, drawingOptions);
-            }
+            SplashKit.DrawBitmapOnWindow(_window, pistol,_basePoint.X - _camera.Pos.X, _basePoint.Y - _camera.Pos.Y, drawingOptions);
         }
 
         public virtual void Shoot()

@@ -66,6 +66,12 @@ namespace Cyberpunk77022
                     this.Manager.NewShop("home");
                 }
             }
+
+            this.InEf.Update();
+            if (this.Closing)
+            {
+                this.OutEf.Update();
+            }
         }
 
         public override void Draw() 
@@ -77,10 +83,7 @@ namespace Cyberpunk77022
             aboutBtn.Draw();
 
             this.InEf.Draw();
-            if(this.Closing)
-            {
-                this.OutEf.Draw();
-            }
+            this.OutEf.Draw();
         }
     }
 }

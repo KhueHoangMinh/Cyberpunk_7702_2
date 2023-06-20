@@ -24,12 +24,16 @@ namespace Cyberpunk77022
             _height = height;
         }
 
-        public void Draw()
+        public void Update()
         {
-            if(_color.A >= 0.02)
+            if (_color.A >= 0.02)
             {
                 _color.A -= (float)0.02;
             }
+        }
+
+        public void Draw()
+        {
             SplashKit.FillRectangle(_color, _x, _y, _width, _height);
         }
     }
@@ -49,15 +53,20 @@ namespace Cyberpunk77022
             _height = height;
         }
 
-        public void Draw()
+        public void Update()
         {
             if (_color.A <= 0.98)
             {
                 _color.A += (float)0.02;
-            } else
+            }
+            else
             {
                 _completed = true;
             }
+        }
+
+        public void Draw()
+        {
             SplashKit.FillRectangle(_color, _x, _y, _width, _height);
         }
     }

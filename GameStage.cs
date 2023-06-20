@@ -163,6 +163,11 @@ namespace Cyberpunk77022
                     }
                 }
             }
+            this.InEf.Update();
+            if (this.Closing)
+            {
+                this.OutEf.Update();
+            }
             //Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
@@ -218,10 +223,7 @@ namespace Cyberpunk77022
             }
 
             this.InEf.Draw();
-            if (this.Closing)
-            {
-                this.OutEf.Draw();
-            }
+            this.OutEf.Draw();
         }
 
         public Camera Camera { get { return camera; } }

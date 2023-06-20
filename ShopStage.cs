@@ -259,6 +259,11 @@ namespace Cyberpunk77022
             {
                 _items[i].Update();
             }
+            inEf.Update();
+            if(_closing)
+            {
+                outEf.Update();
+            }
         }
 
         public void Draw()
@@ -270,10 +275,7 @@ namespace Cyberpunk77022
             SplashKit.FillRectangle(Color.RGBAColor(0, 0, 0, 30), _shop.Manager.Window.Width - 10, Y, 10, _height);
             SplashKit.FillRectangle(Color.Gray, _shop.Manager.Window.Width - 10, Y + -_scrollY * _height / _actualHeight, 10, _height * _height / _actualHeight);
             inEf.Draw();
-            if (_closing)
-            {
-                outEf.Draw();
-            }
+            outEf.Draw();
         }
 
         public void Deselect(Item except)
@@ -653,6 +655,11 @@ namespace Cyberpunk77022
                     this.Manager.NewEnd();
                 }
             }
+            this.InEf.Update();
+            if (this.Closing)
+            {
+                this.OutEf.Update();
+            }
         }
 
         public override void Draw()
@@ -679,10 +686,7 @@ namespace Cyberpunk77022
             skillBtn.Draw();
 
             this.InEf.Draw();
-            if (this.Closing)
-            {
-                this.OutEf.Draw();
-            }
+            this.OutEf.Draw();
         }
 
     }
