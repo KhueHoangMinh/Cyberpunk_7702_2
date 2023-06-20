@@ -56,10 +56,24 @@ namespace Cyberpunk77022
                 Color pale = this.Color;
                 pale.A -= 0.01f;
                 this.Color = pale;
+                if (this.Color.A <= 0.3)
+                {
+                    if (new Random().Next(0, 15) < 1)
+                    {
+                        for (int i = 0; i < 5; i++)
+                        {
+                            _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
+                            {
+                                X = (double)new Random().Next((int)this.Left, (int)this.Right),
+                                Y = (double)new Random().Next((int)this.Top, (int)this.Bottom),
+                            }, Color.White, 0, 0));
+                        }
+                    }
+                }
             }
             if(this.Color.A <= 0)
             {
-                for(int i = 0; i < 5; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
                     {
