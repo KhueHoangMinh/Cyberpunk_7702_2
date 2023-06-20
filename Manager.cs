@@ -253,7 +253,7 @@ namespace Cyberpunk77022
         public string Gun
         {
             get { return _gun; }
-            set { Console.WriteLine(value); _gun = value; }
+            set { _gun = value; }
         }
         public string Skin
         {

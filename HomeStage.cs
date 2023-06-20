@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
@@ -29,6 +30,8 @@ namespace Cyberpunk77022
             startBtn = new Button("START", Color.Red, this.Manager.Window.Width / 2, 400, 250, 150);
             shopBtn = new Button("SHOP", Color.Red, this.Manager.Window.Width / 2, 650, 250, 150);
             aboutBtn = new Button("ABOUT", Color.Red, this.Manager.Window.Width / 2, 900, 250, 150);
+
+            
 
         }
 
