@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 using SplashKitSDK;
@@ -14,7 +15,7 @@ namespace Cyberpunk77022
             int WIDTH = 1920;
             int HEIGHT = 1080;
             long TIME_BETWEEN_UPDATES = 100000;
-            long TIME_BETWEEN_FRAMES = 100000;
+            long TIME_BETWEEN_FRAMES = 0;
             long CURRENT_UPDATE_TICK = 0;
             long CURRENT_FRAME_TICK = 0;
 
@@ -24,12 +25,10 @@ namespace Cyberpunk77022
             SplashKit.CurrentWindowToggleFullscreen();
             do
             {
-                if (DateTime.UtcNow.Ticks - CURRENT_UPDATE_TICK >= TIME_BETWEEN_UPDATES)
-                {
-                    CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
-                    manager.Update();
-                    SplashKit.ProcessEvents();
-                }
+                CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
+                manager.Update();
+                SplashKit.ProcessEvents();
+                SplashKit.Delay((uint)TIME_BETWEEN_UPDATES / 10000);
                 if (DateTime.UtcNow.Ticks - CURRENT_FRAME_TICK >= TIME_BETWEEN_FRAMES)
                 {
                     CURRENT_FRAME_TICK = DateTime.UtcNow.Ticks;
