@@ -45,7 +45,7 @@ namespace Cyberpunk77022
                     CURRENT_FRAME_TICK = DateTime.UtcNow.Ticks;
                     SplashKit.ClearScreen(Color.Black);
                     manager.Draw();
-                    SplashKit.DrawText(_textInput, Color.White, "font", 50, 100, 100);
+                    //SplashKit.DrawText(_textInput, Color.White, "font", 50, 100, 100);
                     SplashKit.RefreshScreen();
                 }
                 SplashKit.Delay((uint)TIME_BETWEEN_UPDATES / 10000);

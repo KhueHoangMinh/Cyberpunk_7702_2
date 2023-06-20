@@ -31,8 +31,6 @@ namespace Cyberpunk77022
             shopBtn = new Button("SHOP", Color.Red, this.Manager.Window.Width / 2, 650, 250, 150);
             aboutBtn = new Button("ABOUT", Color.Red, this.Manager.Window.Width / 2, 900, 250, 150);
 
-            
-
         }
 
         public override void Update()
