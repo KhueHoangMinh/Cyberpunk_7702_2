@@ -31,7 +31,7 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Pistol1(_game, this, 1);
+            _EnemyGun = new Pistol1(_game, this, 5);
             _EnemyGun.SmokeDensity = 5;
             _camera = camera;
             _maxHealth = 100;
@@ -214,9 +214,19 @@ namespace Cyberpunk77022
             _minusHealth = _health;
             _health -= bullet.Damage;
             _minusHealth -= _health;
-            aX = 10 * bullet.VelX / bullet.Speed;
-            aY = 10 * bullet.VelY / bullet.Speed;
-            aY -= 10;
+            if(_health >= 0)
+            {
+                aX = 10 * bullet.VelX / bullet.Speed;
+                aY = 10 * bullet.VelY / bullet.Speed;
+                aY -= 10;
+            } 
+            else
+            {
+                aX = 20 * bullet.VelX / bullet.Speed;
+                aY = 20 * bullet.VelY / bullet.Speed;
+                aY -= 20;
+            }
+            if(_alive) _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
             //this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
         public float Health

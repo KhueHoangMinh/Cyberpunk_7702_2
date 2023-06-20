@@ -25,6 +25,7 @@ namespace Cyberpunk77022
             _text = text;
             _color = color;
             _textColor = color;
+            _textColor.A = 0.2f;
             _background = color;
             _background.A = (float)0.2;
             _x = x; 

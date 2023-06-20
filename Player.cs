@@ -172,6 +172,7 @@ namespace Cyberpunk77022
                 _health -= bullet.Damage;
             }
             _minusHealth -= _health;
+            _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
         }
 
         public void DrawGun() 

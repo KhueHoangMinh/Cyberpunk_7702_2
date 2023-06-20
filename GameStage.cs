@@ -21,6 +21,8 @@ namespace Cyberpunk77022
         List<Enemy> enemies;
         List<Ground> grounds;
         List<Bullet> bullets;
+        Queue<MinusHealth> minusHealths;
+        int MinusHealthPop = 0;
         Queue<Trace> traces;
         int TracePop = 0;
         Queue<Explosion> explosions;
@@ -47,7 +49,10 @@ namespace Cyberpunk77022
             player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, _manager.Gun, _manager.Skin, _manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
+            minusHealths = new Queue<MinusHealth>();
             grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = _manager.Window.Height }, _manager.Window.Width, 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = -50, Y = _manager.Window.Height / 2 }, 100, _manager.Window.Height + 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width + 50, Y = _manager.Window.Height / 2 }, 100, _manager.Window.Height + 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
@@ -125,6 +130,15 @@ namespace Cyberpunk77022
                     explosions.Dequeue();
                     ExploPop--;
                 }
+                foreach (MinusHealth minusHealth in minusHealths)
+                {
+                    minusHealth.Update();
+                }
+                while (MinusHealthPop > 0 && minusHealths.Count > 0)
+                {
+                    minusHealths.Dequeue();
+                    MinusHealthPop--;
+                }
                 camera.Update(player.Gun.Nozzle);
                 pauseBtn.Update();
                 if (pauseBtn.Hovering)
@@ -199,6 +213,10 @@ namespace Cyberpunk77022
             foreach (Explosion explosion in explosions)
             {
                 explosion.Draw();
+            }
+            foreach (MinusHealth minusHealth in minusHealths)
+            {
+                minusHealth.Draw();
             }
             SplashKit.DrawText(_manager.Score.ToString(), Color.White, "font", 50, _manager.Window.Width / 2 - SplashKit.TextWidth(_manager.Score.ToString(), "font", 50) / 2, 20);
             pauseBtn.Draw();
@@ -277,6 +295,15 @@ namespace Cyberpunk77022
         public void RemoveSmoke()
         {
             SmokePop++;
+        }
+        public void AddMinusHealth(MinusHealth minusHealth)
+        {
+            minusHealths.Enqueue(minusHealth);
+        }
+
+        public void RemoveMinusHealth()
+        {
+            MinusHealthPop++;
         }
 
         public void EndGame()
