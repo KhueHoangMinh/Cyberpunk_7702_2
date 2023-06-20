@@ -374,9 +374,8 @@ namespace Cyberpunk77022
         {
         }
     }
-    public class ShopStage
+    public class ShopStage : Stage
     {
-        Manager _manager;
         Button backBtn;
         Button weaponBtn;
         Button skinBtn;
@@ -384,9 +383,6 @@ namespace Cyberpunk77022
         Page weaponPage;
         Page skinPage;
         Page skillPage;
-        InEffect inEf;
-        OutEffect outEf;
-        bool _closing = false;
         string _nextShowing;
         string _nextState;
         string _prevState;
@@ -395,7 +391,7 @@ namespace Cyberpunk77022
 
 
 
-        public ShopStage(Manager manager, string prevState)
+        public ShopStage(Manager manager, string prevState) : base(manager)
         {
 
             WeaponBrief[] weaponList = new WeaponBrief[7]
@@ -425,20 +421,17 @@ namespace Cyberpunk77022
                 new SkillBrief("skill","Defense","Reduce damage",100,0),
             };
 
-            _manager = manager;
-            inEf = new InEffect(0,0,_manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
             backBtn = new Button("<", Color.Red, 80, 80, 70, 70);
-            float width = _manager.Window.Width / 3;
+            float width = this.Manager.Window.Width / 3;
             weaponBtn = new Button("Weapon", Color.Gray, width/2, 180, width, 50);
             weaponBtn.Color = Color.White;
             skinBtn = new Button("Skin", Color.Gray, width + width/2, 180, width, 50);
             skinBtn.Color = Color.White;
             skillBtn = new Button("Power", Color.Gray, width*2 + width/2, 180, width, 50);
             skillBtn.Color = Color.White;
-            weaponPage = new Page(this, weaponList, _manager.Window.Height - 205, 205);
-            skinPage = new Page(this, skinList, _manager.Window.Height - 205, 205);
-            skillPage = new Page(this, skillList, _manager.Window.Height - 205, 205);
+            weaponPage = new Page(this, weaponList, this.Manager.Window.Height - 205, 205);
+            skinPage = new Page(this, skinList, this.Manager.Window.Height - 205, 205);
+            skillPage = new Page(this, skillList, this.Manager.Window.Height - 205, 205);
             _prevState = prevState;
 
             this.Load();
@@ -446,11 +439,11 @@ namespace Cyberpunk77022
 
         public void Load()
         {
-            for(int i = 0; i < _manager.UserData.Count; i++)
+            for(int i = 0; i < this.Manager.UserData.Count; i++)
             {
                 if(i < 7)
                 {
-                    switch(_manager.UserData[i])
+                    switch (this.Manager.UserData[i])
                     {
                         case "0":
                             weaponPage.Items[i].State = "not_purchased";
@@ -460,12 +453,12 @@ namespace Cyberpunk77022
                             break;
                         case "2":
                             weaponPage.Items[i].State = "selected";
-                            _manager.Gun = weaponPage.Items[i]._name;
+                            this.Manager.Gun = weaponPage.Items[i]._name;
                             break;
                     }
                 } else if (i > 6 && i < 13)
                 {
-                    switch (_manager.UserData[i])
+                    switch (this.Manager.UserData[i])
                     {
                         case "0":
                             skinPage.Items[i - 7].State = "not_purchased";
@@ -475,12 +468,12 @@ namespace Cyberpunk77022
                             break;
                         case "2":
                             skinPage.Items[i - 7].State = "selected";
-                            _manager.Skin = skinPage.Items[i - 7]._name;
+                            this.Manager.Skin = skinPage.Items[i - 7]._name;
                             break;
                     }
                 } else if ( i > 12 && i < 15)
                 {
-                    switch (_manager.UserData[i])
+                    switch (this.Manager.UserData[i])
                     {
                         case "0":
                             skillPage.Items[i - 13].State = "not_purchased";
@@ -490,7 +483,7 @@ namespace Cyberpunk77022
                             break;
                         case "2":
                             skillPage.Items[i - 13].State = "selected";
-                            _manager.Skill = skillPage.Items[i - 13]._name;
+                            this.Manager.Skill = skillPage.Items[i - 13]._name;
                             break;
                     }
                 }
@@ -549,11 +542,11 @@ namespace Cyberpunk77022
                 }
             }
 
-            _manager.UserData = saving;
-            _manager.Save("../../../userdata.txt");
+            this.Manager.UserData = saving;
+            this.Manager.Save("../../../userdata.txt");
         }
 
-        public void Update()
+        public override void Update()
         {
             backBtn.Update();
             weaponBtn.Update();
@@ -594,7 +587,7 @@ namespace Cyberpunk77022
             {
                 if (backBtn.Hovering)
                 {
-                    _closing = true;
+                    this.Closing = true;
                     _nextState = _prevState;
                 } else
                 if (weaponBtn.Hovering)
@@ -649,20 +642,20 @@ namespace Cyberpunk77022
                     _nextShowing = "skill";
                 }
             }
-            if (outEf._completed)
+            if (this.OutEf._completed)
             {
                 if (_nextState == "home")
                 {
-                    _manager.NewHome();
+                    this.Manager.NewHome();
                 }
                 if (_nextState == "end")
                 {
-                    _manager.NewEnd();
+                    this.Manager.NewEnd();
                 }
             }
         }
 
-        public void Draw()
+        public override void Draw()
         {
 
             switch (_showing)
@@ -677,21 +670,20 @@ namespace Cyberpunk77022
                     skillPage.Draw();
                     break;
             }
-            SplashKit.FillRectangle(Color.Black,0,0, _manager.Window.Width,205);
-            SplashKit.DrawText("SHOP", Color.White, "font", 70, _manager.Window.Width / 2 - SplashKit.TextWidth("SHOP", "font", 70) / 2, 80 - SplashKit.TextHeight("SHOP", "font", 70) / 2);
-            SplashKit.DrawText(_manager.Coin.ToString(), Color.Yellow, "font", 50, _manager.Window.Width - SplashKit.TextWidth(_manager.Coin.ToString(), "font", 50) - 35, 80 - SplashKit.TextHeight("SHOP", "font", 70) / 2);
+            SplashKit.FillRectangle(Color.Black,0,0, this.Manager.Window.Width,205);
+            SplashKit.DrawText("SHOP", Color.White, "font", 70, this.Manager.Window.Width / 2 - SplashKit.TextWidth("SHOP", "font", 70) / 2, 80 - SplashKit.TextHeight("SHOP", "font", 70) / 2);
+            SplashKit.DrawText(this.Manager.Coin.ToString(), Color.Yellow, "font", 50, this.Manager.Window.Width - SplashKit.TextWidth(this.Manager.Coin.ToString(), "font", 50) - 35, 80 - SplashKit.TextHeight("SHOP", "font", 70) / 2);
             backBtn.Draw();
             weaponBtn.Draw();
             skinBtn.Draw();
             skillBtn.Draw();
 
-            inEf.Draw();
-            if (_closing)
+            this.InEf.Draw();
+            if (this.Closing)
             {
-                outEf.Draw();
+                this.OutEf.Draw();
             }
         }
 
-        public Manager Manager { get { return _manager; } }
     }
 }

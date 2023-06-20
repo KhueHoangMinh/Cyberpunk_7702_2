@@ -13,6 +13,7 @@ namespace Cyberpunk77022
         Color _color;
         Point2D _init;
         float _fontSize = 20;
+        bool _sizeIncre = true;
          
         GameStage _game;
         public MinusHealth(GameStage game, Object minused, float minusHealth) { 
@@ -28,11 +29,23 @@ namespace Cyberpunk77022
         public void Update()
         {
             _init.Y -= 0.3;
-            _fontSize -= 0.5f;
-            if (_fontSize < 0)
+            if (_sizeIncre)
             {
-                _fontSize = 0;
-                _game.RemoveMinusHealth();
+                _fontSize += 1;
+                if (_fontSize > 30)
+                {
+                    _sizeIncre = false;
+                    _fontSize = 30;
+                }
+            }
+            else
+            {
+                _fontSize -= 0.5f;
+                if (_fontSize < 0)
+                {
+                    _fontSize = 0;
+                    _game.RemoveMinusHealth();
+                }
             }
         }
 

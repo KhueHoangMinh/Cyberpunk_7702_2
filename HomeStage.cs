@@ -10,20 +10,15 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
-    public class HomeStage
+    public class HomeStage : Stage
     {
         DrawingOptions drawingOptions;
-        Manager _manager;
         Button startBtn;
         Button shopBtn;
         Button aboutBtn;
-        InEffect inEf;
-        OutEffect outEf;
-        bool _closing = false;
         string _nextState;
-        public HomeStage(Manager manager)
+        public HomeStage(Manager manager) : base(manager)
         {
-            _manager = manager;
             drawingOptions = new DrawingOptions()
             {
                 Dest = manager.Window,
@@ -31,15 +26,13 @@ namespace Cyberpunk77022
                 ScaleY = (float)1.5,
 
             };
-            inEf = new InEffect(0, 0, _manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
-            startBtn = new Button("START", Color.Red, _manager.Window.Width / 2, 400, 250, 150);
-            shopBtn = new Button("SHOP", Color.Red, _manager.Window.Width / 2, 650, 250, 150);
-            aboutBtn = new Button("ABOUT", Color.Red, _manager.Window.Width / 2, 900, 250, 150);
+            startBtn = new Button("START", Color.Red, this.Manager.Window.Width / 2, 400, 250, 150);
+            shopBtn = new Button("SHOP", Color.Red, this.Manager.Window.Width / 2, 650, 250, 150);
+            aboutBtn = new Button("ABOUT", Color.Red, this.Manager.Window.Width / 2, 900, 250, 150);
 
         }
 
-        public void Update()
+        public override void Update()
         {
             startBtn.Update();
             shopBtn.Update();
@@ -48,45 +41,45 @@ namespace Cyberpunk77022
             {
                 if(startBtn.Hovering)
                 {
-                    _closing = true;
+                    this.Closing = true;
                     _nextState = "game";
                 }
                 if (shopBtn.Hovering)
                 {
-                    _closing = true;
+                    this.Closing = true;
                     _nextState = "shop";
                 }
                 if (aboutBtn.Hovering)
                 {
-                    _closing = true;
+                    this.Closing = true;
                     _nextState = "about";
                 }
             }
-            if(outEf._completed)
+            if(this.OutEf._completed)
             {
                 if(_nextState == "game")
                 {
-                    _manager.NewGame();
+                    this.Manager.NewGame();
                 }
                 if(_nextState == "shop")
                 {
-                    _manager.NewShop("home");
+                    this.Manager.NewShop("home");
                 }
             }
         }
 
-        public void Draw() 
+        public override void Draw() 
         {
 
-            SplashKit.DrawBitmap(SplashKit.BitmapNamed("logo"), _manager.Window.Width / 2 - SplashKit.BitmapNamed("logo").Width / 2, 100, drawingOptions);
+            SplashKit.DrawBitmap(SplashKit.BitmapNamed("logo"), this.Manager.Window.Width / 2 - SplashKit.BitmapNamed("logo").Width / 2, 100, drawingOptions);
             startBtn.Draw();
             shopBtn.Draw();
             aboutBtn.Draw();
 
-            inEf.Draw();
-            if(_closing)
+            this.InEf.Draw();
+            if(this.Closing)
             {
-                outEf.Draw();
+                this.OutEf.Draw();
             }
         }
     }

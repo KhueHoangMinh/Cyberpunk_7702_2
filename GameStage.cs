@@ -11,12 +11,8 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
-    public class GameStage
+    public class GameStage : Stage
     {
-        Manager _manager;
-        InEffect inEf;
-        OutEffect outEf;
-        bool _closing = false;
         Player player;
         List<Enemy> enemies;
         List<Ground> grounds;
@@ -40,36 +36,33 @@ namespace Cyberpunk77022
         Color _background;
         bool paused = false;
 
-        public GameStage(Manager manager)
+        public GameStage(Manager manager) : base(manager)
         {
-            _manager = manager;
-            inEf = new InEffect(0, 0, _manager.Window.Width, _manager.Window.Height);
-            outEf = new OutEffect(0,0,_manager.Window.Width, _manager.Window.Height);
-            camera = new Camera(_manager.Window.Width, _manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = _manager.Window.Width/2, Y = 50}, 100, 100, _manager.Gun, _manager.Skin, _manager.Skill);
+            camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();
-            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = _manager.Window.Height }, _manager.Window.Width, 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = -50, Y = _manager.Window.Height / 2 }, 100, _manager.Window.Height + 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width + 50, Y = _manager.Window.Height / 2 }, 100, _manager.Window.Height + 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = _manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = -50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
             smokes = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
-            pauseBtn = new Button("||", Color.Red, _manager.Window.Width-80, 80, 70, 70);
-            resumeBtn = new Button("Resume", Color.Green, _manager.Window.Width / 2, _manager.Window.Height/2-50, 250, 150);
-            quitBtn = new Button("QUIT", Color.Red, _manager.Window.Width / 2, _manager.Window.Height/2 + 150, 250, 150);
-            _manager.Score = 0;
+            pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-80, 80, 70, 70);
+            resumeBtn = new Button("Resume", Color.Green, this.Manager.Window.Width / 2, this.Manager.Window.Height/2-50, 250, 150);
+            quitBtn = new Button("QUIT", Color.Red, this.Manager.Window.Width / 2, this.Manager.Window.Height/2 + 150, 250, 150);
+            this.Manager.Score = 0;
             _background = Color.Black;
             _background.A = 0.5f;
         }
 
-        public void Update()
+        public override void Update()
         {
-            if(!_closing && !paused)
+            if(!this.Closing && !paused)
             {
                 if(enemies.Count == 0)
                 {
@@ -150,9 +143,9 @@ namespace Cyberpunk77022
                 }
             } else
             {
-                if (outEf._completed)
+                if (this.OutEf._completed)
                 {
-                    _manager.NewEnd();
+                    this.Manager.NewEnd();
                 }
                 if(paused)
                 {
@@ -173,12 +166,7 @@ namespace Cyberpunk77022
             //Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
-        public Player GetPlayer
-        {
-            get { return player; }
-        }
-
-        public void Draw()
+        public override void Draw()
         {
             foreach (Trace trace in traces)
             {
@@ -218,26 +206,30 @@ namespace Cyberpunk77022
             {
                 minusHealth.Draw();
             }
-            SplashKit.DrawText(_manager.Score.ToString(), Color.White, "font", 50, _manager.Window.Width / 2 - SplashKit.TextWidth(_manager.Score.ToString(), "font", 50) / 2, 20);
+            SplashKit.DrawText(this.Manager.Score.ToString(), Color.White, "font", 50, this.Manager.Window.Width / 2 - SplashKit.TextWidth(this.Manager.Score.ToString(), "font", 50) / 2, 20);
             pauseBtn.Draw();
             if(paused)
             {
-                SplashKit.FillRectangle(_background, 0, 0, _manager.Window.Width, _manager.Window.Height);
-                SplashKit.FillRectangle(Color.RGBAColor(0,0,0,0.6),_manager.Window.Width/2-300, _manager.Window.Height/2-300,600,600);
-                SplashKit.DrawText("Paused", Color.White, "font", 60, _manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, _manager.Window.Height / 2 - 250);
+                SplashKit.FillRectangle(_background, 0, 0, this.Manager.Window.Width, this.Manager.Window.Height);
+                SplashKit.FillRectangle(Color.RGBAColor(0,0,0,0.6),this.Manager.Window.Width/2-300, this.Manager.Window.Height/2-300,600,600);
+                SplashKit.DrawText("Paused", Color.White, "font", 60, this.Manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, this.Manager.Window.Height / 2 - 250);
                 resumeBtn.Draw();
                 quitBtn.Draw();
             }
 
-            inEf.Draw();
-            if (_closing)
+            this.InEf.Draw();
+            if (this.Closing)
             {
-                outEf.Draw();
+                this.OutEf.Draw();
             }
         }
-        public Manager Manager { get { return _manager; } }
 
         public Camera Camera { get { return camera; } }
+
+        public Player GetPlayer
+        {
+            get { return player; }
+        }
 
         public List<Ground> Grounds { 
             get { return grounds; }
@@ -266,7 +258,7 @@ namespace Cyberpunk77022
         public void RemoveEnemy(Enemy enemy)
         {
             enemies.Remove(enemy);
-            _manager.Score++;
+            this.Manager.Score++;
         }
 
         public void AddTrace(Trace trace)
@@ -308,7 +300,7 @@ namespace Cyberpunk77022
 
         public void EndGame()
         {
-            _closing = true;
+            this.Closing = true;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace Cyberpunk77022
         GameStage game;
         EndStage end;
         ShopStage shop;
+        Stage currentStage;
         string _gun = "Default Gun";
         string _skin = "Default Skin";
         string _skill = null;
@@ -55,6 +56,8 @@ namespace Cyberpunk77022
             game = new GameStage(this);
             end = new EndStage(this);
             shop = new ShopStage(this, "home");
+            currentStage = home;
+
 
             for (int i = 0; i < 30; i++)
             {
@@ -153,11 +156,18 @@ namespace Cyberpunk77022
 
         public void Update()
         {
+
+            currentStage.Update();
+
+        }
+
+        public void Draw()
+        {
             for (int i = 0; i < stars.Count; i++)
             {
-                if (state == "game")
+                if (currentStage is GameStage)
                 {
-                    stars[i].Update("test", _window.Width, _window.Height, game.GetPlayer.Pos);
+                    stars[i].Update("test", _window.Width, _window.Height, (currentStage as GameStage).GetPlayer.Pos);
                 }
                 else
                 {
@@ -167,9 +177,9 @@ namespace Cyberpunk77022
             }
             for (int i = 0; i < sths.Count; i++)
             {
-                if (state == "game")
+                if (currentStage is GameStage)
                 {
-                    sths[i].Update("test", _window.Width, _window.Height, game.GetPlayer.Pos);
+                    sths[i].Update("test", _window.Width, _window.Height, (currentStage as GameStage).GetPlayer.Pos);
                 }
                 else
                 {
@@ -177,47 +187,32 @@ namespace Cyberpunk77022
                 }
                 sths[i].Draw();
             }
-            switch (state)
-            {
-                case "home":
-                    home.Update();
-                    home.Draw();
-                    break;
-                case "game":
-                    game.Update();
-                    game.Draw();
-                    break;
-                case "end":
-                    end.Update();
-                    end.Draw();
-                    break;
-                case "shop":
-                    shop.Update();
-                    shop.Draw();
-                    break;
-            }
-
+            currentStage.Draw();
         }
 
         public void NewHome()
         {
             home = new HomeStage(this);
+            currentStage = home;
             state = "home";
         }
         public void NewGame()
         {
             game = new GameStage(this);
+            currentStage = game;
             state = "game";
         }
         public void NewEnd()
         {
             end = new EndStage(this);
+            currentStage = end;
             state = "end";
         }
 
         public void NewShop(string prevStage)
         {
             shop = new ShopStage(this, prevStage);
+            currentStage = shop;
             state = "shop";
         }
 
