@@ -40,6 +40,42 @@ namespace Cyberpunk77022
         bool paused = false;
         bool server = true;
 
+        static string[] ToDouble(string p2dstring)
+        {
+            p2dstring = p2dstring.Trim();
+            string[] res;
+            string sPosX = "";
+            string sPosY = "";
+            string ticks = "";
+            bool doneX = false;
+            bool doneY = false;
+
+            for (int i = 0; i < p2dstring.Length; i++)
+            {
+                if (p2dstring[i] == ' ' && !doneX)
+                {
+                    doneX = true;
+                } else if(p2dstring[i] == ' ' && doneX)
+                {
+                    doneY = true;
+                } else
+                {
+                    if(!doneX)
+                    {
+                        sPosX += p2dstring[i];
+                    } else if (doneX && !doneY)
+                    {
+                        sPosY += p2dstring[i];
+                    } else if (doneX && doneY)
+                    {
+                        ticks += p2dstring[i];
+                    }
+                }
+            }
+            res = new string[3] { sPosX, sPosY,ticks };
+            return res;
+        }
+
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
@@ -73,6 +109,8 @@ namespace Cyberpunk77022
                 UdpClient listener = new UdpClient(listenPort);
                 IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
 
+                long prevTicks = 0;
+
                 try
                 {
                     while (true)
@@ -90,6 +128,13 @@ namespace Cyberpunk77022
 
                             string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
                             Console.WriteLine($"Data from from {groupEP} : " + msg);
+
+                            string[] received = ToDouble(msg);
+                            if (long.Parse(received[2]) > prevTicks)
+                            {
+                                prevTicks = long.Parse(received[2]);
+                                player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                            }
                         }
                     }
                 }
@@ -120,9 +165,9 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
-                        byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString());
+                        byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString());
                         s.SendTo(sendbuf, ep);
-                        Thread.Sleep((int)12000 / 10000);
+                        Thread.Sleep((int)0 / 10000);
                     }
                 }
                 else
@@ -145,7 +190,7 @@ namespace Cyberpunk77022
                             byte[] sendbuf = Encoding.ASCII.GetBytes("W");
                             s.SendTo(sendbuf, ep);
                         }
-                        Thread.Sleep((int)12000 / 10000);
+                        Thread.Sleep((int)0 / 10000);
                     }
                 }
 
