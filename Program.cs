@@ -184,6 +184,8 @@ namespace Cyberpunk77022
 
 
 
+
+
             new Thread(() =>
             {
                 const int listenPort = 11000;
@@ -199,7 +201,19 @@ namespace Cyberpunk77022
                         byte[] bytes = listener.Receive(ref groupEP);
 
                         Console.WriteLine($"Received broadcast from {groupEP} :");
-                        Console.WriteLine($" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}");
+
+                        string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
+                        Console.WriteLine(msg);
+
+                        if(msg == "Current ticks: " + DateTime.UtcNow.Ticks.ToString())
+                        {
+                            Console.WriteLine("EQ");
+
+                        } else
+                        {
+                            Console.WriteLine(msg);
+                            Console.WriteLine("Current ticks: " + DateTime.UtcNow.Ticks.ToString());
+                        }
                     }
                 }
                 catch (SocketException e)
@@ -213,17 +227,35 @@ namespace Cyberpunk77022
 
             }).Start();
 
+
+            new Thread(() =>
+            {
+
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                IPAddress broadcast = IPAddress.Parse("192.168.1.255");
+
+                IPEndPoint ep = new IPEndPoint(broadcast, 11000);
+                while (true)
+                {
+                    byte[] sendbuf = Encoding.ASCII.GetBytes("Current ticks: " + DateTime.UtcNow.Ticks.ToString());
+                    s.SendTo(sendbuf, ep);
+                    Thread.Sleep((int)TIME_BETWEEN_UPDATES / 10000);
+                }
+
+            }).Start();
+
             // Game loop
 
             do
             {
-                CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
-
-
-
+                if (DateTime.UtcNow.Ticks - CURRENT_UPDATE_TICK >= TIME_BETWEEN_UPDATES)
+                {
+                    CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
+                }
 
                 manager.Update();
-
+                SplashKit.ProcessEvents();
                 //if(SplashKit.MouseClicked(MouseButton.LeftButton))
                 //{
                 //    SplashKit.StartReadingText(new Rectangle() { X = 100, Y = 100, Width = 100, Height = 100 });
@@ -232,8 +264,6 @@ namespace Cyberpunk77022
                 //{
                 //    _textInput = SplashKit.TextInput(window);
                 //}
-
-                SplashKit.ProcessEvents();
 
                 //Listen(handler);
 
