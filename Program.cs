@@ -28,69 +28,7 @@ namespace Cyberpunk77022
 
             string _textInput = SplashKit.TextInput(window);
 
-            // Listener
-
-            new Thread(() =>
-            {
-                const int listenPort = 11000;
-
-                UdpClient listener = new UdpClient(listenPort);
-                IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
-
-                try
-                {
-                    while (true)
-                    {
-                        Console.WriteLine("Waiting for broadcast");
-                        byte[] bytes = listener.Receive(ref groupEP);
-
-                        Console.WriteLine($"Received broadcast from {groupEP} :");
-
-                        string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
-                        Console.WriteLine(msg);
-
-                        if(msg == "Current ticks: " + DateTime.UtcNow.Ticks.ToString())
-                        {
-                            Console.WriteLine("EQ");
-
-                        } else
-                        {
-                            Console.WriteLine(msg);
-                            Console.WriteLine("Current ticks: " + DateTime.UtcNow.Ticks.ToString());
-                        }
-                    }
-                }
-                catch (SocketException e)
-                {
-                    Console.WriteLine(e);
-                }
-                finally
-                {
-                    listener.Close();
-                }
-
-            }).Start();
-
-            // Sender
-
-            new Thread(() =>
-            {
-
-                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-                IPAddress broadcast = IPAddress.Parse("192.168.1.255");
-
-                IPEndPoint ep = new IPEndPoint(broadcast, 11000);
-
-
-                while (true)
-                {
-                    byte[] sendbuf = Encoding.ASCII.GetBytes("Current ticks: " + DateTime.UtcNow.Ticks.ToString());
-                    s.SendTo(sendbuf, ep);
-                    Thread.Sleep((int)TIME_BETWEEN_UPDATES / 10000);
-                }
-
-            }).Start();
+           
 
             // Game loop
 

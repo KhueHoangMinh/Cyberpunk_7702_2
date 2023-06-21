@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Net.Sockets;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +16,7 @@ namespace Cyberpunk77022
     public class GameStage : Stage
     {
         Player player;
+        Player enemy;
         List<Enemy> enemies;
         List<Ground> grounds;
         List<Bullet> bullets;
@@ -29,17 +32,19 @@ namespace Cyberpunk77022
         int round = 0;
         long _clearAt;
         bool _resting = true;
-        long _restTime = 1000000;
+        long _restTime = 5000000;
         Button pauseBtn;
         Button resumeBtn;
         Button quitBtn;
         Color _background;
         bool paused = false;
+        bool server = true;
 
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
             player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();
@@ -58,31 +63,118 @@ namespace Cyberpunk77022
             this.Manager.Score = 0;
             _background = Color.Black;
             _background.A = 0.5f;
+
+            // Listener
+
+            new Thread(() =>
+            {
+                const int listenPort = 11000;
+
+                UdpClient listener = new UdpClient(listenPort);
+                IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
+
+                try
+                {
+                    while (true)
+                    {
+                        Console.WriteLine("Waiting for broadcast");
+                        byte[] bytes = listener.Receive(ref groupEP);
+                        if (server)
+                        {
+
+                            string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
+                            Console.WriteLine($"Key pressed from {groupEP} : " + msg);
+                        }
+                        else
+                        {
+
+                            string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
+                            Console.WriteLine($"Data from from {groupEP} : " + msg);
+                        }
+                    }
+                }
+                catch (SocketException e)
+                {
+                    Console.WriteLine(e);
+                }
+                finally
+                {
+                    listener.Close();
+                }
+
+            }).Start();
+
+            // Sender
+
+            new Thread(() =>
+            {
+
+                Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+                IPAddress broadcast = IPAddress.Parse("192.168.1.255");
+
+                IPEndPoint ep = new IPEndPoint(broadcast, 11000);
+
+
+                if (server)
+                {
+                    while (true)
+                    {
+                        byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString());
+                        s.SendTo(sendbuf, ep);
+                        Thread.Sleep((int)12000 / 10000);
+                    }
+                }
+                else
+                {
+                    while (true)
+                    {
+                        if (SplashKit.KeyDown(KeyCode.AKey))
+                        {
+                            byte[] sendbuf = Encoding.ASCII.GetBytes("A");
+                            s.SendTo(sendbuf, ep);
+                        }
+                        else if (SplashKit.KeyDown(KeyCode.DKey))
+                        {
+                            byte[] sendbuf = Encoding.ASCII.GetBytes("D");
+                            s.SendTo(sendbuf, ep);
+                        }
+                        else
+                        if (SplashKit.KeyDown(KeyCode.WKey))
+                        {
+                            byte[] sendbuf = Encoding.ASCII.GetBytes("W");
+                            s.SendTo(sendbuf, ep);
+                        }
+                        Thread.Sleep((int)12000 / 10000);
+                    }
+                }
+
+            }).Start();
         }
 
         public override void Update()
         {
             if(!this.Closing && !paused)
             {
-                if(enemies.Count == 0)
-                {
-                    if(_resting)
-                    {
-                        round++;
-                        _clearAt = DateTime.UtcNow.Ticks;
-                        _resting = false;
-                    } else
-                    {
-                        if(DateTime.UtcNow.Ticks - _clearAt >= _restTime)
-                        {
-                            for(int i = 0; i < Math.Ceiling((decimal)round/3); i++)
-                            {
-                                enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10,1000), Y = new Random().Next(10, 100) }, 50, 50, Color.Red));
-                            }
-                            _resting = true;
-                        }
-                    }
-                }
+                //if(enemies.Count == 0)
+                //{
+                //    if(_resting)
+                //    {
+                //        round++;
+                //        _clearAt = DateTime.UtcNow.Ticks;
+                //        _resting = false;
+                //    } else
+                //    {
+                //        if(DateTime.UtcNow.Ticks - _clearAt >= _restTime)
+                //        {
+                //            for(int i = 0; i < Math.Ceiling((decimal)round/3); i++)
+                //            {
+                //                enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10,1000), Y = new Random().Next(10, 100) }, 50, 50, Color.Red));
+                //            }
+                //            _resting = true;
+                //        }
+                //    }
+                //}
                 foreach (Trace trace in traces)
                 {
                     trace.Update();
@@ -97,7 +189,8 @@ namespace Cyberpunk77022
                     bullets[i].Update();
                 }
                 player.Update(grounds, bullets);
-                if(player.Health <= 0) { 
+                enemy.Update(grounds, bullets);
+                if (player.Health <= 0) { 
                     this.EndGame();
                 }
 
@@ -182,6 +275,7 @@ namespace Cyberpunk77022
                 bullets[i].Draw();
             }
             player.Draw();
+            enemy.Draw();
             for (int i = 0; i < enemies.Count; i++)
             {
                 enemies[i].Draw();
@@ -192,6 +286,8 @@ namespace Cyberpunk77022
             }
             player.DrawHealth();
             player.DrawGun();
+            enemy.DrawHealth();
+            enemy.DrawGun();
 
             for (int i = 0; i < enemies.Count; i++)
             {

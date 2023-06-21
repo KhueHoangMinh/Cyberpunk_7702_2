@@ -53,7 +53,7 @@ namespace Cyberpunk77022
             this.Load("../../../userdata.txt");
 
             home = new HomeStage(this);
-            game = new GameStage(this);
+            //game = new GameStage(this);
             end = new EndStage(this);
             shop = new ShopStage(this, "home");
             currentStage = home;
