@@ -122,6 +122,19 @@ namespace Cyberpunk77022
 
                             string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
                             Console.WriteLine($"Key pressed from {groupEP} : " + msg);
+                            if (msg[0] == '1')
+                            {
+                                MovePlayer(enemy, 0);
+                            }
+                            else if (msg[1] == '1')
+                            {
+                                MovePlayer(enemy, 1);
+                            }
+                            else
+                            if (msg[2] == '1')
+                            {
+                                MovePlayer(enemy, 2);
+                            }
                         }
                         else
                         {
@@ -130,12 +143,13 @@ namespace Cyberpunk77022
                             Console.WriteLine($"Data from from {groupEP} : " + msg);
 
                             string[] received = ToDouble(msg);
-                            if (long.Parse(received[2]) > prevTicks)
+                            if (true)
                             {
                                 prevTicks = long.Parse(received[2]);
                                 player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
                             }
                         }
+                        Thread.Sleep((int)80000 / 10000);
                     }
                 }
                 catch (SocketException e)
@@ -166,35 +180,65 @@ namespace Cyberpunk77022
                     while (true)
                     {
                         byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString());
+                        if (SplashKit.KeyDown(KeyCode.AKey))
+                        {
+                            MovePlayer(player, 0);
+                        }
+                        else if (SplashKit.KeyDown(KeyCode.DKey))
+                        {
+                            MovePlayer(player, 1);
+                        }
+                        else
+                        if (SplashKit.KeyDown(KeyCode.WKey))
+                        {
+                            MovePlayer(player, 2);
+                        }
                         s.SendTo(sendbuf, ep);
-                        Thread.Sleep((int)0 / 10000);
+                        Thread.Sleep((int)80000 / 10000);
                     }
                 }
                 else
                 {
                     while (true)
                     {
+                        int dir1 = 0; int dir2 = 0; int dir3 = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
-                            byte[] sendbuf = Encoding.ASCII.GetBytes("A");
-                            s.SendTo(sendbuf, ep);
+                            dir1 = 1;
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
-                            byte[] sendbuf = Encoding.ASCII.GetBytes("D");
-                            s.SendTo(sendbuf, ep);
+                            dir2 = 1;
                         }
                         else
                         if (SplashKit.KeyDown(KeyCode.WKey))
                         {
-                            byte[] sendbuf = Encoding.ASCII.GetBytes("W");
-                            s.SendTo(sendbuf, ep);
+                            dir3 = 1;
                         }
-                        Thread.Sleep((int)0 / 10000);
+                        byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                        s.SendTo(sendbuf, ep);
+                        Thread.Sleep((int)80000 / 10000);
                     }
                 }
 
             }).Start();
+        }
+
+        public void MovePlayer(Player player, int dir)
+        {
+            if (dir == 0)
+            {
+                player.VelX -= player.A;
+            }
+            else if (dir == 1)
+            {
+                player.VelX += player.A;
+            }
+            if (dir == 2 && !player.Jumped)
+            {
+                player.VelY = -10;
+                player.Jumped = true;
+            }
         }
 
         public override void Update()

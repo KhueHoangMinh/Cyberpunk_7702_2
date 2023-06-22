@@ -110,19 +110,11 @@ namespace Cyberpunk77022
                 }
             }
             base.Gravity();
-            if(SplashKit.KeyDown(KeyCode.AKey))
+            if(_jumped)
             {
-                this.VelX -= _a;
-            } else if (SplashKit.KeyDown(KeyCode.DKey))
-            {
-                this.VelX += _a;
-            }
-            if (SplashKit.KeyDown(KeyCode.WKey) && !_jumped)
-            {
-                this.VelY = -10;
-                for(int i = 0; i < 3; i++)
+                for (int i = 0; i < 3; i++)
                 {
-                    switch(collide)
+                    switch (collide)
                     {
                         case "bottom":
                             _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
@@ -139,7 +131,7 @@ namespace Cyberpunk77022
                                 Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
                             }, Color.White));
                             break;
-                            
+
                         case "right":
                             _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
                             {
@@ -219,6 +211,17 @@ namespace Cyberpunk77022
         public GameStage Game
         {
             get { return _game; }
+        }
+
+        public float A
+        {
+            get { return -A;}
+        }
+
+        public bool Jumped
+        {
+            get { return _jumped; }
+            set { _jumped = value; }
         }
     }
 }
