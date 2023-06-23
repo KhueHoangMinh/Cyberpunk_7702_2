@@ -125,16 +125,17 @@ namespace Cyberpunk77022
                                 Console.WriteLine(msg);
                                 if (msg[0] == '1')
                                 {
-                                    MovePlayer(enemy, 0);
+                                    enemy.VelX -= 1;
                                 }
                                 else if (msg[1] == '1')
                                 {
-                                    MovePlayer(enemy, 1);
+                                    enemy.VelX -= 1;
                                 }
                                 else
-                                if (msg[2] == '1')
+                                if (msg[2] == '1' && !enemy.Jumped)
                                 {
-                                    MovePlayer(enemy, 2);
+                                    enemy.VelY = -10;
+                                    enemy.Jumped = true;
                                 }
                             }
                         }
@@ -187,16 +188,18 @@ namespace Cyberpunk77022
                         byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString()); 
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
-                            MovePlayer(player, 0);
+                            player.VelX -= 1;
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
-                            MovePlayer(player, 1);
+                            player.VelX += 1;
                         }
                         else
-                        if (SplashKit.KeyDown(KeyCode.WKey))
+                        if (SplashKit.KeyDown(KeyCode.WKey)
+                           && !player.Jumped)
                         {
-                            MovePlayer(player, 2);
+                            player.VelY = -10;
+                            player.Jumped = true;
                         }
                         s.SendTo(sendbuf, ep);
                         Thread.Sleep(15);
@@ -215,7 +218,6 @@ namespace Cyberpunk77022
                         {
                             dir2 = 1;
                         }
-                        else
                         if (SplashKit.KeyDown(KeyCode.WKey))
                         {
                             dir3 = 1;
