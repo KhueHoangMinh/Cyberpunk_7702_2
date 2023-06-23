@@ -129,9 +129,8 @@ namespace Cyberpunk77022
                                 }
                                 else if (msg[1] == '1')
                                 {
-                                    enemy.VelX -= 1;
+                                    enemy.VelX += 1;
                                 }
-                                else
                                 if (msg[2] == '1' && !enemy.Jumped)
                                 {
                                     enemy.VelY = -10;
@@ -200,7 +199,7 @@ namespace Cyberpunk77022
                             player.VelY = -10;
                             player.Jumped = true;
                         }
-                        s.SendTo(sendbuf, ep);
+                        //s.SendTo(sendbuf, ep);
                         Thread.Sleep(15);
                     }
                 }
