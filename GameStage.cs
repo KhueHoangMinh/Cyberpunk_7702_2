@@ -118,21 +118,24 @@ namespace Cyberpunk77022
                         byte[] bytes = listener.Receive(ref groupEP);
                         if (server)
                         {
-
-                            string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
-                            Console.WriteLine(msg);
-                            if (msg[0] == '1')
+                            
+                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                            if(msg.Length == 3)
                             {
-                                MovePlayer(enemy, 0);
-                            }
-                            else if (msg[1] == '1')
-                            {
-                                MovePlayer(enemy, 1);
-                            }
-                            else
-                            if (msg[2] == '1')
-                            {
-                                MovePlayer(enemy, 2);
+                                Console.WriteLine(msg);
+                                if (msg[0] == '1')
+                                {
+                                    MovePlayer(enemy, 0);
+                                }
+                                else if (msg[1] == '1')
+                                {
+                                    MovePlayer(enemy, 1);
+                                }
+                                else
+                                if (msg[2] == '1')
+                                {
+                                    MovePlayer(enemy, 2);
+                                }
                             }
                         }
                         else
