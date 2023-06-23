@@ -154,7 +154,7 @@ namespace Cyberpunk77022
                                 }
                             }
                         }
-                        Thread.Sleep((int)80000 / 10000);
+                        Thread.Sleep(15);
                     }
                 }
                 catch (SocketException e)
@@ -199,7 +199,7 @@ namespace Cyberpunk77022
                             MovePlayer(player, 2);
                         }
                         s.SendTo(sendbuf, ep);
-                        Thread.Sleep((int)80000 / 10000);
+                        Thread.Sleep(15);
                     }
                 }
                 else
@@ -222,7 +222,7 @@ namespace Cyberpunk77022
                         }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
                         s.SendTo(sendbuf, ep);
-                        Thread.Sleep((int)80000 / 10000);
+                        Thread.Sleep(15);
                     }
                 }
 
