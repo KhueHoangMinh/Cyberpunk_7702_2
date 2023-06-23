@@ -92,12 +92,15 @@ namespace Cyberpunk77022
 
                 long sequence = 0;
 
+                int mismatch = 0;
+
                 Queue<byte[]> buffer = new Queue<byte[]>();
 
                 try
                 {
                     while (true)
                     {
+
                         buffer.Enqueue(listener.Receive(ref groupEP));
                         if (server)
                         {
@@ -130,6 +133,8 @@ namespace Cyberpunk77022
                             string[] received = splitMsg(msg);
                             if (long.Parse(received[2]) > prevTicks)
                             {
+                                mismatch++;
+                                Console.WriteLine(mismatch.ToString());
                                 prevTicks = long.Parse(received[2]);
                                 player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
                             }
@@ -148,6 +153,7 @@ namespace Cyberpunk77022
                             //    player.Jumped = true;
                             //}
                         }
+                        sequence++;
                         Thread.Sleep(15);
                     }
                 }
@@ -209,6 +215,7 @@ namespace Cyberpunk77022
                         //    sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
                         //    s.SendTo(sendbuf, ep2);
                         //}
+                        sequence++;
                         Thread.Sleep(15);
                     }
                 }
@@ -239,6 +246,7 @@ namespace Cyberpunk77022
                             byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
                             s.SendTo(sendbuf, ep1);
                         }
+                        sequence++;
                         Thread.Sleep(15);
                     }
                 }
