@@ -122,7 +122,7 @@ namespace Cyberpunk77022
                             string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                             if(msg.Length == 3)
                             {
-                                Console.WriteLine(msg);
+                                Console.WriteLine("move enemy: " + msg);
                                 if (msg[0] == '1')
                                 {
                                     enemy.VelX -= 1;
@@ -141,8 +141,7 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-
-                            string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
+                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                             Console.WriteLine(msg);
 
                             if(msg.Length > 6)
@@ -222,8 +221,11 @@ namespace Cyberpunk77022
                         {
                             dir3 = 1;
                         }
-                        byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
-                        s.SendTo(sendbuf, ep);
+                        if(dir1 + dir2 +dir3 != 0)
+                        {
+                            byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                            s.SendTo(sendbuf, ep);
+                        }
                         Thread.Sleep(15);
                     }
                 }
