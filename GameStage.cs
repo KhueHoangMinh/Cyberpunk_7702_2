@@ -115,13 +115,12 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
-                        Console.WriteLine("Waiting for broadcast");
                         byte[] bytes = listener.Receive(ref groupEP);
                         if (server)
                         {
 
                             string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
-                            Console.WriteLine($"Key pressed from {groupEP} : " + msg);
+                            Console.WriteLine(msg);
                             if (msg[0] == '1')
                             {
                                 MovePlayer(enemy, 0);
@@ -140,13 +139,16 @@ namespace Cyberpunk77022
                         {
 
                             string msg = $" {Encoding.ASCII.GetString(bytes, 0, bytes.Length)}";
-                            Console.WriteLine($"Data from from {groupEP} : " + msg);
+                            Console.WriteLine(msg);
 
-                            string[] received = ToDouble(msg);
-                            if (true)
+                            if(msg.Length > 6)
                             {
-                                prevTicks = long.Parse(received[2]);
-                                player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                                string[] received = ToDouble(msg);
+                                if (true)
+                                {
+                                    prevTicks = long.Parse(received[2]);
+                                    player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                                }
                             }
                         }
                         Thread.Sleep((int)80000 / 10000);
@@ -179,7 +181,7 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
-                        byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString());
+                        byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString()); 
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             MovePlayer(player, 0);
