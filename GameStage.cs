@@ -127,9 +127,9 @@ namespace Cyberpunk77022
                         byte[] bytes = listener.Receive(ref groupEP);
                         if (server)
                         {
-                            
+
                             string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-                            if(msg.Length == 3)
+                            if (msg.Length == 3)
                             {
                                 Console.WriteLine("move enemy: " + msg);
                                 if (msg[0] == '1')
@@ -149,18 +149,35 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-                            //string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-                            //Console.WriteLine(msg);
+                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                            Console.WriteLine(msg);
 
-                            //if(msg.Length > 6)
-                            //{
-                            //    string[] received = ToDouble(msg);
-                            //    if (true)
-                            //    {
-                            //        prevTicks = long.Parse(received[2]);
-                            //        player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
-                            //    }
-                            //}
+                            if (msg.Length > 6)
+                            {
+                                string[] received = ToDouble(msg);
+                                if (true)
+                                {
+                                    prevTicks = long.Parse(received[2]);
+                                    player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                                }
+                            }
+                            if (msg.Length == 3)
+                            {
+                                Console.WriteLine("move player: " + msg);
+                                if (msg[0] == '1')
+                                {
+                                    player.VelX -= 1;
+                                }
+                                else if (msg[1] == '1')
+                                {
+                                    player.VelX += 1;
+                                }
+                                if (msg[2] == '1' && !enemy.Jumped)
+                                {
+                                    player.VelY = -10;
+                                    player.Jumped = true;
+                                }
+                            }
                         }
                         Thread.Sleep(15);
                     }
@@ -196,23 +213,31 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
+                        int dir1 = 0; int dir2 = 0; int dir3 = 0;
                         byte[] sendbuf = Encoding.ASCII.GetBytes(player.Pos.X.ToString() + " " + player.Pos.Y.ToString() + " " + DateTime.UtcNow.Ticks.ToString()); 
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
+                            dir1 = 1;
                             player.VelX -= 1;
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
+                            dir2 = 1;
                             player.VelX += 1;
                         }
-                        else
                         if (SplashKit.KeyDown(KeyCode.WKey)
                            && !player.Jumped)
                         {
+                            dir3 = 1;
                             player.VelY = -10;
                             player.Jumped = true;
                         }
-                        s.SendTo(sendbuf, ep2);
+                        //s.SendTo(sendbuf, ep2);
+                        if (dir1 + dir2 + dir3 != 0)
+                        {
+                            sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                            s.SendTo(sendbuf, ep2);
+                        }
                         Thread.Sleep(15);
                     }
                 }
