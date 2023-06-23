@@ -249,14 +249,18 @@ namespace Cyberpunk77022
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             dir1 = 1;
+                            enemy.VelX -= 1;
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
                             dir2 = 1;
+                            enemy.VelX += 1;
                         }
                         if (SplashKit.KeyDown(KeyCode.WKey))
                         {
                             dir3 = 1;
+                            enemy.VelY = -10;
+                            enemy.Jumped = true;
                         }
                         if(dir1 + dir2 +dir3 != 0)
                         {
