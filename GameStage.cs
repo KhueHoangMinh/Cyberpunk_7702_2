@@ -106,6 +106,15 @@ namespace Cyberpunk77022
             {
                 const int listenPort = 11000;
 
+
+                IPAddress broadcast = IPAddress.Parse("192.168.1.255");
+                IPAddress playerIP = IPAddress.Parse("192.168.1.8");
+                IPAddress hostIP = IPAddress.Parse("192.168.1.12");
+
+
+                IPEndPoint ep1 = new IPEndPoint(hostIP, 11000);
+                IPEndPoint ep2 = new IPEndPoint(playerIP, 11000);
+
                 UdpClient listener = new UdpClient(listenPort);
                 IPEndPoint groupEP = new IPEndPoint(IPAddress.Any, listenPort);
 
@@ -140,18 +149,18 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
-                            Console.WriteLine(msg);
+                            //string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                            //Console.WriteLine(msg);
 
-                            if(msg.Length > 6)
-                            {
-                                string[] received = ToDouble(msg);
-                                if (true)
-                                {
-                                    prevTicks = long.Parse(received[2]);
-                                    player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
-                                }
-                            }
+                            //if(msg.Length > 6)
+                            //{
+                            //    string[] received = ToDouble(msg);
+                            //    if (true)
+                            //    {
+                            //        prevTicks = long.Parse(received[2]);
+                            //        player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                            //    }
+                            //}
                         }
                         Thread.Sleep(15);
                     }
@@ -175,8 +184,12 @@ namespace Cyberpunk77022
                 Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
                 IPAddress broadcast = IPAddress.Parse("192.168.1.255");
+                IPAddress playerIP = IPAddress.Parse("192.168.1.8");
+                IPAddress hostIP = IPAddress.Parse("192.168.1.12");
 
-                IPEndPoint ep = new IPEndPoint(broadcast, 11000);
+
+                IPEndPoint ep1 = new IPEndPoint(hostIP, 11000);
+                IPEndPoint ep2 = new IPEndPoint(playerIP, 11000);
 
 
                 if (server)
@@ -199,7 +212,7 @@ namespace Cyberpunk77022
                             player.VelY = -10;
                             player.Jumped = true;
                         }
-                        //s.SendTo(sendbuf, ep);
+                        s.SendTo(sendbuf, ep2);
                         Thread.Sleep(15);
                     }
                 }
@@ -223,7 +236,7 @@ namespace Cyberpunk77022
                         if(dir1 + dir2 +dir3 != 0)
                         {
                             byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
-                            s.SendTo(sendbuf, ep);
+                            s.SendTo(sendbuf, ep1);
                         }
                         Thread.Sleep(15);
                     }
