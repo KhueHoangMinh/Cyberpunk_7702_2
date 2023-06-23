@@ -155,29 +155,29 @@ namespace Cyberpunk77022
                             if (msg.Length > 6)
                             {
                                 string[] received = ToDouble(msg);
-                                if (true)
+                                if (long.Parse(received[2]) > prevTicks)
                                 {
                                     prevTicks = long.Parse(received[2]);
                                     player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
                                 }
                             }
-                            //if (msg.Length == 3)
-                            //{
-                            //    Console.WriteLine("move player: " + msg);
-                            //    if (msg[0] == '1')
-                            //    {
-                            //        enemy.VelX -= 1;
-                            //    }
-                            //    else if (msg[1] == '1')
-                            //    {
-                            //        enemy.VelX += 1;
-                            //    }
-                            //    if (msg[2] == '1' && !enemy.Jumped)
-                            //    {
-                            //        enemy.VelY = -10;
-                            //        enemy.Jumped = true;
-                            //    }
-                            //}
+                            if (msg.Length == 3)
+                            {
+                                Console.WriteLine("move player: " + msg);
+                                if (msg[0] == '1')
+                                {
+                                    enemy.VelX -= 1;
+                                }
+                                else if (msg[1] == '1')
+                                {
+                                    enemy.VelX += 1;
+                                }
+                                if (msg[2] == '1' && !enemy.Jumped)
+                                {
+                                    enemy.VelY = -10;
+                                    enemy.Jumped = true;
+                                }
+                            }
                         }
                         Thread.Sleep(15);
                     }
@@ -233,11 +233,11 @@ namespace Cyberpunk77022
                             player.Jumped = true;
                         }
                         s.SendTo(sendbuf, ep2);
-                        //if (dir1 + dir2 + dir3 != 0)
-                        //{
-                        //    sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
-                        //    s.SendTo(sendbuf, ep2);
-                        //}
+                        if (dir1 + dir2 + dir3 != 0)
+                        {
+                            sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                            s.SendTo(sendbuf, ep2);
+                        }
                         Thread.Sleep(15);
                     }
                 }
