@@ -49,8 +49,10 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
-            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2-30, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();
@@ -134,21 +136,21 @@ namespace Cyberpunk77022
                             //Console.WriteLine("move player: " + msg);
                             if (received[3][0] == '1')
                             {
-                                player.VelX -= 1;
+                                enemy.VelX -= 1;
                             }
                             else if (received[3][1] == '1')
                             {
-                                player.VelX += 1;
+                                enemy.VelX += 1;
                             }
-                            if (received[3][2] == '1' && !player.Jumped)
+                            if (received[3][2] == '1' && !enemy.Jumped)
                             {
-                                player.VelY = -10;
-                                player.Jumped = true;
+                                enemy.VelY = -10;
+                                enemy.Jumped = true;
                             }
                             if (long.Parse(received[2]) > prevTicks)
                             {
                                 prevTicks = long.Parse(received[2]);
-                                player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
+                                enemy.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
                             }
                             else
                             {
