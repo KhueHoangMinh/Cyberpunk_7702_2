@@ -111,31 +111,18 @@ namespace Cyberpunk77022
 
                             string[] received = splitMsg(msg);
                             //Console.WriteLine("move player: " + msg);
-                            if (received[5] == "1")
+                            if (received[0][0] == '1')
                             {
-                                if (received[9][0] == '1')
-                                {
-                                    enemy.VelX -= 1;
-                                }
-                                else if (received[9][1] == '1')
-                                {
-                                    enemy.VelX += 1;
-                                }
-                                if (received[9][2] == '1' && !enemy.Jumped)
-                                {
-                                    enemy.VelY = -10;
-                                    enemy.Jumped = true;
-                                }
-                                if (long.Parse(received[8]) > prevTicks)
-                                {
-                                    prevTicks = long.Parse(received[8]);
-                                    enemy.Pos = new Point2D() { X = Double.Parse(received[6]), Y = Double.Parse(received[7]) };
-                                }
-                                else
-                                {
-                                    mismatch++;
-                                    Console.WriteLine(mismatch.ToString());
-                                }
+                                enemy.VelX -= 1;
+                            }
+                            else if (received[0][1] == '1')
+                            {
+                                enemy.VelX += 1;
+                            }
+                            if (received[0][2] == '1' && !enemy.Jumped)
+                            {
+                                enemy.VelY = -10;
+                                enemy.Jumped = true;
                             }
                         }
                         else
@@ -255,7 +242,7 @@ namespace Cyberpunk77022
                             player.Jumped = true;
                         }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
-                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() +
+                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString()
                             );
                         s.SendTo(sendbuf, ep2);
