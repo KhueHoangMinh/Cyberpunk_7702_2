@@ -131,27 +131,30 @@ namespace Cyberpunk77022
                             Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
+                            //Console.WriteLine("move player: " + msg);
+                            if (received[3][0] == '1')
+                            {
+                                player.VelX -= 1;
+                            }
+                            else if (received[3][1] == '1')
+                            {
+                                player.VelX += 1;
+                            }
+                            if (received[3][2] == '1' && !player.Jumped)
+                            {
+                                player.VelY = -10;
+                                player.Jumped = true;
+                            }
                             if (long.Parse(received[2]) > prevTicks)
                             {
-                                mismatch++;
-                                Console.WriteLine(mismatch.ToString());
                                 prevTicks = long.Parse(received[2]);
                                 player.Pos = new Point2D() { X = Double.Parse(received[0]), Y = Double.Parse(received[1]) };
                             }
-                            //Console.WriteLine("move player: " + msg);
-                            //if (received[3][0] == '1')
-                            //{
-                            //    player.VelX -= 1;
-                            //}
-                            //else if (received[3][1] == '1')
-                            //{
-                            //    player.VelX += 1;
-                            //}
-                            //if (received[3][2] == '1' && !player.Jumped)
-                            //{
-                            //    player.VelY = -10;
-                            //    player.Jumped = true;
-                            //}
+                            else
+                            {
+                                mismatch++;
+                                Console.WriteLine(mismatch.ToString());
+                            }
                         }
                         sequence++;
                         Thread.Sleep(15);
