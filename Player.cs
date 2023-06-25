@@ -20,6 +20,7 @@ namespace Cyberpunk77022
         float _maxHealth;
         float _minusHealth = 0;
         string _skill;
+        string collide = "no";
 
         Gun TakeGun(string name)
         {
@@ -80,7 +81,7 @@ namespace Cyberpunk77022
         public void Update(List<Ground> grounds, List<Bullet> bullets)
         {
             _jumped = true;
-            string collide = "no";
+            collide = "no";
             for (int i = 0; i < grounds.Count; i++)
             {
                 string isCollide = this.IsCollideAt(grounds[i]);
@@ -110,7 +111,33 @@ namespace Cyberpunk77022
                 }
             }
             base.Gravity();
-            if(_jumped)
+            VelX = VelX / 1.06f;
+            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
+            _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
+            if (SplashKit.MouseDown(MouseButton.LeftButton))
+            {
+                _PlayerGun.Shoot();
+            }
+        }
+
+        public void MoveLeft()
+        {
+            this.VelX -= _a;
+        }
+
+        public void MoveRight()
+        {
+            this.VelX += _a;
+        }
+
+        public void Jump()
+        {
+            if(!_jumped)
+            {
+                this.VelY = -10;
+                _jumped = true;
+            }
+            if (_jumped)
             {
                 for (int i = 0; i < 3; i++)
                 {
@@ -142,13 +169,6 @@ namespace Cyberpunk77022
 
                     }
                 }
-            }
-            VelX = VelX / 1.06f;
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
-            _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
-            if (SplashKit.MouseDown(MouseButton.LeftButton))
-            {
-                _PlayerGun.Shoot();
             }
         }
 
