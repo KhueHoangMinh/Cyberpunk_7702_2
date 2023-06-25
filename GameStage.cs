@@ -21,12 +21,16 @@ namespace Cyberpunk77022
         List<Ground> grounds;
         List<Bullet> bullets;
         Queue<MinusHealth> minusHealths;
+        Queue<MinusHealth> MinusHealthAdd;
         int MinusHealthPop = 0;
         Queue<Trace> traces;
+        Queue<Trace> TraceAdd;
         int TracePop = 0;
         Queue<Explosion> explosions;
+        Queue<Explosion> ExploAdd;
         int ExploPop = 0;
         Queue<Smoke> smokes;
+        Queue<Smoke> SmokeAdd;
         int SmokePop = 0;
         Camera camera;
         int round = 0;
@@ -55,15 +59,19 @@ namespace Cyberpunk77022
             //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
-            minusHealths = new Queue<MinusHealth>();
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = -50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
+            minusHealths = new Queue<MinusHealth>();
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
             smokes = new Queue<Smoke>();
+            MinusHealthAdd = new Queue<MinusHealth>();
+            TraceAdd = new Queue<Trace>();
+            ExploAdd = new Queue<Explosion>();
+            SmokeAdd = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
             pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-80, 80, 70, 70);
             resumeBtn = new Button("Resume", Color.Green, this.Manager.Window.Width / 2, this.Manager.Window.Height/2-50, 250, 150);
@@ -273,23 +281,6 @@ namespace Cyberpunk77022
             }).Start();
         }
 
-        public void MovePlayer(Player player, int dir)
-        {
-            if (dir == 0)
-            {
-                player.VelX -= player.A;
-            }
-            else if (dir == 1)
-            {
-                player.VelX += player.A;
-            }
-            if (dir == 2 && !player.Jumped)
-            {
-                player.VelY = -10;
-                player.Jumped = true;
-            }
-        }
-
         public override void Update()
         {
             if(!this.Closing && !paused)
@@ -313,6 +304,7 @@ namespace Cyberpunk77022
                 //        }
                 //    }
                 //}
+                if(TraceAdd.Count > 0) traces.Enqueue(TraceAdd.Dequeue());
                 foreach (Trace trace in traces)
                 {
                     trace.Update();
@@ -336,6 +328,7 @@ namespace Cyberpunk77022
                 {
                     enemies[i].Update(grounds, bullets);
                 }
+                if (SmokeAdd.Count > 0) smokes.Enqueue(SmokeAdd.Dequeue());
                 foreach (Smoke smoke in smokes)
                 {
                     smoke.Update();
@@ -345,6 +338,7 @@ namespace Cyberpunk77022
                     smokes.Dequeue();
                     SmokePop--;
                 }
+                if (ExploAdd.Count > 0) explosions.Enqueue(ExploAdd.Dequeue());
                 foreach (Explosion explosion in explosions)
                 {
                     explosion.Update();
@@ -354,6 +348,7 @@ namespace Cyberpunk77022
                     explosions.Dequeue();
                     ExploPop--;
                 }
+                if (MinusHealthAdd.Count > 0) minusHealths.Enqueue(MinusHealthAdd.Dequeue());
                 foreach (MinusHealth minusHealth in minusHealths)
                 {
                     minusHealth.Update();
@@ -504,7 +499,7 @@ namespace Cyberpunk77022
 
         public void AddTrace(Trace trace)
         {
-            traces.Enqueue(trace);
+            TraceAdd.Enqueue(trace);
         }
 
         public void RemoveTrace()
@@ -513,7 +508,7 @@ namespace Cyberpunk77022
         }
         public void AddExplosion(Explosion explosion)
         {
-            explosions.Enqueue(explosion);
+            ExploAdd.Enqueue(explosion);
         }
 
         public void RemoveExplosion()
@@ -522,7 +517,7 @@ namespace Cyberpunk77022
         }
         public void AddSmoke(Smoke smoke)
         {
-            smokes.Enqueue(smoke);
+            SmokeAdd.Enqueue(smoke);
         }
 
         public void RemoveSmoke()
@@ -531,7 +526,7 @@ namespace Cyberpunk77022
         }
         public void AddMinusHealth(MinusHealth minusHealth)
         {
-            minusHealths.Enqueue(minusHealth);
+            MinusHealthAdd.Enqueue(minusHealth);
         }
 
         public void RemoveMinusHealth()
