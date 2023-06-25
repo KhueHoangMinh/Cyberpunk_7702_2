@@ -113,16 +113,15 @@ namespace Cyberpunk77022
                             //Console.WriteLine("move player: " + msg);
                             if (received[0][0] == '1')
                             {
-                                enemy.VelX -= 1;
+                                enemy.MoveLeft();
                             }
                             else if (received[0][1] == '1')
                             {
-                                enemy.VelX += 1;
+                                enemy.MoveRight();
                             }
                             if (received[0][2] == '1' && !enemy.Jumped)
                             {
-                                enemy.VelY = -10;
-                                enemy.Jumped = true;
+                                enemy.Jump();
                             }
                         }
                         else
@@ -137,20 +136,19 @@ namespace Cyberpunk77022
                             {
                                 if (received[4][0] == '1')
                                 {
-                                    enemy.VelX -= 1;
+                                    enemy.MoveLeft();
                                 }
                                 else if (received[4][1] == '1')
                                 {
-                                    enemy.VelX += 1;
+                                    enemy.MoveRight();
                                 }
-                                if (received[4][2] == '1' && !enemy.Jumped)
+                                if (received[4][2] == '1')
                                 {
-                                    enemy.VelY = -10;
-                                    enemy.Jumped = true;
+                                    enemy.Jump();
                                 }
                                 if (long.Parse(received[3]) > prevTicks)
                                 {
-                                    prevTicks = long.Parse(received[2]);
+                                    //prevTicks = long.Parse(received[2]);
                                     enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                 }
                                 else
@@ -161,19 +159,6 @@ namespace Cyberpunk77022
                             }
                             if (received[5] == "1")
                             {
-                                if (received[9][0] == '1')
-                                {
-                                    player.VelX -= 1;
-                                }
-                                else if (received[9][1] == '1')
-                                {
-                                    player.VelX += 1;
-                                }
-                                if (received[9][2] == '1' && !player.Jumped)
-                                {
-                                    player.VelY = -10;
-                                    player.Jumped = true;
-                                }
                                 if (long.Parse(received[8]) > prevTicks)
                                 {
                                     prevTicks = long.Parse(received[8]);
@@ -187,7 +172,7 @@ namespace Cyberpunk77022
                             }
                         }
                         sequence++;
-                        Thread.Sleep(15);
+                        //Thread.Sleep(15);
                     }
                 }
                 catch (SocketException e)
@@ -227,30 +212,28 @@ namespace Cyberpunk77022
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             dir1 = 1;
-                            player.VelX -= 1;
+                            player.MoveLeft();
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
                             dir2 = 1;
-                            player.VelX += 1;
+                            player.MoveRight();
                         }
-                        if (SplashKit.KeyDown(KeyCode.WKey)
-                           && !player.Jumped)
+                        if (SplashKit.KeyDown(KeyCode.WKey))
                         {
                             dir3 = 1;
-                            player.VelY = -10;
-                            player.Jumped = true;
+                            player.Jump();
                         }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
                             "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
-                            "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString()
+                            "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
                             );
                         s.SendTo(sendbuf, ep2);
-                        //if (dir1 + dir2 + dir3 != 0)
-                        //{
-                        //    sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
-                        //    s.SendTo(sendbuf, ep2);
-                        //}
+                        if (dir1 + dir2 + dir3 != 0)
+                        {
+                            //sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                            //s.SendTo(sendbuf, ep2);
+                        }
                         sequence++;
                         Thread.Sleep(15);
                     }
@@ -263,19 +246,17 @@ namespace Cyberpunk77022
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             dir1 = 1;
-                            player.VelX -= 1;
+                            player.MoveLeft();
                         }
                         else if (SplashKit.KeyDown(KeyCode.DKey))
                         {
                             dir2 = 1;
-                            player.VelX += 1;
+                            player.MoveRight();
                         }
-                        if (SplashKit.KeyDown(KeyCode.WKey)
-                           && !player.Jumped)
+                        if (SplashKit.KeyDown(KeyCode.WKey))
                         {
                             dir3 = 1;
-                            player.VelY = -10;
-                            player.Jumped = true;
+                            player.Jump();
                         }
                         //byte[] sendbuf = Encoding.ASCII.GetBytes("1" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString());
                         //s.SendTo(sendbuf, ep1);
@@ -484,6 +465,11 @@ namespace Cyberpunk77022
         public Player GetPlayer
         {
             get { return player; }
+        }
+
+        public Player Enemy
+        {
+            get { return enemy; }
         }
 
         public List<Ground> Grounds { 
