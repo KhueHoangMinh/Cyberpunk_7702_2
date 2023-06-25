@@ -57,6 +57,7 @@ namespace Cyberpunk77022
             enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
             //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            enemy.HostControl = false;
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 100, Color.Brown));
@@ -131,6 +132,7 @@ namespace Cyberpunk77022
                             {
                                 enemy.Jump();
                             }
+                            enemy.Gun.AimPoint = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                         }
                         else
                         {
@@ -158,6 +160,7 @@ namespace Cyberpunk77022
                                 {
                                     //prevTicks = long.Parse(received[2]);
                                     enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                    enemy.Gun.AimPoint = new Point2D() { X = Double.Parse(received[5]), Y = Double.Parse(received[6]) };
                                 }
                                 else
                                 {
@@ -165,12 +168,12 @@ namespace Cyberpunk77022
                                     Console.WriteLine(mismatch.ToString());
                                 }
                             }
-                            if (received[5] == "1")
+                            if (received[7] == "1")
                             {
-                                if (long.Parse(received[8]) > prevTicks)
+                                if (long.Parse(received[10]) > prevTicks)
                                 {
-                                    prevTicks = long.Parse(received[8]);
-                                    player.Pos = new Point2D() { X = Double.Parse(received[6]), Y = Double.Parse(received[7]) };
+                                    prevTicks = long.Parse(received[10]);
+                                    player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                 }
                                 else
                                 {
@@ -234,7 +237,10 @@ namespace Cyberpunk77022
                         }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
                             "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
+                             "," + SplashKit.MousePosition().X.ToString() + "," + SplashKit.MousePosition().Y.ToString() + "," +
+
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
+
                             );
                         s.SendTo(sendbuf, ep2);
                         if (dir1 + dir2 + dir3 != 0)
@@ -266,13 +272,16 @@ namespace Cyberpunk77022
                             dir3 = 1;
                             player.Jump();
                         }
-                        //byte[] sendbuf = Encoding.ASCII.GetBytes("1" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString());
-                        //s.SendTo(sendbuf, ep1);
-                        if(dir1 + dir2 + dir3 != 0)
-                        {
-                            byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
-                            s.SendTo(sendbuf, ep1);
-                        }
+                        byte[] sendbuf = Encoding.ASCII.GetBytes(
+                            //"1" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + 
+                            dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
+                            SplashKit.MousePosition().X.ToString() + "," + SplashKit.MousePosition().Y.ToString());
+                        s.SendTo(sendbuf, ep1);
+                        //if(dir1 + dir2 + dir3 != 0)
+                        //{
+                        //    byte[] sendbuf = Encoding.ASCII.GetBytes(dir1.ToString() + dir2.ToString() + dir3.ToString());
+                        //    s.SendTo(sendbuf, ep1);
+                        //}
                         sequence++;
                         Thread.Sleep(15);
                     }

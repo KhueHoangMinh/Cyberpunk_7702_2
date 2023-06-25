@@ -70,7 +70,7 @@ namespace Cyberpunk77022
         }
         public virtual void Update(Point2D aimPoint)
         {
-            _aimPoint = aimPoint;
+            if((GunOf as Player).HostControl) _aimPoint = aimPoint;
             //float a = (float)(_aimPoint.X - _GunOf.Pos.X);
             //float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
             //float c = (float)Math.Sqrt(a * a + b * b);
@@ -189,6 +189,10 @@ namespace Cyberpunk77022
             {
                 return _aimPoint;
             }
+            set
+            {
+                _aimPoint = value;
+            }
         }
 
         public Object GunOf
@@ -243,5 +247,6 @@ namespace Cyberpunk77022
         {
             get { return _damage; }
         }
+
     }
 }

@@ -21,6 +21,7 @@ namespace Cyberpunk77022
         float _minusHealth = 0;
         string _skill;
         string collide = "no";
+        bool _hostControl = true;
 
         Gun TakeGun(string name)
         {
@@ -242,6 +243,11 @@ namespace Cyberpunk77022
         {
             get { return _jumped; }
             set { _jumped = value; }
+        }
+        public bool HostControl
+        {
+            get { return _hostControl; }
+            set { _hostControl = value; }
         }
     }
 }
