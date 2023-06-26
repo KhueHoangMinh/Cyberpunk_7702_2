@@ -18,12 +18,16 @@ namespace Cyberpunk77022
         List<Ground> grounds;
         List<Bullet> bullets;
         Queue<MinusHealth> minusHealths;
+        Queue<MinusHealth> MinusHealthAdd;
         int MinusHealthPop = 0;
         Queue<Trace> traces;
+        Queue<Trace> TraceAdd;
         int TracePop = 0;
         Queue<Explosion> explosions;
+        Queue<Explosion> ExploAdd;
         int ExploPop = 0;
         Queue<Smoke> smokes;
+        Queue<Smoke> SmokeAdd;
         int SmokePop = 0;
         Camera camera;
         int round = 0;
@@ -51,6 +55,10 @@ namespace Cyberpunk77022
             traces = new Queue<Trace>();
             explosions = new Queue<Explosion>();
             smokes = new Queue<Smoke>();
+            MinusHealthAdd = new Queue<MinusHealth>();
+            TraceAdd = new Queue<Trace>();
+            ExploAdd = new Queue<Explosion>();
+            SmokeAdd = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
             pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-80, 80, 70, 70);
             resumeBtn = new Button("Resume", Color.Green, this.Manager.Window.Width / 2, this.Manager.Window.Height/2-50, 250, 150);
@@ -77,12 +85,23 @@ namespace Cyberpunk77022
                         {
                             for(int i = 0; i < Math.Ceiling((decimal)round/3); i++)
                             {
-                                enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10,1000), Y = new Random().Next(10, 100) }, 50, 50, Color.Red));
+                                int rand = new Random().Next(1, 10);
+                                if (rand < 4)
+                                {
+                                    enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                } else if(rand > 4 && rand < 8)
+                                {
+                                    enemies.Add(new FlyEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                } else
+                                {
+                                    enemies.Add(new BigEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                }
                             }
                             _resting = true;
                         }
                     }
                 }
+                while (TraceAdd.Count > 0) traces.Enqueue(TraceAdd.Dequeue());
                 foreach (Trace trace in traces)
                 {
                     trace.Update();
@@ -105,6 +124,7 @@ namespace Cyberpunk77022
                 {
                     enemies[i].Update(grounds, bullets);
                 }
+                while (SmokeAdd.Count > 0) smokes.Enqueue(SmokeAdd.Dequeue());
                 foreach (Smoke smoke in smokes)
                 {
                     smoke.Update();
@@ -114,6 +134,7 @@ namespace Cyberpunk77022
                     smokes.Dequeue();
                     SmokePop--;
                 }
+                while (ExploAdd.Count > 0) explosions.Enqueue(ExploAdd.Dequeue());
                 foreach (Explosion explosion in explosions)
                 {
                     explosion.Update();
@@ -127,6 +148,7 @@ namespace Cyberpunk77022
                 {
                     minusHealth.Update();
                 }
+                while (MinusHealthAdd.Count > 0) minusHealths.Enqueue(MinusHealthAdd.Dequeue());
                 while (MinusHealthPop > 0 && minusHealths.Count > 0)
                 {
                     minusHealths.Dequeue();
@@ -263,9 +285,10 @@ namespace Cyberpunk77022
             this.Manager.Score++;
         }
 
+
         public void AddTrace(Trace trace)
         {
-            traces.Enqueue(trace);
+            TraceAdd.Enqueue(trace);
         }
 
         public void RemoveTrace()
@@ -274,7 +297,7 @@ namespace Cyberpunk77022
         }
         public void AddExplosion(Explosion explosion)
         {
-            explosions.Enqueue(explosion);
+            ExploAdd.Enqueue(explosion);
         }
 
         public void RemoveExplosion()
@@ -283,7 +306,7 @@ namespace Cyberpunk77022
         }
         public void AddSmoke(Smoke smoke)
         {
-            smokes.Enqueue(smoke);
+            SmokeAdd.Enqueue(smoke);
         }
 
         public void RemoveSmoke()
@@ -292,7 +315,7 @@ namespace Cyberpunk77022
         }
         public void AddMinusHealth(MinusHealth minusHealth)
         {
-            minusHealths.Enqueue(minusHealth);
+            MinusHealthAdd.Enqueue(minusHealth);
         }
 
         public void RemoveMinusHealth()
