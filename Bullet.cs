@@ -1,15 +1,17 @@
 ﻿using SplashKitSDK;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Cyberpunk77022
 {
-    public class Bullet
+    public abstract class Bullet
     {
         GameStage _game;
         float _angle;
@@ -70,8 +72,6 @@ namespace Cyberpunk77022
             delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
             beta = (float)(_angle - Math.Atan(_width / _height));
             _damage = damage;
-            _trace = new Trace(_game, _game.Manager.Window, _camera, this);
-            _game.AddTrace(_trace);
         }
 
 
@@ -81,11 +81,7 @@ namespace Cyberpunk77022
             {
                 this.IsCollided = true;
                 _game.RemoveBullet(this);
-                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                {
-                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                }, this.Color));
+                Explode();
             }
 
             for (int j = 0; j < _game.Grounds.Count; j++)
@@ -93,12 +89,7 @@ namespace Cyberpunk77022
                 if (_game.Grounds[j].IsCollided(this.Pos))
                 {
                     this.IsCollided = true;
-                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                    }, this.Color));
-                    _game.RemoveBullet(this);
+                    Explode();
                     break;
                 }
             }
@@ -109,12 +100,7 @@ namespace Cyberpunk77022
                 {
                     this.IsCollided = true;
                     _game.Enemies[j].GetHit(this);
-                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                    }, this.Color));
-                    _game.RemoveBullet(this);
+                    Explode();
                     break;
                 }
             }
@@ -124,16 +110,21 @@ namespace Cyberpunk77022
             {
                 this.IsCollided = true;
                 _game.GetPlayer.GetHit(this);
-                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
-                {
-                    X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                    Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                }, this.Color));
-                _game.RemoveBullet(this);
+                Explode();
             }
         }
 
-        public void Update()
+        public virtual void Explode()
+        {
+            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+            {
+                X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
+                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+            }, this.Color));
+            _game.RemoveBullet(this);
+        }
+
+        public void MoveBullet()
         {
             float StartX = (float)_Pos.X;
             float StartY = (float)_Pos.Y;
@@ -142,7 +133,7 @@ namespace Cyberpunk77022
                 _Pos.X += checkUnitX;
                 _Pos.Y += checkUnitY;
                 CheckCollide();
-                if(this.IsCollided)
+                if (this.IsCollided)
                 {
                     break;
                 }
@@ -155,7 +146,12 @@ namespace Cyberpunk77022
             }
         }
 
-        public void Draw()
+        public virtual void Update()
+        {
+            MoveBullet();
+        }
+
+        public virtual void Draw()
         {
             //SplashKit.FillQuad(_color, calQuad());
             SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 5);
@@ -187,6 +183,11 @@ namespace Cyberpunk77022
                     }
                 }
             };
+        }
+
+        public GameStage Game
+        {
+            get { return _game; }
         }
 
         public bool IsCollided
@@ -223,10 +224,12 @@ namespace Cyberpunk77022
         public float Width
         {
             get { return _width; }
+            set { _width = value; }
         }
         public float Height
         {
             get { return _height; }
+            set { _height = value; }
         }
 
         public float Angle { 
@@ -234,7 +237,7 @@ namespace Cyberpunk77022
             set 
             { 
                 _angle = value;
-                _trace.ReCalAngle(_angle);
+                if(_trace != null) _trace.ReCalAngle(_angle);
                 sinAngle = (float)Math.Sin(_angle);
                 cosAngle = (float)Math.Cos(_angle);
                 _VelX = (float)(_speed * ((float)Math.Sin(_angle + Math.PI / 2)));
@@ -258,6 +261,7 @@ namespace Cyberpunk77022
         public Color Color
         {
             get { return _color; }
+            set { _color = value; }
         }
 
         public Gun Gun
@@ -271,6 +275,73 @@ namespace Cyberpunk77022
         public float Speed
         {
             get { return _speed; }
+        }
+    }
+
+    public class NormalBullet : Bullet
+    {
+        public NormalBullet(GameStage game, Gun gun, float range, float speed, float damage) : base(game, gun, range, speed, damage)
+        {
+            game.AddTrace(new Trace(game, game.Manager.Window, game.Camera, this));
+        }
+    }
+    public class RPGBullet : Bullet
+    {
+        float _explodeRange = 250;
+        public RPGBullet(GameStage game, Gun gun, float range, float speed, float damage) : base(game, gun, range, speed, damage)
+        {
+            this.Height = 50;
+            this.Width = 20;
+            this.Color = Color.DarkGray;
+        }
+
+        public override void Explode()
+        {
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(250, 275), 300, new Point2D()
+            {
+                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            }, this.Color));
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(200, 275), 300, new Point2D()
+            {
+                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            }, this.Color));
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(150, 175), 300, new Point2D()
+            {
+                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            }, this.Color));
+
+            for(int i = 0; i < this.Game.Enemies.Count; i++)
+            {
+                float dist = (float)((this.Pos.X - this.Game.Enemies[i].Pos.X) * (this.Pos.X - this.Game.Enemies[i].Pos.X) + (this.Pos.Y - this.Game.Enemies[i].Pos.Y) * (this.Pos.Y - this.Game.Enemies[i].Pos.Y));
+                if (dist < _explodeRange * _explodeRange)
+                {
+                    this.Game.Enemies[i].GetHit(this);
+                }
+            }
+
+            this.Game.RemoveBullet(this);
+        }
+
+        public override void Update()
+        {
+            base.MoveBullet();
+            for(int i = 0; i < 5; i++)
+            {
+                if(new Random().Next(0,20) < 4) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2,8), new Random().Next(20,30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White));
+            }
+        }
+
+        public override void Draw()
+        {
+            SplashKit.FillQuad(this.Color, calQuad());
+        }
+
+        public float ExplodeRange
+        {
+            get { return _explodeRange; }
         }
     }
 }

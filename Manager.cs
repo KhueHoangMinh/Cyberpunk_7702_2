@@ -39,6 +39,7 @@ namespace Cyberpunk77022
             SplashKit.LoadBitmap("gun4", "guns/gun4.png");
             SplashKit.LoadBitmap("gun5", "guns/gun5.png");
             SplashKit.LoadBitmap("gun6", "guns/gun6.png");
+            SplashKit.LoadBitmap("rpg", "guns/rpg.png");
 
             SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
             SplashKit.LoadSoundEffect("click", "click.mp3");
@@ -83,7 +84,7 @@ namespace Cyberpunk77022
                     bestScore = int.Parse(reader.ReadLine());
 
                     _userdata = new List<string>();
-                    for (int i = 0; i <= 14; i++)
+                    for (int i = 0; i <= 15; i++)
                     {
                         _userdata.Add(reader.ReadLine());
                     }
@@ -103,7 +104,7 @@ namespace Cyberpunk77022
                     writer.WriteLine("1000");
                 }
                 //writer.WriteLine("Weapon");
-                for (int i = 1; i <= 7; i++)
+                for (int i = 1; i <= 8; i++)
                 {
                     writer.WriteLine("0");
                 }
@@ -119,7 +120,7 @@ namespace Cyberpunk77022
                 }
                 writer.Close();
                 _userdata = new List<string>();
-                for (int i = 0; i <= 14; i++)
+                for (int i = 0; i <= 15; i++)
                 {
                     _userdata.Add("0");
                 }
@@ -136,17 +137,17 @@ namespace Cyberpunk77022
             writer.WriteLine(score.ToString());
             writer.WriteLine(bestScore.ToString());
 
-            for (int i = 0; i <= 6; i++)
+            for (int i = 0; i <= 7; i++)
             {
                 writer.WriteLine(_userdata[i]);
             }
 
-            for (int i = 7; i <= 12; i++)
+            for (int i = 8; i <= 13; i++)
             {
                 writer.WriteLine(_userdata[i]);
             }
 
-            for (int i = 13; i <= 14; i++)
+            for (int i = 14; i <= 15; i++)
             {
                 writer.WriteLine(_userdata[i]);
             }

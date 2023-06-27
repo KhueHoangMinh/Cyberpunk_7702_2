@@ -186,21 +186,40 @@ namespace Cyberpunk77022
         public void GetHit(Bullet bullet)
         {
             _minusHealth = _health;
-            _health -= bullet.Damage;
-            _minusHealth -= _health;
-            if(_health >= 0)
+            if (bullet is NormalBullet)
             {
-                aX = 10 * bullet.VelX / bullet.Speed;
-                aY = 10 * bullet.VelY / bullet.Speed;
-                aY -= 10;
-            } 
-            else
+                if (_health >= 0)
+                {
+                    aX = 10 * bullet.VelX / bullet.Speed;
+                    aY = 10 * bullet.VelY / bullet.Speed;
+                    aY -= 10;
+                }
+                else
+                {
+                    aX = 20 * bullet.VelX / bullet.Speed;
+                    aY = 20 * bullet.VelY / bullet.Speed;
+                    aY -= 20;
+                }
+                _health -= bullet.Damage;
+            } else if (bullet is RPGBullet)
             {
-                aX = 20 * bullet.VelX / bullet.Speed;
-                aY = 20 * bullet.VelY / bullet.Speed;
-                aY -= 20;
+                float scale = ((bullet as RPGBullet).ExplodeRange - (float)Math.Sqrt((this.Pos.X - bullet.Pos.X) * (this.Pos.X - bullet.Pos.X) + (this.Pos.Y - bullet.Pos.Y) * (this.Pos.Y - bullet.Pos.Y)))/ (bullet as RPGBullet).ExplodeRange;
+                if (_health >= 0)
+                {
+                    aX = scale * 50 * bullet.VelX / bullet.Speed;
+                    aY = scale * 50 * bullet.VelY / bullet.Speed;
+                    aY -= scale * 50;
+                }
+                else
+                {
+                    aX = scale * 70 * bullet.VelX / bullet.Speed;
+                    aY = scale * 70 * bullet.VelY / bullet.Speed;
+                    aY -= scale * 70;
+                }
+                _health -= (int) (scale * bullet.Damage);
             }
-            if(_alive) _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
+            _minusHealth -= _health;
+            if (_alive) _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
             //this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
 

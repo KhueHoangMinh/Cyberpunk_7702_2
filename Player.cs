@@ -37,6 +37,8 @@ namespace Cyberpunk77022
                     return new Sniper2(_game, this, 100);
                 case "Gun 6":
                     return new Shotgun1(_game, this, 30);
+                case "RPG":
+                    return new RPG(_game, this, 300);
                 default:
                     return new Pistol1(_game, this, 40);
             }

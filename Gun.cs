@@ -56,7 +56,7 @@ namespace Cyberpunk77022
                 Dest = _window,
                 ScaleX = scale,
                 ScaleY = scale,
-                AnchorOffsetX = -pistol.Width/2,
+                AnchorOffsetX = 0,
                 AnchorOffsetY = 0,
                 Angle = 0,
             };
@@ -94,24 +94,24 @@ namespace Cyberpunk77022
             {
                 nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
                 nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                _pos.X = -(pistol.Width - _DisplayWidth) / 2 - _butt;
                 drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = false;
-                drawingOptions.AnchorOffsetX = (-pistol.Width + _butt) / 2;
-                _pos.X = (pistol.Width - _DisplayWidth) / 2 + _butt;
-                _basePoint.X = _GunOf.Pos.X - _pos.X;
-                _basePoint.Y = _GunOf.Pos.Y - _pos.Y - pistol.Height * scale / 2;
+                drawingOptions.AnchorOffsetX = -pistol.Width / 2 + _butt / scale;
             }
             else
             {
                 nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
                 nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                _pos.X = -(pistol.Width - _DisplayWidth) / 2 - _DisplayWidth + _butt;
                 drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
                 drawingOptions.FlipY = true;
-                drawingOptions.AnchorOffsetX = (pistol.Width - _butt) / 2;
-                _pos.X = (pistol.Width - _DisplayWidth) / 2 - _butt;
-                _basePoint.X = _GunOf.Pos.X - _pos.X - _DisplayWidth;
-                _basePoint.Y = _GunOf.Pos.Y - _pos.Y - pistol.Height * scale / 2;
+                drawingOptions.AnchorOffsetX = pistol.Width / 2 - _butt / scale;
             }
+            _pos.Y = -(pistol.Height) / 2;
+            _basePoint.X = _GunOf.Pos.X + _pos.X;
+            _basePoint.Y = _GunOf.Pos.Y + _pos.Y;
+
             if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
             { 
                 smoking = true;
@@ -140,7 +140,19 @@ namespace Cyberpunk77022
         }
         public virtual void Draw()
         {
-            SplashKit.DrawBitmapOnWindow(_window, pistol,_basePoint.X - _camera.Pos.X, _basePoint.Y - _camera.Pos.Y, drawingOptions);
+            SplashKit.DrawBitmap(pistol,_basePoint.X - _camera.Pos.X, _basePoint.Y - _camera.Pos.Y, drawingOptions);
+            //SplashKit.DrawBitmap(pistol, _GunOf.Pos.X - _camera.Pos.X - (pistol.Width - _DisplayWidth) / 2 -_butt, _GunOf.Pos.Y - _camera.Pos.Y - (pistol.Height + pistol.Height * scale) / 2,
+            //   new DrawingOptions()
+            //   {
+            //       Dest = _window,
+            //       ScaleX = scale,
+            //       ScaleY = scale,
+            //       //FlipY = true,
+            //       AnchorOffsetX = -pistol.Width / 2 + _butt,
+            //       AnchorOffsetY = -pistol.Height / 2,
+            //       Angle = -50,
+            //   }
+            //); ;
         }
 
         public virtual void Shoot()
@@ -164,7 +176,7 @@ namespace Cyberpunk77022
 
         public virtual void ShootAction()
         {
-            Bullet NewBullet = new Bullet(_game, this, 800, _speed, _damage);
+            Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage);
             for (int i = 0; i < 3; i++)
             {
                 _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()

@@ -396,7 +396,7 @@ namespace Cyberpunk77022
         public ShopStage(Manager manager, string prevState) : base(manager)
         {
 
-            WeaponBrief[] weaponList = new WeaponBrief[7]
+            WeaponBrief[] weaponList = new WeaponBrief[8]
             {
                 new WeaponBrief("weapon","Default Gun","A pistol",0,1,"default"),
                 new WeaponBrief("weapon","Gun 1","A pistol",10,0,"gun1"),
@@ -405,6 +405,7 @@ namespace Cyberpunk77022
                 new WeaponBrief("weapon","Gun 4","A pistol",40,0,"gun4"),
                 new WeaponBrief("weapon","Gun 5","A pistol",60,0,"gun5"),
                 new WeaponBrief("weapon","Gun 6","A pistol",150,0,"gun6"),
+                new WeaponBrief("weapon","RPG","A RPG",150,0,"rpg"),
             };
 
             SkinBrief[] skinList = new SkinBrief[6]
@@ -443,7 +444,7 @@ namespace Cyberpunk77022
         {
             for(int i = 0; i < this.Manager.UserData.Count; i++)
             {
-                if(i < 7)
+                if(i < 8)
                 {
                     switch (this.Manager.UserData[i])
                     {
@@ -458,33 +459,33 @@ namespace Cyberpunk77022
                             this.Manager.Gun = weaponPage.Items[i]._name;
                             break;
                     }
-                } else if (i > 6 && i < 13)
+                } else if (i > 7 && i < 14)
                 {
                     switch (this.Manager.UserData[i])
                     {
                         case "0":
-                            skinPage.Items[i - 7].State = "not_purchased";
+                            skinPage.Items[i - 8].State = "not_purchased";
                             break;
                         case "1":
-                            skinPage.Items[i - 7].State = "purchased";
+                            skinPage.Items[i - 8].State = "purchased";
                             break;
                         case "2":
-                            skinPage.Items[i - 7].State = "selected";
+                            skinPage.Items[i - 8].State = "selected";
                             this.Manager.Skin = skinPage.Items[i - 7]._name;
                             break;
                     }
-                } else if ( i > 12 && i < 15)
+                } else if ( i > 13 && i < 16)
                 {
                     switch (this.Manager.UserData[i])
                     {
                         case "0":
-                            skillPage.Items[i - 13].State = "not_purchased";
+                            skillPage.Items[i - 14].State = "not_purchased";
                             break;
                         case "1":
-                            skillPage.Items[i - 13].State = "purchased";
+                            skillPage.Items[i - 14].State = "purchased";
                             break;
                         case "2":
-                            skillPage.Items[i - 13].State = "selected";
+                            skillPage.Items[i - 14].State = "selected";
                             this.Manager.Skill = skillPage.Items[i - 13]._name;
                             break;
                     }

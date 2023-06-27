@@ -46,7 +46,7 @@ namespace Cyberpunk77022
                     manager.Draw();
                     SplashKit.RefreshScreen();
                 }
-                SplashKit.Delay((uint)TIME_BETWEEN_UPDATES / 10000);
+                SplashKit.Delay((uint)(TIME_BETWEEN_UPDATES / 10000));
             } while (
                 !SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey)
             );
