@@ -132,6 +132,10 @@ namespace Cyberpunk77022
                             {
                                 enemy.Jump();
                             }
+                            if (received[0][3] == '1')
+                            {
+                                enemy.Gun.Shoot();
+                            }
                             enemy.Gun.AimPoint = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                         }
                         else
