@@ -156,6 +156,10 @@ namespace Cyberpunk77022
                                 {
                                     enemy.Jump();
                                 }
+                                if (received[4][3] == '1')
+                                {
+                                    enemy.Gun.Shoot();
+                                }
                                 if (long.Parse(received[3]) > prevTicks)
                                 {
                                     //prevTicks = long.Parse(received[2]);
@@ -219,7 +223,7 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
-                        int dir1 = 0; int dir2 = 0; int dir3 = 0;
+                        int dir1 = 0; int dir2 = 0; int dir3 = 0; int shoot = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             dir1 = 1;
@@ -235,8 +239,13 @@ namespace Cyberpunk77022
                             dir3 = 1;
                             player.Jump();
                         }
+                        if (SplashKit.MouseDown(MouseButton.LeftButton))
+                        {
+                            shoot = 1;
+                            player.Gun.Shoot();
+                        }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
-                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
+                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + shoot.ToString() + "," +
                             (SplashKit.MousePosition().X + camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y + camera.Pos.Y).ToString() + "," +
 
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
@@ -256,7 +265,7 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
-                        int dir1 = 0; int dir2 = 0; int dir3 = 0;
+                        int dir1 = 0; int dir2 = 0; int dir3 = 0; int shoot = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
                             dir1 = 1;
@@ -272,9 +281,14 @@ namespace Cyberpunk77022
                             dir3 = 1;
                             player.Jump();
                         }
+                        if (SplashKit.MouseDown(MouseButton.LeftButton))
+                        {
+                            shoot = 1;
+                            player.Gun.Shoot();
+                        }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
                             //"1" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + 
-                            dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
+                            dir1.ToString() + dir2.ToString() + dir3.ToString() + shoot.ToString() + "," +
                            (SplashKit.MousePosition().X + camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y + camera.Pos.Y).ToString());
                         s.SendTo(sendbuf, ep1);
                         //if(dir1 + dir2 + dir3 != 0)

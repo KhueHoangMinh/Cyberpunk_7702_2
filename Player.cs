@@ -115,10 +115,6 @@ namespace Cyberpunk77022
             VelX = VelX / 1.06f;
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
             _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
-            if (SplashKit.MouseDown(MouseButton.LeftButton))
-            {
-                _PlayerGun.Shoot();
-            }
         }
 
         public void MoveLeft()
