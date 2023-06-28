@@ -237,7 +237,7 @@ namespace Cyberpunk77022
                         }
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
                             "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
-                            (SplashKit.MousePosition().X - camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y - camera.Pos.Y).ToString() + "," +
+                            (SplashKit.MousePosition().X + camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y + camera.Pos.Y).ToString() + "," +
 
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
 
@@ -275,7 +275,7 @@ namespace Cyberpunk77022
                         byte[] sendbuf = Encoding.ASCII.GetBytes(
                             //"1" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," + 
                             dir1.ToString() + dir2.ToString() + dir3.ToString() + "," +
-                           (SplashKit.MousePosition().X - camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y - camera.Pos.Y).ToString());
+                           (SplashKit.MousePosition().X + camera.Pos.X).ToString() + "," + (SplashKit.MousePosition().Y + camera.Pos.Y).ToString());
                         s.SendTo(sendbuf, ep1);
                         //if(dir1 + dir2 + dir3 != 0)
                         //{

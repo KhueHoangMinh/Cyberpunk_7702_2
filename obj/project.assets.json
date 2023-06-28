@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\msys64\\home\\hoang\\Cyberpunk77022\\Cyberpunk77022.csproj",
+      "projectUniqueName": "C:\\msys64\\home\\hoang\\Cyberpunk77022_server\\Cyberpunk77022.csproj",
       "projectName": "Cyberpunk77022",
-      "projectPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022\\Cyberpunk77022.csproj",
+      "projectPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022_server\\Cyberpunk77022.csproj",
       "packagesPath": "C:\\Users\\hoang\\.nuget\\packages\\",
-      "outputPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022\\obj\\",
+      "outputPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022_server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\hoang\\AppData\\Roaming\\NuGet\\NuGet.Config",
