@@ -3,20 +3,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
-    public abstract class Gun
+    public abstract class Gun : ShopItem
     {
         Object _GunOf;
         Camera _camera;
         Window _window;
         SoundEffect singleshot;
-        Bitmap pistol;
+        Bitmap _graphic;
         Point2D _pos;
         DrawingOptions drawingOptions;
+        DrawingOptions shopDrawingOption;
         float _DisplayWidth;
         float scale;
         GameStage _game;
@@ -37,20 +41,29 @@ namespace Cyberpunk77022
         float _initVelX;
         float _initVelY;
         int _smokeDensity = 30;
+        string _name;
+        string _id;
+        string _desc;
+        int _price;
+        bool purchased = false;
 
-        public Gun(GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
+        public Gun(string name, string id, string desc, int price, GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
         {
+            _name = name;
+            _id = id;
+            _desc = desc;
             _game = game;
+            _price = price;
             _window = game.Manager.Window;
             _GunOf = GunOf;
             _camera = game.Camera;
             singleshot = SplashKit.SoundEffectNamed(soundName);
-            pistol = SplashKit.BitmapNamed(bitmapName);
+            _graphic = SplashKit.BitmapNamed(bitmapName);
             _DisplayWidth = DisplayWidth;
             _butt = butt;
             _nozzleLength = _DisplayWidth - _butt;
-            scale = (float)(_DisplayWidth / pistol.Width);
-            _pos = new Point2D() { X = (pistol.Width - _DisplayWidth)/2, Y = (pistol.Height - pistol.Height*scale) / 2, };
+            scale = (float)(_DisplayWidth / _graphic.Width);
+            _pos = new Point2D() { X = (_graphic.Width - _DisplayWidth)/2, Y = (_graphic.Height - _graphic.Height*scale) / 2, };
             drawingOptions = new DrawingOptions()
             {
                 Dest = _window,
@@ -59,6 +72,52 @@ namespace Cyberpunk77022
                 AnchorOffsetX = 0,
                 AnchorOffsetY = 0,
                 Angle = 0,
+            }; 
+            float shopScale = 300 * 1.0f / _graphic.Width;
+            shopDrawingOption = new DrawingOptions()
+            {
+                Dest = game.Manager.Window,
+                ScaleX = shopScale,
+                ScaleY = shopScale,
+            };
+            _ShootTime = 999999999;
+            _aimPoint = new Point2D();
+            nozzle = new Point2D();
+            _basePoint = new Point2D();
+            _damage = damage;
+            _fireRate = fireRate;
+            _recoil = recoil;
+        }
+
+        public Gun(string name, string id, string desc, int price, Window window, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
+        {
+            _name = name;
+            _id = id;
+            _desc = desc;
+            _price = price;
+            _GunOf = GunOf;
+            singleshot = SplashKit.SoundEffectNamed(soundName);
+            _graphic = SplashKit.BitmapNamed(bitmapName);
+            _DisplayWidth = DisplayWidth;
+            _butt = butt;
+            _nozzleLength = _DisplayWidth - _butt;
+            scale = (float)(_DisplayWidth / _graphic.Width);
+            _pos = new Point2D() { X = (_graphic.Width - _DisplayWidth) / 2, Y = (_graphic.Height - _graphic.Height * scale) / 2, };
+            drawingOptions = new DrawingOptions()
+            {
+                Dest = _window,
+                ScaleX = scale,
+                ScaleY = scale,
+                AnchorOffsetX = 0,
+                AnchorOffsetY = 0,
+                Angle = 0,
+            };
+            float shopScale = 300 * 1.0f / _graphic.Width;
+            shopDrawingOption = new DrawingOptions()
+            {
+                Dest = window,
+                ScaleX = shopScale,
+                ScaleY = shopScale,
             };
             _ShootTime = 999999999;
             _aimPoint = new Point2D();
@@ -70,89 +129,78 @@ namespace Cyberpunk77022
         }
         public virtual void Update(Point2D aimPoint)
         {
-            _aimPoint = aimPoint;
-            //float a = (float)(_aimPoint.X - _GunOf.Pos.X);
-            //float b = (float)(_aimPoint.Y - _GunOf.Pos.Y);
-            //float c = (float)Math.Sqrt(a * a + b * b);
-            //nozzle = new Point2D() { X = _GunOf.Pos.X + _nozzleLength * a / c, Y = _GunOf.Pos.Y + _nozzleLength * b / c };
-            if (_aimPoint.X != _GunOf.Pos.X)
+            if(_game != null)
             {
-                angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
-            }
-            else
-            {
-                if (_aimPoint.Y > _GunOf.Pos.Y)
+                _aimPoint = aimPoint;
+                if (_aimPoint.X != _GunOf.Pos.X)
                 {
-                    angle = -(float)Math.PI / 2 + _shock;
+                    angle = (float)Math.Atan((_aimPoint.Y - _GunOf.Pos.Y) / (_aimPoint.X - _GunOf.Pos.X)) + _shock;
                 }
                 else
                 {
-                    angle = (float)Math.PI / 2 + _shock;
+                    if (_aimPoint.Y > _GunOf.Pos.Y)
+                    {
+                        angle = -(float)Math.PI / 2 + _shock;
+                    }
+                    else
+                    {
+                        angle = (float)Math.PI / 2 + _shock;
+                    }
                 }
-            }
-            if (_aimPoint.X > _GunOf.Pos.X)
-            {
-                nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
-                nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
-                _pos.X = -(pistol.Width - _DisplayWidth) / 2 - _butt;
-                drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
-                drawingOptions.FlipY = false;
-                drawingOptions.AnchorOffsetX = -pistol.Width / 2 + _butt / scale;
-            }
-            else
-            {
-                nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
-                nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
-                _pos.X = -(pistol.Width - _DisplayWidth) / 2 - _DisplayWidth + _butt;
-                drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
-                drawingOptions.FlipY = true;
-                drawingOptions.AnchorOffsetX = pistol.Width / 2 - _butt / scale;
-            }
-            _pos.Y = -(pistol.Height) / 2;
-            _basePoint.X = _GunOf.Pos.X + _pos.X;
-            _basePoint.Y = _GunOf.Pos.Y + _pos.Y;
+                if (_aimPoint.X > _GunOf.Pos.X)
+                {
+                    nozzle.X = _GunOf.Pos.X + _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                    nozzle.Y = _GunOf.Pos.Y - _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                    _pos.X = -(_graphic.Width - _DisplayWidth) / 2 - _butt;
+                    drawingOptions.Angle = (float)(360 / (Math.PI * 2)) * angle;
+                    drawingOptions.FlipY = false;
+                    drawingOptions.AnchorOffsetX = -_graphic.Width / 2 + _butt / scale;
+                }
+                else
+                {
+                    nozzle.X = _GunOf.Pos.X - _nozzleLength * ((float)Math.Sin(angle + Math.PI / 2));
+                    nozzle.Y = _GunOf.Pos.Y + _nozzleLength * ((float)Math.Cos(angle + Math.PI / 2));
+                    _pos.X = -(_graphic.Width - _DisplayWidth) / 2 - _DisplayWidth + _butt;
+                    drawingOptions.Angle = -360 + (float)(360 / (Math.PI * 2)) * angle;
+                    drawingOptions.FlipY = true;
+                    drawingOptions.AnchorOffsetX = _graphic.Width / 2 - _butt / scale;
+                }
+                _pos.Y = -(_graphic.Height) / 2;
+                _basePoint.X = _GunOf.Pos.X + _pos.X;
+                _basePoint.Y = _GunOf.Pos.Y + _pos.Y;
 
-            if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
-            { 
-                smoking = true;
-            }
-            if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1,100) <= _smokeDensity)
-            {
-                _initVelX = (float)(5 * ((float)Math.Sin(angle + Math.PI / 2)));
-                _initVelY = (float)(5 * ((float)Math.Cos(angle + Math.PI / 2)));
-                if (this.Reverse)
+                if (!smoking && DateTime.UtcNow.Ticks - _ShootTime >= _fireRate + 500000)
                 {
-                    _initVelX *= -1;
-                }else
-                {
-                    _initVelY *= -1;
+                    smoking = true;
                 }
-                _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
+                if (smoking && DateTime.UtcNow.Ticks - _ShootTime <= 40000000 && new Random().Next(1, 100) <= _smokeDensity)
                 {
-                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
-                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                }, Color.White,_initVelX,_initVelY));
-            } else if(DateTime.UtcNow.Ticks - _ShootTime > 8000000)
-            {
-                smoking = false;
+                    _initVelX = (float)(5 * ((float)Math.Sin(angle + Math.PI / 2)));
+                    _initVelY = (float)(5 * ((float)Math.Cos(angle + Math.PI / 2)));
+                    if (this.Reverse)
+                    {
+                        _initVelX *= -1;
+                    }
+                    else
+                    {
+                        _initVelY *= -1;
+                    }
+                    _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                        Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                    }, Color.White, _initVelX, _initVelY));
+                }
+                else if (DateTime.UtcNow.Ticks - _ShootTime > 8000000)
+                {
+                    smoking = false;
+                }
+                _shock = _shock * (float)0.9;
             }
-            _shock = _shock*(float)0.9;
         }
         public virtual void Draw()
         {
-            SplashKit.DrawBitmap(pistol,_basePoint.X - _camera.Pos.X, _basePoint.Y - _camera.Pos.Y, drawingOptions);
-            //SplashKit.DrawBitmap(pistol, _GunOf.Pos.X - _camera.Pos.X - (pistol.Width - _DisplayWidth) / 2 -_butt, _GunOf.Pos.Y - _camera.Pos.Y - (pistol.Height + pistol.Height * scale) / 2,
-            //   new DrawingOptions()
-            //   {
-            //       Dest = _window,
-            //       ScaleX = scale,
-            //       ScaleY = scale,
-            //       //FlipY = true,
-            //       AnchorOffsetX = -pistol.Width / 2 + _butt,
-            //       AnchorOffsetY = -pistol.Height / 2,
-            //       Angle = -50,
-            //   }
-            //); ;
+            SplashKit.DrawBitmap(_graphic,_basePoint.X - _camera.Pos.X, _basePoint.Y - _camera.Pos.Y, drawingOptions);
         }
 
         public virtual void Shoot()
@@ -176,16 +224,24 @@ namespace Cyberpunk77022
 
         public virtual void ShootAction()
         {
-            Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage);
-            for (int i = 0; i < 3; i++)
+            if(_game != null)
             {
-                _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage);
+                for (int i = 0; i < 3; i++)
                 {
-                    X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                    Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                }, Color.Random()));
+                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
+                    {
+                        X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
+                        Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
+                    }, Color.Random()));
+                }
+                _game.AddBullet(NewBullet);
             }
-            _game.AddBullet(NewBullet);
+        }
+
+        public void Graphic(float x, float y)
+        {
+            SplashKit.DrawBitmap(_graphic, x - _graphic.Width / 2, y- _graphic.Height / 2, shopDrawingOption);
         }
 
         public Point2D BasePoint
@@ -208,6 +264,7 @@ namespace Cyberpunk77022
             get {
                 return _GunOf;
             }
+            set { _GunOf = value; }
         }
 
         public Point2D Nozzle
@@ -229,6 +286,11 @@ namespace Cyberpunk77022
         public GameStage Game
         {
             get { return _game; }
+            set { 
+                _game = value;
+                _camera = _game.Camera;
+                drawingOptions.Dest = Game.Manager.Window;
+            }
         }
 
         public bool Reverse
@@ -254,6 +316,15 @@ namespace Cyberpunk77022
         public float Damage
         {
             get { return _damage; }
+        }
+        public string Name { get { return _name; } }
+        public string ID { get { return _id; } }
+        public string Description { get { return _desc; } }
+        public int Price { get { return _price; } }
+        public bool Purchased
+        {
+            get { return purchased; }
+            set { purchased = value; }
         }
     }
 }

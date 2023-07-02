@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SplashKitSDK;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Cyberpunk77022
 {
     public class Sniper1 : Gun
     {
-        public Sniper1(GameStage game, Object GunOf, float damage) : base(game, GunOf, "gun1", "singleshot", 250,50, damage, 10000000, 1)
+        public Sniper1(Window window, float damage) : base("Sniper 1", "sniper1", "a gun", 50, window, "gun1", "singleshot", 250,50, damage, 10000000, 1)
         {
         }
     }

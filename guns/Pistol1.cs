@@ -10,7 +10,7 @@ namespace Cyberpunk77022
 {
     public class Pistol1 : Gun
     {
-        public Pistol1(GameStage game, Object GunOf, float damage) : base(game,GunOf,"default","singleshot",80,0,damage,5000000,1)
+        public Pistol1(Window window, float damage) : base("Default Gun", "default", "a gun", 0, window,"default","singleshot",80,0,damage,5000000,1)
         {
         }
     }

@@ -1,10 +1,12 @@
-﻿using SplashKitSDK;
+﻿using Cyberpunk77022.skills;
+using SplashKitSDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Cyberpunk77022
 {
@@ -23,11 +25,15 @@ namespace Cyberpunk77022
         EndStage end;
         ShopStage shop;
         Stage currentStage;
-        string _gun = "Default Gun";
-        string _skin = "Default Skin";
-        string _skill = null;
+        Gun _gun;
+        Skin _skin;
+        Skill _skill = null;
 
         List<string> _userdata = new List<string>();
+
+        List<ShopItem> _guns;
+        List<ShopItem> _skins;
+        List<ShopItem> _skills;
 
         public Manager(Window window)
         {
@@ -46,19 +52,54 @@ namespace Cyberpunk77022
 
             SplashKit.LoadFont("font", "Roboto-Bold.ttf");
 
+
             _window = window;
+
+            _guns = new List<ShopItem>()
+            {
+                new Pistol1(_window, 40),
+                new Sniper1(_window, 99),
+                new Pistol2(_window, 50),
+                new Rifle1(_window, 20),
+                new Rifle2(_window, 25),
+                new Sniper2(_window, 100),
+                new Shotgun1(_window, 30),
+                new RPG(_window, 300)
+            };
+
+            _skins = new List<ShopItem>()
+            {
+                new Skin("Blue", "blue", "a skin", 0, Color.Blue),
+                new Skin("Green", "green", "a skin", 0, Color.Green),
+                new Skin("Red", "red", "a skin", 0, Color.Red),
+                new Skin("Yellow", "yellow", "a skin", 0, Color.Yellow),
+                new Skin("Gray", "gray", "a skin", 0, Color.Gray),
+                new Skin("Pink", "pink", "a skin", 0, Color.Pink)
+            };
+
+            _skills = new List<ShopItem>()
+            {
+                new Health(),
+                new Defense()
+            };
+
+
 
             stars = new List<Star>();
             sths = new List<Something>();
 
             this.Load("../../../userdata.txt");
 
+            _gun = _guns[0] as Gun;
+            Console.WriteLine(_gun);
+            _skin = _skins[0] as Skin;
+
             home = new HomeStage(this);
             game = new GameStage(this);
             end = new EndStage(this);
             shop = new ShopStage(this, "home");
-            currentStage = home;
 
+            currentStage = home;
 
             for (int i = 0; i < 30; i++)
             {
@@ -251,17 +292,30 @@ namespace Cyberpunk77022
             set { state = value; }
         }
 
-        public string Gun
+        public List<ShopItem> Guns
+        {
+            get { return _guns; }
+        }
+        public List<ShopItem> Skins
+        {
+            get { return _skins; }
+        }
+        public List<ShopItem> Skills
+        {
+            get { return _skills; }
+        }
+
+        public Gun Gun
         {
             get { return _gun; }
             set { _gun = value; }
         }
-        public string Skin
+        public Skin Skin
         {
             get { return _skin; }
             set { _skin = value; }
         }
-        public string Skill
+        public Skill Skill
         {
             get { return _skill; }
             set { _skill = value; }

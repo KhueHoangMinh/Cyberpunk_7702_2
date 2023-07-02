@@ -19,64 +19,21 @@ namespace Cyberpunk77022
         float _health;
         float _maxHealth;
         float _minusHealth = 0;
-        string _skill;
-
-        Gun TakeGun(string name)
-        {
-            switch(name)
-            {
-                case "Gun 1":
-                    return new Sniper1(_game, this, 99);
-                case "Gun 2":
-                    return new Pistol2(_game, this, 50);
-                case "Gun 3":
-                    return new Rifle1(_game, this, 20);
-                case "Gun 4":
-                    return new Rifle2(_game, this, 25);
-                case "Gun 5":
-                    return new Sniper2(_game, this, 100);
-                case "Gun 6":
-                    return new Shotgun1(_game, this, 30);
-                case "RPG":
-                    return new RPG(_game, this, 300);
-                default:
-                    return new Pistol1(_game, this, 40);
-            }
-        }
-
-        Color TakeSkin(string name)
-        {
-            switch (name)
-            {
-                case "Blue":
-                    return Color.Blue;
-                case "Green":
-                    return Color.Green;
-                case "Red":
-                    return Color.Red;
-                case "Yellow":
-                    return Color.Yellow;
-                case "Gray":
-                    return Color.Gray;
-                case "Pink":
-                    return Color.Pink;
-                default:
-                    return Color.Blue;
-            }
-        }
-        public Player(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, string weapon, string skin, string skill) : base(camera, pos, sizeX,sizeY,Color.White,true,0,0) { 
+        public Player(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY) : base(camera, pos, sizeX,sizeY, Color.White, true,0,0) { 
             _manager = game.Manager;
             _game = game;
-            _PlayerGun = TakeGun(weapon);
-            this.Color = TakeSkin(skin);
+            _PlayerGun = game.Manager.Gun;
+            _PlayerGun.Game = game;
+            _PlayerGun.GunOf = this;
+
+            this.Color = game.Manager.Skin.Color;
             _camera = camera;
             _maxHealth = 100;
-            if(skill == "Health")
+            if(game.Manager.Skill != null && game.Manager.Skill.ID == "health")
             {
                 _maxHealth = 200;
             }
             _health = _maxHealth;
-            _skill = skill;
         }
 
         public void Update(List<Ground> grounds, List<Bullet> bullets)
@@ -166,7 +123,7 @@ namespace Cyberpunk77022
         {
             _game.Camera.Shock(bullet.VelX, bullet.VelY, bullet.Speed);
             _minusHealth = _health;
-            if (_skill == "Defense")
+            if (_game.Manager.Skill != null && _game.Manager.Skill.ID == "defense")
             {
                 _health -= bullet.Damage * 0.6f;
             } else
@@ -188,21 +145,12 @@ namespace Cyberpunk77022
             SplashKit.FillRectangle(Color.Gray, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, this.Right - this.Left, 10);
             SplashKit.FillRectangle(Color.Green, this.Left - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _health / _maxHealth, 10);
             SplashKit.FillRectangle(Color.RGBAColor(255, 0, 0, 90), this.Left + (this.Right - this.Left) * _health / _maxHealth - _camera.Pos.X, this.Top - 20 - _camera.Pos.Y, (this.Right - this.Left) * _minusHealth / _maxHealth, 10);
-            DrawSkill(_skill);
+            DrawSkill();
         }
 
-        public void DrawSkill(string skill)
+        public void DrawSkill()
         {
-            switch (skill)
-            {
-                case "Health":
-                    SplashKit.FillRectangle(Color.Green, this.Right - _camera.Pos.X + 15 - 5, this.Top - 15 - _camera.Pos.Y - 10, 10, 20);
-                    SplashKit.FillRectangle(Color.Green, this.Right - _camera.Pos.X + 15 - 10, this.Top - 15 - _camera.Pos.Y - 5, 20, 10);
-                    break;
-                case "Defense":
-                    SplashKit.FillRectangle(Color.DarkGray, this.Right - _camera.Pos.X + 10, this.Top - 20 - _camera.Pos.Y, 10, 10);
-                    break;
-            }
+            if(_game.Manager.Skill != null) _game.Manager.Skill.InGameGraphic((float)(this.Right - _camera.Pos.X + 15), (float)(this.Top - 15 - _camera.Pos.Y));
         }
 
         public Gun Gun

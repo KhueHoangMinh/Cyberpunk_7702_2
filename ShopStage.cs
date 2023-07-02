@@ -4,14 +4,30 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
+    
 
-    public abstract class Item
+    public interface ShopItem
+    {
+        public void Graphic(float x, float y);
+        public string Name { get; }
+        public string ID { get; }
+        public string Description { get; }
+        public int Price { get; }
+        public bool Purchased
+        {
+            get;
+            set;
+        }
+    }
+    public class Item
     {
         string _type;
         Page _page;
@@ -28,13 +44,16 @@ namespace Cyberpunk77022
         Button selectButton;
         Button deselectButton;
         string _state = "not_purchased";
+        ShopItem _actualItem;
+        int _index = 0;
 
-        public Item(Page page, ItemBrief info, float width, float height, float xOnPage, float yOnPage)
+        public Item(Page page, int index, ShopItem actualItem, float width, float height, float xOnPage, float yOnPage)
         {
             _page = page;
-            _type = info.type;
-            _name = info.name;
-            _price = info.price;
+            _index = index;
+            _actualItem = actualItem;
+            _name = actualItem.Name;
+            _price = actualItem.Price;
             _width = width;
             _height = height;
             _xOnPage = xOnPage;
@@ -48,57 +67,51 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            if (_page.Shop.Manager.Gun == _name || _page.Shop.Manager.Skin == _name || _page.Shop.Manager.Skill == _name)
-            {
-                _state = "selected";
-            }
 
             y = _page.Y + _page.ScrollY + _yOnPage;
             buyButton.Y = y + 180;
             selectButton.Y = y + 180;
             deselectButton.Y = y + 180;
-            switch (_state)
+
+            if(_actualItem.Purchased)
             {
-                case "not_purchased":
-                    buyButton.Update();
-                    if(buyButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
-                    {
-                        if(_page.Shop.Manager.Coin > _price)
-                        {
-                            _state = "purchased";
-                            _page.Shop.Manager.Coin -= _price;
-                            _page.Shop.Save();
-                        }
-                    }
-                    break;
-                case "purchased":
-                    selectButton.Update();
+                selectButton.Update();
+                if (_page.Shop.Manager.Gun == _actualItem || _page.Shop.Manager.Skin == _actualItem || _page.Shop.Manager.Skill == _actualItem)
+                {
+                    _state = "selected";
+                } else
+                {
                     if (selectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
                     {
                         _page.Deselect(this);
-                        switch(_type)
+                        switch (_actualItem)
                         {
-                            case "weapon":
-                                _page.Shop.Manager.Gun = _name;
+                            case Gun:
+                                _page.Shop.Manager.Gun = _page.Shop.Manager.Guns[_index] as Gun;
                                 break;
-                            case "skin":
-                                _page.Shop.Manager.Skin = _name;
+                            case Skin:
+                                _page.Shop.Manager.Skin = _page.Shop.Manager.Skins[_index] as Skin;
                                 break;
-                            case "skill":
-                                _page.Shop.Manager.Skill = _name;
+                            case Skill:
+                                _page.Shop.Manager.Skill = _page.Shop.Manager.Skills[_index] as Skill;
                                 break;
                         }
                         _state = "selected";
                         _page.Shop.Save();
                     }
-                    break;
-                case "selected":
-                    deselectButton.Update();
-                    if (deselectButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
+                }
+            } else
+            {
+                buyButton.Update();
+                if (buyButton.Hovering && SplashKit.MouseClicked(MouseButton.LeftButton) && SplashKit.MousePosition().Y > _page.Y)
+                {
+                    if (_page.Shop.Manager.Coin > _price)
                     {
-
+                        _state = "purchased";
+                        _page.Shop.Manager.Coin -= _price;
+                        _page.Shop.Save();
                     }
-                    break;
+                }
             }
         }
 
@@ -107,7 +120,7 @@ namespace Cyberpunk77022
             SplashKit.FillRectangle(Color.RGBColor(20,20,20), x - _width / 2, y - _height / 2, _width, _height);
             SplashKit.FillRectangle(Color.Black, x - _width / 2 + 20, y - _height / 2 + 20, _width - 40, _height/2 - 20);
 
-            DrawGraphic();
+            _actualItem.Graphic(x, y - _height / 4);
 
             SplashKit.DrawText(_name, Color.White, "font", 60, x - SplashKit.TextWidth(_name, "font", 60) / 2, y + 20);
 
@@ -125,8 +138,6 @@ namespace Cyberpunk77022
             }
         }
 
-        public abstract void DrawGraphic();
-
         public void Deselect()
         {
             if(_state == "selected")
@@ -142,63 +153,6 @@ namespace Cyberpunk77022
         }
     }
 
-    public class WeaponItem : Item
-    {
-        Bitmap _image;
-        float _scale;
-        DrawingOptions opts;
-        public WeaponItem(Page page, ItemBrief info, float width, float height, float XOnPage, float YOnPage) : base(page,info,width,height,XOnPage,YOnPage) {
-            _image = SplashKit.BitmapNamed((info as WeaponBrief).image);
-            _scale = 300 * 1.0f / _image.Width;
-            opts = new DrawingOptions()
-            {
-                Dest = page.Shop.Manager.Window,
-                ScaleX = _scale,
-                ScaleY = _scale,
-            };
-        }
-
-        public override void DrawGraphic()
-        {
-            SplashKit.DrawBitmap(_image, x - _image.Width / 2, y - _width / 4 - _image.Height / 2, opts);
-        }
-    }
-    public class SkinItem : Item
-    {
-        Color _color;
-        public SkinItem(Page page, ItemBrief info, float width, float height, float XOnPage, float YOnPage) : base(page, info, width, height, XOnPage, YOnPage)
-        {
-            _color = (info as SkinBrief).color;
-        }
-
-        public override void DrawGraphic()
-        {
-            SplashKit.FillRectangle(_color, x - 50, y - _width / 4 - 50, 100,100);
-        }
-    }
-
-
-    public class SkillItem : Item
-    {
-        public SkillItem(Page page, ItemBrief info, float width, float height, float XOnPage, float YOnPage) : base(page, info, width, height, XOnPage, YOnPage)
-        {
-        }
-
-        public override void DrawGraphic()
-        {
-            switch(_name)
-            {
-                case "Health":
-                    SplashKit.FillRectangle(Color.Green, x - 20, y - _width / 4 - 60, 40, 120);
-                    SplashKit.FillRectangle(Color.Green, x - 60, y - _width / 4 - 20, 120, 40);
-                    break;
-                case "Defense":
-                    SplashKit.FillRectangle(Color.DarkGray, x - 50, y - _width / 4 - 50, 100, 100);
-                    break;
-            }
-        }
-    }
-
     public class Page
     {
         ShopStage _shop;
@@ -211,7 +165,7 @@ namespace Cyberpunk77022
         float _scrollY = 0;
         float _y;
 
-        public Page (ShopStage shop, ItemBrief[] items, float height, float y)
+        public Page (ShopStage shop, List<ShopItem> items, float height, float y)
         {
             _shop = shop; 
             _height = height;
@@ -220,22 +174,11 @@ namespace Cyberpunk77022
             outEf = new OutEffect(0, _y, _shop.Manager.Window.Width, _shop.Manager.Window.Height);
             _y = y;
             float width = _shop.Manager.Window.Width / 3;
-            for (int i = 0; i < items.Length; i++)
+            for (int i = 0; i < items.Count; i++)
             {
                 int column = i % 3 + 1;
                 int row = (int)Math.Ceiling((decimal)((i+1) * 1.0 / 3));
-                switch(items[i].type)
-                {
-                    case "weapon":
-                        _items.Add(new WeaponItem(this, items[i], width - 40, width - 40, (width) * (column - 1) + width / 2, (width) * (row - 1) + width / 2));
-                        break;
-                    case "skin":
-                        _items.Add(new SkinItem(this, items[i], width - 40, width - 40, (width) * (column - 1) + width / 2, (width) * (row - 1) + width / 2));
-                        break;
-                    case "skill":
-                        _items.Add(new SkillItem(this, items[i], width - 40, width - 40, (width) * (column - 1) + width / 2, (width) * (row - 1) + width / 2));
-                        break;
-                }
+                _items.Add(new Item(this, i, items[i], width - 40, width - 40, (width) * (column - 1) + width / 2, (width) * (row - 1) + width / 2));
             }
             int rowCount = (int)Math.Ceiling((decimal)(_items.Count * 1.0 / 3));
             _actualHeight = rowCount * width;
@@ -330,52 +273,7 @@ namespace Cyberpunk77022
 
         public ShopStage Shop { get { return _shop; } }
     }
-    public abstract class ItemBrief
-    {
-        public string type;
-        public string name;
-        public string description;
-        public int price;
-        public int state = 0;
 
-        public ItemBrief(string type, string name, string description, int price, int state)
-        {
-            this.type = type;
-            this.name = name;
-            this.description = description;
-            this.price = price;
-            this.state = state;
-        }
-    }
-
-    public class WeaponBrief : ItemBrief
-    {
-        public string image;
-
-        public WeaponBrief(string type, string name, string description, int price, int state, string image) : base(type, name, description, price,state)
-        {
-            this.image = image;
-        }
-    }
-
-
-    public class SkinBrief : ItemBrief
-    {
-        public Color color;
-
-        public SkinBrief(string type, string name, string description, int price, int state, Color color) : base(type, name, description, price, state)
-        {
-            this.color = color;
-        }
-    }
-
-    class SkillBrief : ItemBrief
-    {
-
-        public SkillBrief(string type, string name, string description, int price, int state) : base(type, name, description, price, state)
-        {
-        }
-    }
     public class ShopStage : Stage
     {
         Button backBtn;
@@ -391,39 +289,8 @@ namespace Cyberpunk77022
         string _showing = "weapon";
         float bodyTop = 205;
 
-
-
         public ShopStage(Manager manager, string prevState) : base(manager)
         {
-
-            WeaponBrief[] weaponList = new WeaponBrief[8]
-            {
-                new WeaponBrief("weapon","Default Gun","A pistol",0,1,"default"),
-                new WeaponBrief("weapon","Gun 1","A pistol",10,0,"gun1"),
-                new WeaponBrief("weapon","Gun 2","A pistol",120,0,"gun2"),
-                new WeaponBrief("weapon","Gun 3","A pistol",30,0,"gun3"),
-                new WeaponBrief("weapon","Gun 4","A pistol",40,0,"gun4"),
-                new WeaponBrief("weapon","Gun 5","A pistol",60,0,"gun5"),
-                new WeaponBrief("weapon","Gun 6","A pistol",150,0,"gun6"),
-                new WeaponBrief("weapon","RPG","A RPG",150,0,"rpg"),
-            };
-
-            SkinBrief[] skinList = new SkinBrief[6]
-            {
-                new SkinBrief("skin","Default Skin","Blue Alien",0,1,Color.Blue),
-                new SkinBrief("skin","Green","Blue Alien",10,0,Color.Green),
-                new SkinBrief("skin","Red","Blue Alien",20,0,Color.Red),
-                new SkinBrief("skin","Yellow","Blue Alien",30,0,Color.Yellow),
-                new SkinBrief("skin","Gray","Blue Alien",40,0,Color.Gray),
-                new SkinBrief("skin","Pink","Blue Alien",50,0,Color.Pink),
-            };
-
-            SkillBrief[] skillList = new SkillBrief[2]
-            {
-                new SkillBrief("skill","Health","Increase health",100,0),
-                new SkillBrief("skill","Defense","Reduce damage",100,0),
-            };
-
             backBtn = new Button("<", Color.Red, 80, 80, 70, 70);
             float width = this.Manager.Window.Width / 3;
             weaponBtn = new Button("Weapon", Color.Gray, width/2, 180, width, 50);
@@ -432,9 +299,9 @@ namespace Cyberpunk77022
             skinBtn.Color = Color.White;
             skillBtn = new Button("Power", Color.Gray, width*2 + width/2, 180, width, 50);
             skillBtn.Color = Color.White;
-            weaponPage = new Page(this, weaponList, this.Manager.Window.Height - 205, 205);
-            skinPage = new Page(this, skinList, this.Manager.Window.Height - 205, 205);
-            skillPage = new Page(this, skillList, this.Manager.Window.Height - 205, 205);
+            weaponPage = new Page(this, this.Manager.Guns, this.Manager.Window.Height - 205, 205);
+            skinPage = new Page(this, this.Manager.Skins, this.Manager.Window.Height - 205, 205);
+            skillPage = new Page(this, this.Manager.Skills, this.Manager.Window.Height - 205, 205);
             _prevState = prevState;
 
             this.Load();
@@ -450,13 +317,15 @@ namespace Cyberpunk77022
                     {
                         case "0":
                             weaponPage.Items[i].State = "not_purchased";
+                            (this.Manager.Guns[i] as Gun).Purchased = false;
                             break;
                         case "1":
                             weaponPage.Items[i].State = "purchased";
+                            (this.Manager.Guns[i] as Gun).Purchased = true;
                             break;
                         case "2":
                             weaponPage.Items[i].State = "selected";
-                            this.Manager.Gun = weaponPage.Items[i]._name;
+                            this.Manager.Gun = this.Manager.Guns[i] as Gun;
                             break;
                     }
                 } else if (i > 7 && i < 14)
@@ -465,13 +334,15 @@ namespace Cyberpunk77022
                     {
                         case "0":
                             skinPage.Items[i - 8].State = "not_purchased";
+                            (this.Manager.Skins[i - 8] as Skin).Purchased = false;
                             break;
                         case "1":
                             skinPage.Items[i - 8].State = "purchased";
+                            (this.Manager.Skins[i - 8] as Skin).Purchased = true;
                             break;
                         case "2":
                             skinPage.Items[i - 8].State = "selected";
-                            this.Manager.Skin = skinPage.Items[i - 7]._name;
+                            this.Manager.Skin = this.Manager.Skins[i - 8] as Skin;
                             break;
                     }
                 } else if ( i > 13 && i < 16)
@@ -480,13 +351,15 @@ namespace Cyberpunk77022
                     {
                         case "0":
                             skillPage.Items[i - 14].State = "not_purchased";
+                            (this.Manager.Skills[i - 14] as Skill).Purchased = false;
                             break;
                         case "1":
                             skillPage.Items[i - 14].State = "purchased";
+                            (this.Manager.Skills[i - 14] as Skill).Purchased = true;
                             break;
                         case "2":
                             skillPage.Items[i - 14].State = "selected";
-                            this.Manager.Skill = skillPage.Items[i - 13]._name;
+                            this.Manager.Skill = this.Manager.Skills[i - 14] as Skill;
                             break;
                     }
                 }

@@ -276,13 +276,21 @@ namespace Cyberpunk77022
         {
             get { return _speed; }
         }
+
+        public Trace Trace
+        {
+            get { return _trace; }
+            set { _trace = value; }
+        }
     }
 
     public class NormalBullet : Bullet
     {
         public NormalBullet(GameStage game, Gun gun, float range, float speed, float damage) : base(game, gun, range, speed, damage)
         {
-            game.AddTrace(new Trace(game, game.Manager.Window, game.Camera, this));
+            this.Trace = new Trace(game, game.Manager.Window, game.Camera, this);
+            game.AddTrace(this.Trace);
+
         }
     }
     public class RPGBullet : Bullet

@@ -43,7 +43,7 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();

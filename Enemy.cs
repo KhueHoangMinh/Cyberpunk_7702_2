@@ -34,7 +34,9 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Pistol1(_game, this, 5);
+            _EnemyGun = new Pistol1(_game.Manager.Window, 5);
+            this.Gun.Game = this.Game;
+            this.Gun.GunOf = this;
             _EnemyGun.SmokeDensity = 5;
             _camera = camera;
             _maxHealth = 100;
@@ -50,7 +52,9 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Pistol1(_game, this, 5);
+            _EnemyGun = new Pistol1(_game.Manager.Window, 5);
+            this.Gun.Game = this.Game;
+            this.Gun.GunOf = this;
             _EnemyGun.SmokeDensity = 5;
             _camera = camera;
             _maxHealth = MaxHealth;
@@ -366,7 +370,9 @@ namespace Cyberpunk77022
     {
         public FlyEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 50, 50, Color.Orange, 60)
         {
-            this.Gun = new Rifle1(this.Game, this, 8);
+            this.Gun = new Rifle1(this.Game.Manager.Window, 8);
+            this.Gun.Game = this.Game;
+            this.Gun.GunOf = this;
         }
         public override void Behaviour()
         {
@@ -420,7 +426,9 @@ namespace Cyberpunk77022
     {
         public BigEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 100, 100, Color.LightBlue, 300)
         {
-            this.Gun = new Shotgun1(this.Game, this, 3);
+            this.Gun = new Shotgun1(this.Game.Manager.Window, 3);
+            this.Gun.Game = this.Game;
+            this.Gun.GunOf = this;
         }
 
         public override void Behaviour()
