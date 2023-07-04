@@ -29,8 +29,6 @@ namespace Cyberpunk77022
         Skin _skin;
         Skill _skill = null;
 
-        List<string> _userdata = new List<string>();
-
         List<ShopItem> _guns;
         List<ShopItem> _skins;
         List<ShopItem> _skills;
@@ -70,12 +68,17 @@ namespace Cyberpunk77022
             _skins = new List<ShopItem>()
             {
                 new Skin("Blue", "blue", "a skin", 0, Color.Blue),
-                new Skin("Green", "green", "a skin", 0, Color.Green),
-                new Skin("Red", "red", "a skin", 0, Color.Red),
-                new Skin("Yellow", "yellow", "a skin", 0, Color.Yellow),
-                new Skin("Gray", "gray", "a skin", 0, Color.Gray),
-                new Skin("Pink", "pink", "a skin", 0, Color.Pink)
+                new Skin("Green", "green", "a skin", 10, Color.Green),
+                new Skin("Red", "red", "a skin", 20, Color.Red),
+                new Skin("Yellow", "yellow", "a skin", 30, Color.Yellow),
+                new Skin("Gray", "gray", "a skin", 40, Color.Gray),
+                new Skin("Pink", "pink", "a skin", 50, Color.Pink)
             };
+
+            _guns[0].Purchased = true;
+            _skins[0].Purchased = true;
+            _gun = _guns[0] as Gun;
+            _skin = _skins[0] as Skin;
 
             _skills = new List<ShopItem>()
             {
@@ -83,16 +86,11 @@ namespace Cyberpunk77022
                 new Defense()
             };
 
-
-
             stars = new List<Star>();
             sths = new List<Something>();
 
             this.Load("../../../userdata.txt");
 
-            _gun = _guns[0] as Gun;
-            Console.WriteLine(_gun);
-            _skin = _skins[0] as Skin;
 
             home = new HomeStage(this);
             game = new GameStage(this);
@@ -124,10 +122,60 @@ namespace Cyberpunk77022
                     score = int.Parse(reader.ReadLine());
                     bestScore = int.Parse(reader.ReadLine());
 
-                    _userdata = new List<string>();
-                    for (int i = 0; i <= 15; i++)
+                    string loading = "";
+                    string data = reader.ReadLine();
+                    int i = 0;
+                    while(data != "===END===" && data != null)
                     {
-                        _userdata.Add(reader.ReadLine());
+                        if (data == "Weapon" || data == "Skin" || data == "Skill")
+                        {
+                            i = 0;
+                            loading = data;
+                        } else 
+                        if (data == "0" || data == "1" || data == "2")
+                        {
+                            switch(data)
+                            {
+                                case "0":
+                                    break;
+                                case "1":
+                                    switch (loading)
+                                    {
+                                        case "Weapon":
+                                            _guns[i].Purchased = true;
+                                            break;
+                                        case "Skin":
+                                            _skins[i].Purchased = true;
+                                            break;
+                                        case "Skill":
+                                            _skills[i].Purchased = true;
+                                            break;
+                                    }
+                                    break;
+                                case "2":
+                                    switch (loading)
+                                    {
+                                        case "Weapon":
+                                            _guns[i].Purchased = true;
+                                            _gun = _guns[i] as Gun;
+                                            Console.WriteLine(_guns[i].Name);
+                                            break;
+                                        case "Skin":
+                                            _skins[i].Purchased = true;
+                                            _skin = _skins[i] as Skin;
+                                            Console.WriteLine(_skins[i].Name);
+                                            break;
+                                        case "Skill":
+                                            _skills[i].Purchased = true;
+                                            _skill = _skills[i] as Skill;
+                                            Console.WriteLine(_skills[i].Name);
+                                            break;
+                                    }
+                                    break;
+                            }
+                            i++;
+                        }
+                        data = reader.ReadLine();
                     }
 
                     reader.Close();
@@ -138,36 +186,14 @@ namespace Cyberpunk77022
                 }
             } else
             {
-                StreamWriter writer = new StreamWriter(filename);
-                //writer.WriteLine("Info");
-                for (int i = 1; i <= 3; i++)
-                {
-                    writer.WriteLine("1000");
-                }
-                //writer.WriteLine("Weapon");
-                for (int i = 1; i <= 8; i++)
-                {
-                    writer.WriteLine("0");
-                }
-                //writer.WriteLine("Skin");
-                for (int i = 1; i <= 6; i++)
-                {
-                    writer.WriteLine("0");
-                }
-                //writer.WriteLine("Skill");
-                for (int i = 1; i <= 2; i++)
-                {
-                    writer.WriteLine("0");
-                }
-                writer.Close();
-                _userdata = new List<string>();
-                for (int i = 0; i <= 15; i++)
-                {
-                    _userdata.Add("0");
-                }
                 coin = 1000;
                 score = 0;
                 bestScore = 0;
+                _guns[0].Purchased = true;
+                _skins[0].Purchased = true;
+                _gun = _guns[0] as Gun;
+                _skin = _skins[0] as Skin;
+                Save(filename);
             }
         }
 
@@ -178,20 +204,65 @@ namespace Cyberpunk77022
             writer.WriteLine(score.ToString());
             writer.WriteLine(bestScore.ToString());
 
-            for (int i = 0; i <= 7; i++)
+            writer.WriteLine("Weapon");
+            for (int i = 0; i < _guns.Count; i++)
             {
-                writer.WriteLine(_userdata[i]);
+                if (_guns[i].Purchased)
+                {
+                    if(_gun == _guns[i])
+                    {
+                        writer.WriteLine("2");
+                    } else
+                    {
+                        writer.WriteLine("1");
+                    }
+                } else
+                {
+                    writer.WriteLine("0");
+                }
             }
 
-            for (int i = 8; i <= 13; i++)
+            writer.WriteLine("Skin");
+            for (int i = 0; i < _skins.Count; i++)
             {
-                writer.WriteLine(_userdata[i]);
+                if (_skins[i].Purchased)
+                {
+                    if (_skin == _skins[i])
+                    {
+                        writer.WriteLine("2");
+                    }
+                    else
+                    {
+                        writer.WriteLine("1");
+                    }
+                }
+                else
+                {
+                    writer.WriteLine("0");
+                }
             }
 
-            for (int i = 14; i <= 15; i++)
+            writer.WriteLine("Skill");
+            for (int i = 0; i < _skills.Count; i++)
             {
-                writer.WriteLine(_userdata[i]);
+                if (_skills[i].Purchased)
+                {
+                    if (_skill == _skills[i])
+                    {
+                        writer.WriteLine("2");
+                    }
+                    else
+                    {
+                        writer.WriteLine("1");
+                    }
+                }
+                else
+                {
+                    writer.WriteLine("0");
+                }
             }
+
+            writer.WriteLine("===END===");
 
             writer.Close();
         }
@@ -331,11 +402,5 @@ namespace Cyberpunk77022
         public EndStage EndStage { get { return end; } }
 
         public ShopStage ShopStage { get { return shop; } }
-
-        public List<string> UserData
-        {
-            get { return _userdata; }
-            set { _userdata = value; }
-        }
     }
 }

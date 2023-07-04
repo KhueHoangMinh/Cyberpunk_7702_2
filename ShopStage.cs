@@ -29,7 +29,6 @@ namespace Cyberpunk77022
     }
     public class Item
     {
-        string _type;
         Page _page;
         public string _name;
         int _price;
@@ -63,6 +62,22 @@ namespace Cyberpunk77022
             buyButton = new Button(_price.ToString(), Color.Red, x, y + 380, 200, 80);
             selectButton = new Button("Select", Color.Green, x, y + 380, 200, 80);
             deselectButton = new Button("Selected", Color.Yellow, x, y + 380, 200, 80);
+
+            if (_actualItem.Purchased)
+            {
+                if (_page.Shop.Manager.Gun == _actualItem || _page.Shop.Manager.Skin == _actualItem || _page.Shop.Manager.Skill == _actualItem)
+                {
+                    _state = "selected";
+                }
+                else
+                {
+                    _state = "purchased";
+                }
+            }
+            else
+            {
+                _state = "not_purchased";
+            }
         }
 
         public void Update()
@@ -97,7 +112,7 @@ namespace Cyberpunk77022
                                 break;
                         }
                         _state = "selected";
-                        _page.Shop.Save();
+                        _page.Shop.Manager.Save("../../../userdata.txt");
                     }
                 }
             } else
@@ -107,9 +122,10 @@ namespace Cyberpunk77022
                 {
                     if (_page.Shop.Manager.Coin > _price)
                     {
-                        _state = "purchased";
                         _page.Shop.Manager.Coin -= _price;
-                        _page.Shop.Save();
+                        _state = "purchased";
+                        _actualItem.Purchased = true;
+                        _page.Shop.Manager.Save("../../../userdata.txt");
                     }
                 }
             }
@@ -304,122 +320,7 @@ namespace Cyberpunk77022
             skillPage = new Page(this, this.Manager.Skills, this.Manager.Window.Height - 205, 205);
             _prevState = prevState;
 
-            this.Load();
-        }
-
-        public void Load()
-        {
-            for(int i = 0; i < this.Manager.UserData.Count; i++)
-            {
-                if(i < 8)
-                {
-                    switch (this.Manager.UserData[i])
-                    {
-                        case "0":
-                            weaponPage.Items[i].State = "not_purchased";
-                            (this.Manager.Guns[i] as Gun).Purchased = false;
-                            break;
-                        case "1":
-                            weaponPage.Items[i].State = "purchased";
-                            (this.Manager.Guns[i] as Gun).Purchased = true;
-                            break;
-                        case "2":
-                            weaponPage.Items[i].State = "selected";
-                            this.Manager.Gun = this.Manager.Guns[i] as Gun;
-                            break;
-                    }
-                } else if (i > 7 && i < 14)
-                {
-                    switch (this.Manager.UserData[i])
-                    {
-                        case "0":
-                            skinPage.Items[i - 8].State = "not_purchased";
-                            (this.Manager.Skins[i - 8] as Skin).Purchased = false;
-                            break;
-                        case "1":
-                            skinPage.Items[i - 8].State = "purchased";
-                            (this.Manager.Skins[i - 8] as Skin).Purchased = true;
-                            break;
-                        case "2":
-                            skinPage.Items[i - 8].State = "selected";
-                            this.Manager.Skin = this.Manager.Skins[i - 8] as Skin;
-                            break;
-                    }
-                } else if ( i > 13 && i < 16)
-                {
-                    switch (this.Manager.UserData[i])
-                    {
-                        case "0":
-                            skillPage.Items[i - 14].State = "not_purchased";
-                            (this.Manager.Skills[i - 14] as Skill).Purchased = false;
-                            break;
-                        case "1":
-                            skillPage.Items[i - 14].State = "purchased";
-                            (this.Manager.Skills[i - 14] as Skill).Purchased = true;
-                            break;
-                        case "2":
-                            skillPage.Items[i - 14].State = "selected";
-                            this.Manager.Skill = this.Manager.Skills[i - 14] as Skill;
-                            break;
-                    }
-                }
-            }
-            
-        }
-
-        public void Save()
-        {
-            List<string> saving = new List<string>();
-            for(int i = 0; i < weaponPage.Items.Count; i++)
-            {
-                switch (weaponPage.Items[i].State)
-                {
-                    case "not_purchased":
-                        saving.Add("0");
-                        break;
-                    case "purchased":
-                        saving.Add("1");
-                        break;
-                    case "selected":
-                        saving.Add("2");
-                        break;
-                }
-            }
-
-            for (int i = 0; i < skinPage.Items.Count; i++)
-            {
-                switch (skinPage.Items[i].State)
-                {
-                    case "not_purchased":
-                        saving.Add("0");
-                        break;
-                    case "purchased":
-                        saving.Add("1");
-                        break;
-                    case "selected":
-                        saving.Add("2");
-                        break;
-                }
-            }
-
-            for (int i = 0; i < skillPage.Items.Count; i++)
-            {
-                switch (skillPage.Items[i].State)
-                {
-                    case "not_purchased":
-                        saving.Add("0");
-                        break;
-                    case "purchased":
-                        saving.Add("1");
-                        break;
-                    case "selected":
-                        saving.Add("2");
-                        break;
-                }
-            }
-
-            this.Manager.UserData = saving;
-            this.Manager.Save("../../../userdata.txt");
+            //this.Load();
         }
 
         public override void Update()
