@@ -66,6 +66,10 @@ namespace Cyberpunk77022
                 {
                     this.Manager.NewShop("home");
                 }
+                if (_nextState == "about")
+                {
+                    this.Manager.NewAbout();
+                }
             }
 
             this.InEf.Update();

@@ -24,6 +24,7 @@ namespace Cyberpunk77022
         GameStage game;
         EndStage end;
         ShopStage shop;
+        AboutStage about;
         Stage currentStage;
         Gun _gun;
         Skin _skin;
@@ -96,6 +97,7 @@ namespace Cyberpunk77022
             game = new GameStage(this);
             end = new EndStage(this);
             shop = new ShopStage(this, "home");
+            about = new AboutStage(this);
 
             currentStage = home;
 
@@ -156,19 +158,16 @@ namespace Cyberpunk77022
                                     switch (loading)
                                     {
                                         case "Weapon":
-                                            _guns[i].Purchased = true;
+                                            _guns[i].Purchased = true; 
                                             _gun = _guns[i] as Gun;
-                                            Console.WriteLine(_guns[i].Name);
                                             break;
                                         case "Skin":
                                             _skins[i].Purchased = true;
                                             _skin = _skins[i] as Skin;
-                                            Console.WriteLine(_skins[i].Name);
                                             break;
                                         case "Skill":
                                             _skills[i].Purchased = true;
                                             _skill = _skills[i] as Skill;
-                                            Console.WriteLine(_skills[i].Name);
                                             break;
                                     }
                                     break;
@@ -333,6 +332,12 @@ namespace Cyberpunk77022
             shop = new ShopStage(this, prevStage);
             currentStage = shop;
             state = "shop";
+        }
+        public void NewAbout()
+        {
+            about = new AboutStage(this);
+            currentStage = about;
+            state = "about";
         }
 
         public int Score
