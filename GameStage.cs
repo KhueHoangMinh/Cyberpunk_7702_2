@@ -172,7 +172,10 @@ namespace Cyberpunk77022
                                 {
                                     enemy.Gun.Shoot();
                                 }
-                                if (long.Parse(received[3]) > prevTicks)
+                                if (
+                                //long.Parse(received[3]) > prevTicks
+                                true
+                                )
                                 {
                                     //prevTicks = long.Parse(received[2]);
                                     enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
@@ -186,7 +189,10 @@ namespace Cyberpunk77022
                             }
                             if (received[7] == "1")
                             {
-                                if (long.Parse(received[10]) > prevTicks)
+                                if (
+                                //long.Parse(received[10]) > prevTicks
+                                true
+                                )
                                 {
                                     prevTicks = long.Parse(received[10]);
                                     player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
