@@ -50,6 +50,16 @@ namespace Cyberpunk77022
             return p2dstring.Split(',');
         }
 
+        static string StringifyBullets(List<Bullet> bullets)
+        {
+            string res = "";
+            foreach (Bullet bullet in bullets) 
+            { 
+                res += bullet.ToString(); 
+            }
+            return res;
+        }
+
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
@@ -81,7 +91,7 @@ namespace Cyberpunk77022
             _background = Color.Black;
             _background.A = 0.5f;
 
-            // Listener
+            // Listener ==========================================================================================
 
             new Thread(() =>
             {
@@ -105,17 +115,16 @@ namespace Cyberpunk77022
 
                 int mismatch = 0;
 
-                Queue<byte[]> buffer = new Queue<byte[]>();
 
                 try
                 {
+                    byte[] receivedByte = listener.Receive(ref groupEP);
+                    byte[] bytes = receivedByte;
                     while (true)
                     {
 
-                        buffer.Enqueue(listener.Receive(ref groupEP));
                         if (server)
                         {
-                            byte[] bytes = buffer.Dequeue();
                             string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
 
                             string[] received = splitMsg(msg);
@@ -140,7 +149,6 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-                            byte[] bytes = buffer.Dequeue();
                             string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                             Console.WriteLine(msg);
 
@@ -205,7 +213,7 @@ namespace Cyberpunk77022
 
             }).Start();
 
-            // Sender
+            // Sender ==========================================================================================
 
             new Thread(() =>
             {
@@ -221,6 +229,8 @@ namespace Cyberpunk77022
                 IPEndPoint ep2 = new IPEndPoint(playerIP, 11000);
 
                 long sequence = 0;
+
+                Queue<string> buffer = new Queue<string>();
 
 
                 if (server)

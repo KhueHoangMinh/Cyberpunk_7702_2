@@ -22,6 +22,7 @@ namespace Cyberpunk77022
         string _skill;
         string collide = "no";
         bool _hostControl = true;
+        int sequence = 0;
 
         Gun TakeGun(string name)
         {
@@ -244,6 +245,12 @@ namespace Cyberpunk77022
         {
             get { return _hostControl; }
             set { _hostControl = value; }
+        }
+
+        public int Sequence
+        {
+            get { return sequence; }
+            set { sequence = value; }
         }
     }
 }
