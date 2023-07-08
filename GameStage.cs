@@ -325,6 +325,7 @@ namespace Cyberpunk77022
 
         public void EndGame()
         {
+            this.Manager.Save("../../../userdata.txt");
             this.Closing = true;
         }
     }

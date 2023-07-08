@@ -55,6 +55,7 @@ namespace Cyberpunk77022
     {
         float _x;
         float _y = 0;
+        bool _end = false;
         List<Info> _info;
 
         public Content(float x, float y, List<Info> info)
@@ -71,6 +72,11 @@ namespace Cyberpunk77022
                 _info[i].Update(_x,_y + i * (_info[i].Height + 20));
             }
             _y -= 1;
+
+            if( this.Height < 0)
+            {
+                _end = true;
+            }
         }
 
         public void Draw()
@@ -79,6 +85,16 @@ namespace Cyberpunk77022
             {
                 _info[i].Draw();
             }
+        }
+
+        public float Height
+        {
+            get { return _y + (_info.Count - 1) * (_info[_info.Count - 1].Height + 20);  }
+        }
+
+        public bool End
+        {
+            get { return _end; }
         }
     }
 
@@ -104,6 +120,11 @@ namespace Cyberpunk77022
         {
             backBtn.Update();
             _content.Update();
+            if(_content.End)
+            {
+                this.Closing = true;
+                _nextState = "home";
+            }
             if (SplashKit.MouseClicked(MouseButton.LeftButton))
             {
                 if (backBtn.Hovering)
