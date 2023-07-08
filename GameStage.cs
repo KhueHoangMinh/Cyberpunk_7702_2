@@ -118,14 +118,15 @@ namespace Cyberpunk77022
 
                 try
                 {
-                    byte[] receivedByte = listener.Receive(ref groupEP);
-                    byte[] bytes = receivedByte;
+
                     while (true)
                     {
 
+                        byte[] bytes = listener.Receive(ref groupEP);
+                        string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                         if (server)
                         {
-                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
+                            Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
                             //Console.WriteLine("move player: " + msg);
@@ -149,7 +150,6 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-                            string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                             Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
