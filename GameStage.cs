@@ -158,7 +158,8 @@ namespace Cyberpunk77022
                             Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
-                            string[] buffered = splitMsg(buffer.Dequeue());
+                            string[] buffered = new string[6];
+                            if(buffer.Count > 0) buffered = splitMsg(buffer.Dequeue());
                             //Console.WriteLine("move player: " + msg);
                             if (received[0] == "0")
                             {
@@ -194,7 +195,7 @@ namespace Cyberpunk77022
                                     buffer = new Queue<string>();
                                 } else
                                 {
-                                    while(long.Parse(received[3]) > long.Parse(buffered[3]))
+                                    while(long.Parse(received[3]) > long.Parse(buffered[3]) && buffer.Count > 0)
                                     {
                                         buffered = splitMsg(buffer.Dequeue());
                                     }
