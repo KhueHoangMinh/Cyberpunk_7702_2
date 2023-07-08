@@ -91,6 +91,11 @@ namespace Cyberpunk77022
             _background = Color.Black;
             _background.A = 0.5f;
 
+            Queue<string> buffer = new Queue<string>();
+
+            long sequence = 0;
+
+
             // Listener ==========================================================================================
 
             new Thread(() =>
@@ -111,9 +116,9 @@ namespace Cyberpunk77022
 
                 long prevTicks = 0;
 
-                long sequence = 0;
 
                 int mismatch = 0;
+
 
 
                 try
@@ -153,6 +158,7 @@ namespace Cyberpunk77022
                             Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
+                            string[] buffered = splitMsg(buffer.Dequeue());
                             //Console.WriteLine("move player: " + msg);
                             if (received[0] == "0")
                             {
@@ -172,39 +178,58 @@ namespace Cyberpunk77022
                                 {
                                     enemy.Gun.Shoot();
                                 }
-                                if (
-                                //long.Parse(received[3]) > prevTicks
-                                true
-                                )
+                                if (long.Parse(received[3]) == long.Parse(buffered[3]))
                                 {
-                                    //prevTicks = long.Parse(received[2]);
+                                    if (received[1] != buffered[1] || received[2] != buffered[2])
+                                    {
+                                        sequence = long.Parse(received[3]);
+                                        enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                        buffer = new Queue<string>();
+                                    }
+                                } else if (long.Parse(received[3]) < long.Parse(buffered[3]))
+                                {
+                                    sequence = long.Parse(received[3]);
                                     enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
-                                    enemy.Gun.AimPoint = new Point2D() { X = Double.Parse(received[5]), Y = Double.Parse(received[6]) };
-                                }
-                                else
-                                {
-                                    mismatch++;
-                                    Console.WriteLine(mismatch.ToString());
-                                }
-                            }
-                            if (received[7] == "1")
-                            {
-                                if (
-                                //long.Parse(received[10]) > prevTicks
-                                true
-                                )
-                                {
-                                    prevTicks = long.Parse(received[10]);
                                     player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
-                                }
-                                else
+                                    buffer = new Queue<string>();
+                                } else
                                 {
-                                    mismatch++;
-                                    Console.WriteLine(mismatch.ToString());
+                                    while(long.Parse(received[3]) > long.Parse(buffered[3]))
+                                    {
+                                        buffered = splitMsg(buffer.Dequeue());
+                                    }
                                 }
+                                //if (
+                                //long.Parse(received[3]) > prevTicks
+                                ////true
+                                //)
+                                //{
+                                //    //prevTicks = long.Parse(received[2]);
+                                //    //enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                //    enemy.Gun.AimPoint = new Point2D() { X = Double.Parse(received[5]), Y = Double.Parse(received[6]) };
+                                //}
+                                //else
+                                //{
+                                //    mismatch++;
+                                //    Console.WriteLine(mismatch.ToString());
+                                //}
+                            //}
+                                //if (
+                                //long.Parse(received[10]) > prevTicks
+                                ////true
+                                //)
+                                //{
+                                //    prevTicks = long.Parse(received[10]);
+                                //    //player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
+                                //}
+                                //else
+                                //{
+                                //    mismatch++;
+                                //    Console.WriteLine(mismatch.ToString());
+                                //}
                             }
                         }
-                        sequence++;
+                        //sequence++;
                         //Thread.Sleep(15);
                     }
                 }
@@ -234,9 +259,6 @@ namespace Cyberpunk77022
                 IPEndPoint ep1 = new IPEndPoint(hostIP, 11000);
                 IPEndPoint ep2 = new IPEndPoint(playerIP, 11000);
 
-                long sequence = 0;
-
-                Queue<string> buffer = new Queue<string>();
 
 
                 if (server)
@@ -285,6 +307,11 @@ namespace Cyberpunk77022
                 {
                     while (true)
                     {
+                        buffer.Enqueue(
+                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() +
+
+                            "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
+                            );
                         int dir1 = 0; int dir2 = 0; int dir3 = 0; int shoot = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
