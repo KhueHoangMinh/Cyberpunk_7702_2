@@ -181,7 +181,7 @@ namespace Cyberpunk77022
                                 }
                                 if(buffered != null)
                                 {
-                                    if (long.Parse(received[3]) == long.Parse(buffered[3]))
+                                    if (int.Parse(received[3]) == int.Parse(buffered[3]))
                                     {
                                         if (received[1] != buffered[1] || received[2] != buffered[2])
                                         {
@@ -191,7 +191,7 @@ namespace Cyberpunk77022
                                             Console.WriteLine("Diff: " + received[1] + " " + received[2] + " " + buffered[1] + " " + buffered[2]);
                                         }
                                     }
-                                    else if (long.Parse(received[3]) < long.Parse(buffered[3]))
+                                    else if (int.Parse(received[3]) < int.Parse(buffered[3]))
                                     {
                                         sequence = int.Parse(received[3]);
                                         enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
@@ -208,6 +208,7 @@ namespace Cyberpunk77022
                                     }
 
                                 }
+                                
                                 //if (
                                 //long.Parse(received[3]) > prevTicks
                                 ////true
@@ -321,6 +322,7 @@ namespace Cyberpunk77022
 
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
                             );
+                        Console.WriteLine(sequence.ToString());
                         int dir1 = 0; int dir2 = 0; int dir3 = 0; int shoot = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
