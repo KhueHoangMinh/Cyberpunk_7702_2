@@ -197,7 +197,7 @@ namespace Cyberpunk77022
                                         enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                         player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                         buffer = new Queue<string>();
-                                        Console.WriteLine("Seq: " + received[1] + " " + received[2] + " " + buffered[1] + " " + buffered[2]);
+                                        Console.WriteLine("Seq: " + received[3] + " " + buffered[3]);
                                     }
                                     else
                                     {
