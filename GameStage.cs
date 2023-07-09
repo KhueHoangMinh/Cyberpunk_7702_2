@@ -93,7 +93,7 @@ namespace Cyberpunk77022
 
             Queue<string> buffer = new Queue<string>();
 
-            long sequence = 0;
+            int sequence = 0;
 
 
             // Listener ==========================================================================================
@@ -131,7 +131,7 @@ namespace Cyberpunk77022
                         string msg = Encoding.ASCII.GetString(bytes, 0, bytes.Length);
                         if (server)
                         {
-                            Console.WriteLine(msg);
+                            //Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
                             //Console.WriteLine("move player: " + msg);
@@ -155,7 +155,7 @@ namespace Cyberpunk77022
                         }
                         else
                         {
-                            Console.WriteLine(msg);
+                            //Console.WriteLine(msg);
 
                             string[] received = splitMsg(msg);
                             string[] buffered = null;
@@ -185,7 +185,7 @@ namespace Cyberpunk77022
                                     {
                                         if (received[1] != buffered[1] || received[2] != buffered[2])
                                         {
-                                            sequence = long.Parse(received[3]);
+                                            sequence = int.Parse(received[3]);
                                             enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                             buffer = new Queue<string>();
                                             Console.WriteLine("Diff: " + received[1] + " " + received[2] + " " + buffered[1] + " " + buffered[2]);
@@ -193,7 +193,7 @@ namespace Cyberpunk77022
                                     }
                                     else if (long.Parse(received[3]) < long.Parse(buffered[3]))
                                     {
-                                        sequence = long.Parse(received[3]);
+                                        sequence = int.Parse(received[3]);
                                         enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                         player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                         buffer = new Queue<string>();
