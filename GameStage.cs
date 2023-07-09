@@ -187,6 +187,7 @@ namespace Cyberpunk77022
                                         {
                                             sequence = int.Parse(received[3]);
                                             enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                            player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                             buffer = new Queue<string>();
                                             Console.WriteLine("Diff: " + received[1] + " " + received[2] + " " + buffered[1] + " " + buffered[2]);
                                         }
@@ -318,11 +319,10 @@ namespace Cyberpunk77022
                     while (true)
                     {
                         buffer.Enqueue(
-                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() +
+                            "0" + "," + player.Pos.X.ToString() + "," + player.Pos.Y.ToString() + "," + sequence.ToString() + "," +
 
                             "1" + "," + enemy.Pos.X.ToString() + "," + enemy.Pos.Y.ToString() + "," + sequence.ToString()
                             );
-                        Console.WriteLine(sequence.ToString());
                         int dir1 = 0; int dir2 = 0; int dir3 = 0; int shoot = 0;
                         if (SplashKit.KeyDown(KeyCode.AKey))
                         {
