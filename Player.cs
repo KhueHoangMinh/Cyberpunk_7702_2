@@ -117,8 +117,8 @@ namespace Cyberpunk77022
             base.Gravity();
             VelX = VelX / 1.06f;
             this.Pos = new Point2D() { X = Math.Round(this.Pos.X + this.VelX,3), Y = Math.Round(this.Pos.Y + this.VelY,3) };
-            drawingPos.X += (this.Pos.X - drawingPos.X) * 0.8;
-            drawingPos.Y += (this.Pos.Y - drawingPos.Y) * 0.8;
+            drawingPos.X += (this.Pos.X - drawingPos.X) * 0.6;
+            drawingPos.Y += (this.Pos.Y - drawingPos.Y) * 0.6;
             _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
         }
 
@@ -220,6 +220,7 @@ namespace Cyberpunk77022
         public override void Draw()
         {
             SplashKit.FillRectangle(this.Color, drawingPos.X - this.SizeX / 2 - _camera.Pos.X, drawingPos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
+            //SplashKit.FillRectangle(Color.RGBAColor(255,0,0,100), this.Pos.X - this.SizeX / 2 - _camera.Pos.X, this.Pos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
             this.DrawGun();
             this.DrawHealth();
             this.DrawSkill(_skill);
