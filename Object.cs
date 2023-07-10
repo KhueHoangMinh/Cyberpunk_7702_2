@@ -43,7 +43,7 @@ namespace Cyberpunk77022
             }
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             SplashKit.FillRectangle(_color, (float)_pos.X - _sizeX / 2 - _camera.Pos.X, (float)_pos.Y - _sizeY / 2 - _camera.Pos.Y, _sizeX, _sizeY);
         }
@@ -164,6 +164,15 @@ namespace Cyberpunk77022
         public float Left
         {
             get { return (float)_pos.X - _sizeX/2; }
+        }
+
+        public float SizeX
+        {
+            get { return _sizeX; }
+        }
+        public float SizeY
+        {
+            get { return _sizeY; }
         }
 
         public Color Color

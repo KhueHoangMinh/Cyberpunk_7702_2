@@ -23,6 +23,7 @@ namespace Cyberpunk77022
         string collide = "no";
         bool _hostControl = true;
         int sequence = 0;
+        Point2D drawingPos;
 
         Gun TakeGun(string name)
         {
@@ -78,6 +79,7 @@ namespace Cyberpunk77022
             }
             _health = _maxHealth;
             _skill = skill;
+            drawingPos = this.Pos;
         }
 
         public void Update(List<Ground> grounds, List<Bullet> bullets)
@@ -115,6 +117,8 @@ namespace Cyberpunk77022
             base.Gravity();
             VelX = VelX / 1.06f;
             this.Pos = new Point2D() { X = Math.Round(this.Pos.X + this.VelX,3), Y = Math.Round(this.Pos.Y + this.VelY,3) };
+            drawingPos.X += (this.Pos.X - drawingPos.X) * 0.8;
+            drawingPos.Y += (this.Pos.Y - drawingPos.Y) * 0.8;
             _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
         }
 
@@ -211,6 +215,14 @@ namespace Cyberpunk77022
                     SplashKit.FillRectangle(Color.DarkGray, this.Right - _camera.Pos.X + 10, this.Top - 20 - _camera.Pos.Y, 10, 10);
                     break;
             }
+        }
+
+        public override void Draw()
+        {
+            SplashKit.FillRectangle(this.Color, drawingPos.X - this.SizeX / 2 - _camera.Pos.X, drawingPos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
+            this.DrawGun();
+            this.DrawHealth();
+            this.DrawSkill(_skill);
         }
 
         public Gun Gun
