@@ -187,12 +187,12 @@ namespace Cyberpunk77022
 
                                     if (int.Parse(received[3]) == int.Parse(buffered[3]))
                                     {
-                                        if ((int)(double.Parse(received[8])) != (int)(double.Parse(buffered[1])) || (int)(double.Parse(received[9])) != (int)(double.Parse(buffered[2])))
-                                        {
-                                            //sequence = int.Parse(received[3]) + 1;
-                                            //enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
-                                            //player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
-                                            //buffer = new Queue<string>();
+                                        if (Math.Abs(double.Parse(received[8]) - double.Parse(buffered[1])) >= 1 || Math.Abs(double.Parse(received[9])) - (int)(double.Parse(buffered[2])) >= 1)
+                                        { 
+                                            sequence = int.Parse(received[3]) + 1;
+                                            enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                            player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
+                                            buffer = new Queue<string>();
                                             Console.WriteLine("Diff: " + received[8] + " " + received[9] + " " + buffered[1] + " " + buffered[2]);
                                         } else
                                         {
