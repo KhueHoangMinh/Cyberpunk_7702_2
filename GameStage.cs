@@ -42,7 +42,7 @@ namespace Cyberpunk77022
         Button quitBtn;
         Color _background;
         bool paused = false;
-        bool server = true;
+        bool server = false;
 
         static string[] splitMsg(string p2dstring)
         {
@@ -63,10 +63,10 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2-30, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
-            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
-            //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
-            //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2-30, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             enemy.HostControl = false;
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
@@ -181,31 +181,43 @@ namespace Cyberpunk77022
                                 }
                                 if(buffered != null)
                                 {
+                                    Console.WriteLine(int.Parse(received[3]));
+
+                                    Console.WriteLine(int.Parse(buffered[3]));
+
                                     if (int.Parse(received[3]) == int.Parse(buffered[3]))
                                     {
-                                        if (received[1] != buffered[1] || received[2] != buffered[2])
+                                        if (received[8] != buffered[1] || received[9] != buffered[2])
                                         {
-                                            sequence = int.Parse(received[3]);
+                                            sequence = int.Parse(received[3]) + 1;
                                             enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                             player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                             buffer = new Queue<string>();
-                                            Console.WriteLine("Diff: " + received[1] + " " + received[2] + " " + buffered[1] + " " + buffered[2]);
+                                            Console.WriteLine("Diff: " + received[8] + " " + received[9] + " " + buffered[1] + " " + buffered[2]);
+                                        } else
+                                        {
+                                            Console.WriteLine("EQ");
                                         }
                                     }
                                     else if (int.Parse(received[3]) < int.Parse(buffered[3]))
                                     {
-                                        sequence = int.Parse(received[3]);
+                                        sequence = int.Parse(received[3]) + 1;
                                         enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
                                         player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
                                         buffer = new Queue<string>();
-                                        Console.WriteLine("Seq: " + received[3] + " " + buffered[3]);
+                                        Console.WriteLine("Smaller: " + received[3] + " " + buffered[3]);
                                     }
-                                    else
+                                    else if(int.Parse(received[3]) > int.Parse(buffered[3]))
                                     {
-                                        while (long.Parse(received[3]) > long.Parse(buffered[3]) && buffer.Count > 0)
-                                        {
-                                            buffered = splitMsg(buffer.Dequeue());
-                                        }
+                                        sequence = int.Parse(received[3]) + 1;
+                                        enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
+                                        player.Pos = new Point2D() { X = Double.Parse(received[8]), Y = Double.Parse(received[9]) };
+                                        buffer = new Queue<string>();
+                                        Console.WriteLine("Larger: " + received[3] + " " + buffered[3]);
+                                        //while (long.Parse(received[3]) > long.Parse(buffered[3]) && buffer.Count > 0)
+                                        //{
+                                        //    buffered = splitMsg(buffer.Dequeue());
+                                        //}
                                     }
 
                                 }
