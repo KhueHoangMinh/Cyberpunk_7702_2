@@ -114,7 +114,7 @@ namespace Cyberpunk77022
             }
             base.Gravity();
             VelX = VelX / 1.06f;
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
+            this.Pos = new Point2D() { X = Math.Round(this.Pos.X + this.VelX,3), Y = Math.Round(this.Pos.Y + this.VelY,3) };
             _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
         }
 

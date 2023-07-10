@@ -42,7 +42,7 @@ namespace Cyberpunk77022
         Button quitBtn;
         Color _background;
         bool paused = false;
-        bool server = false;
+        bool server = true;
 
         static string[] splitMsg(string p2dstring)
         {
@@ -63,10 +63,10 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
-            //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2-30, Y = 50}, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
-            //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
-            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
-            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2+30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
+            //enemy = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 - 30, Y = 50 }, 100, 100, this.Manager.Gun, this.Manager.Skin, this.Manager.Skill);
+            //player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width / 2 + 30, Y = 50 }, 100, 100, "Gun 6", "Pink", this.Manager.Skill);
             enemy.HostControl = false;
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
