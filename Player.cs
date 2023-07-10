@@ -219,8 +219,8 @@ namespace Cyberpunk77022
 
         public override void Draw()
         {
-            SplashKit.FillRectangle(this.Color, drawingPos.X - this.SizeX / 2 - _camera.Pos.X, drawingPos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
-            //SplashKit.FillRectangle(Color.RGBAColor(255,0,0,100), this.Pos.X - this.SizeX / 2 - _camera.Pos.X, this.Pos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
+            //SplashKit.FillRectangle(this.Color, drawingPos.X - this.SizeX / 2 - _camera.Pos.X, drawingPos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
+            SplashKit.FillRectangle(this.Color, this.Pos.X - this.SizeX / 2 - _camera.Pos.X, this.Pos.Y - this.SizeY / 2 - _camera.Pos.Y, this.SizeX, this.SizeY);
             this.DrawGun();
             this.DrawHealth();
             this.DrawSkill(_skill);
