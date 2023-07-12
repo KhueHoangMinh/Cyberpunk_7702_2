@@ -80,6 +80,7 @@ namespace Cyberpunk77022
             if ((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
             {
                 this.IsCollided = true;
+                SplashKit.SoundEffectNamed("hit").Play();
                 _game.RemoveBullet(this);
                 Explode();
             }
@@ -89,6 +90,7 @@ namespace Cyberpunk77022
                 if (_game.Grounds[j].IsCollided(this.Pos))
                 {
                     this.IsCollided = true;
+                    SplashKit.SoundEffectNamed("hit").Play();
                     Explode();
                     break;
                 }
@@ -99,6 +101,7 @@ namespace Cyberpunk77022
                 if (_game.Enemies[j].IsCollided(this.Pos) && this.Gun.GunOf is Player)
                 {
                     this.IsCollided = true;
+                    SplashKit.SoundEffectNamed("hit").Play();
                     _game.Enemies[j].GetHit(this);
                     Explode();
                     break;
@@ -109,6 +112,7 @@ namespace Cyberpunk77022
             if (_game.GetPlayer.IsCollided(this.Pos) && this.Gun.GunOf is Enemy)
             {
                 this.IsCollided = true;
+                SplashKit.SoundEffectNamed("hit").Play();
                 _game.GetPlayer.GetHit(this);
                 Explode();
             }

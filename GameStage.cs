@@ -283,6 +283,7 @@ namespace Cyberpunk77022
         {
             enemies.Remove(enemy);
             this.Manager.Score++;
+            this.Manager.Coin++;
         }
 
 

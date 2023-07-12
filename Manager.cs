@@ -29,6 +29,7 @@ namespace Cyberpunk77022
         Gun _gun;
         Skin _skin;
         Skill _skill = null;
+        Music background;
 
         List<ShopItem> _guns;
         List<ShopItem> _skins;
@@ -47,12 +48,29 @@ namespace Cyberpunk77022
             SplashKit.LoadBitmap("rpg", "guns/rpg.png");
 
             SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
-            SplashKit.LoadSoundEffect("click", "click.mp3");
+            SplashKit.LoadSoundEffect("singleshot2", "sounds/singleshot2.mp3");
+            SplashKit.LoadSoundEffect("shotgun", "sounds/shotgun.mp3");
+            SplashKit.LoadSoundEffect("rifle", "sounds/rifle.mp3");
+            SplashKit.LoadSoundEffect("sniper", "sounds/sniper.mp3");
+            SplashKit.LoadSoundEffect("hit", "sounds/hit.mp3");
+
+            SplashKit.LoadSoundEffect("click", "sounds/click.mp3");
+            SplashKit.LoadSoundEffect("denied", "sounds/denied.mp3");
+
+            SplashKit.LoadSoundEffect("dying1", "sounds/dying1.mp3");
+            SplashKit.LoadSoundEffect("dying2", "sounds/dying2.mp3");
+            SplashKit.LoadSoundEffect("dying3", "sounds/dying3.mp3");
+
+            SplashKit.LoadMusic("background", "sounds/background.mp3");
 
             SplashKit.LoadFont("font", "Roboto-Bold.ttf");
 
 
             _window = window;
+
+            background = SplashKit.MusicNamed("background");
+            SplashKit.SetMusicVolume(0.6f);
+            background.FadeIn(3000);
 
             _guns = new List<ShopItem>()
             {
@@ -268,7 +286,10 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-
+            if(!SplashKit.MusicPlaying())
+            {
+                background.Play();
+            }
             for (int i = 0; i < stars.Count; i++)
             {
                 if (currentStage is GameStage)

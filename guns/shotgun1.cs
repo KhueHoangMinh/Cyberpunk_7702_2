@@ -11,7 +11,7 @@ namespace Cyberpunk77022
 {
     public class Shotgun1 : Gun
     {
-        public Shotgun1(Window window, float damage) : base("Shotgun", "shotgun", "a gun", 50, window, "gun6","singleshot",200,0,damage,5000000,1)
+        public Shotgun1(Window window, float damage) : base("Shotgun", "shotgun", "a gun", 50, window, "gun6","shotgun",200,0,damage,5000000,1)
         {
         }
         public override void ShootAction()

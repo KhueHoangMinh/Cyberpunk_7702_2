@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -27,10 +28,11 @@ namespace Cyberpunk77022
         float _minusHealth = 0;
         string collide = "no";
         bool _gravity = true;
+        string _dying;
 
         float aX = 0;
         float aY = 0;
-        public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
+        public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
             _game = game;
@@ -47,8 +49,9 @@ namespace Cyberpunk77022
             _fireRate = new Random().Next(30000000, 50000000);
             _jumpedAt = -_jumpTime;
             _firedAt = -_fireRate;
+            _dying = dying;
         }
-        public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, float MaxHealth) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
+        public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying, float MaxHealth) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
             _game = game;
@@ -65,12 +68,14 @@ namespace Cyberpunk77022
             _fireRate = new Random().Next(30000000, 50000000);
             _jumpedAt = -_jumpTime;
             _firedAt = -_fireRate;
+            _dying = dying;
         }
         public virtual void Update(List<Ground> grounds, List<Bullet> bullets)
         {
             if(_health < 0 && _alive)
             {
                 _alive = false;
+                SplashKit.SoundEffectNamed(_dying).Play();
                 this.Color = Color.DarkGray;
                 //_game.RemoveEnemy(this);
             }
@@ -292,7 +297,7 @@ namespace Cyberpunk77022
 
     public class NormalEnemy : Enemy
     {
-        public NormalEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 60, 60, Color.Red) { 
+        public NormalEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 60, 60, Color.Red,"dying1") { 
         
         }
 
@@ -368,7 +373,7 @@ namespace Cyberpunk77022
 
     public class FlyEnemy : Enemy
     {
-        public FlyEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 50, 50, Color.Orange, 60)
+        public FlyEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 50, 50, Color.Orange, "dying2", 60)
         {
             this.Gun = new Rifle1(this.Game.Manager.Window, 8);
             this.Gun.Game = this.Game;
@@ -424,7 +429,7 @@ namespace Cyberpunk77022
     }
     public class BigEnemy : Enemy
     {
-        public BigEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 100, 100, Color.LightBlue, 300)
+        public BigEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 100, 100, Color.LightBlue, "dying3", 300)
         {
             this.Gun = new Shotgun1(this.Game.Manager.Window, 3);
             this.Gun.Game = this.Game;
