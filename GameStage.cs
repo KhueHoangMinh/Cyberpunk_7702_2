@@ -187,7 +187,7 @@ namespace Cyberpunk77022
 
                                     if (int.Parse(received[3]) == int.Parse(buffered[3]))
                                     {
-                                        if (Math.Abs(double.Parse(received[8]) - double.Parse(buffered[1])) >= 1 || Math.Abs(double.Parse(received[9])) - (int)(double.Parse(buffered[2])) >= 1)
+                                        if (Math.Abs(double.Parse(received[8]) - double.Parse(buffered[1])) >= 2 || Math.Abs(double.Parse(received[9])) - (int)(double.Parse(buffered[2])) >= 2)
                                         { 
                                             sequence = int.Parse(received[3]) + 1;
                                             enemy.Pos = new Point2D() { X = Double.Parse(received[1]), Y = Double.Parse(received[2]) };
