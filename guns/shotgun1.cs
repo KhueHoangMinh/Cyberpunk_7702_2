@@ -11,6 +11,9 @@ namespace Cyberpunk77022
 {
     public class Shotgun1 : Gun
     {
+        public Shotgun1(Window window, float damage, bool enemys) : base("Shotgun", "shotgun", "a gun", 50, window, "gun6", "shotgun", 200, 0, damage, 5000000, 1, enemys)
+        {
+        }
         public Shotgun1(Window window, float damage) : base("Shotgun", "shotgun", "a gun", 50, window, "gun6","shotgun",200,0,damage,5000000,1)
         {
         }
@@ -18,9 +21,18 @@ namespace Cyberpunk77022
         {
             if (this.Game != null)
             {
+                Color color = Color.White;
+                if (!this.enemyGun)
+                {
+                    color = Color.Random();
+                }
                 for (int i = 0; i < 6; i++)
                 {
-                    Bullet NewBullet = new NormalBullet(this.Game, this, new Random().Next(200,400), 40, this.Damage);
+                    Bullet NewBullet = new NormalBullet(this.Game, this, new Random().Next(200,400), 40, this.Damage, color);
+                    if (enemyGun)
+                    {
+                        NewBullet.Speed = 20;
+                    }
                     NewBullet.Angle += (float)new Random().NextDouble() * 0.5f - 0.25f;
                     this.Game.AddBullet(NewBullet);
                 }
@@ -30,7 +42,7 @@ namespace Cyberpunk77022
                     {
                         X = (double)new Random().Next((int)this.Nozzle.X - 10, (int)this.Nozzle.X + 10),
                         Y = (double)new Random().Next((int)this.Nozzle.Y - 10, (int)this.Nozzle.Y + 10),
-                    }, Color.Random()));
+                    }, color));
                 }
             }
             

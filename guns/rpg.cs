@@ -12,6 +12,9 @@ namespace Cyberpunk77022
         public RPG(Window window, float damage) : base("RPG", "rpg", "a gun", 50, window, "rpg", "singleshot", 250, 125, damage, 10000000, 1)
         {
         }
+        public RPG(Window window, float damage,bool enemys) : base("RPG", "rpg", "a gun", 50, window, "rpg", "singleshot", 250, 125, damage, 10000000, 1, enemys)
+        {
+        }
         public override void ShootAction()
         {
             if(this.Game != null)

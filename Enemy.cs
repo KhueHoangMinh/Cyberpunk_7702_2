@@ -36,7 +36,7 @@ namespace Cyberpunk77022
         {
             _manager = game.Manager;
             _game = game;
-            _EnemyGun = new Pistol1(_game.Manager.Window, 5);
+            _EnemyGun = new Pistol1(_game.Manager.Window, 5, true);
             this.Gun.Game = this.Game;
             this.Gun.GunOf = this;
             _EnemyGun.SmokeDensity = 5;
@@ -72,6 +72,10 @@ namespace Cyberpunk77022
         }
         public virtual void Update(List<Ground> grounds, List<Bullet> bullets)
         {
+            if(this.Pos.Y > 3000)
+            {
+                _health = -1;
+            }
             if(_health < 0 && _alive)
             {
                 _alive = false;
@@ -375,7 +379,7 @@ namespace Cyberpunk77022
     {
         public FlyEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 50, 50, Color.Orange, "dying2", 60)
         {
-            this.Gun = new Rifle1(this.Game.Manager.Window, 8);
+            this.Gun = new Rifle1(this.Game.Manager.Window, 8, true);
             this.Gun.Game = this.Game;
             this.Gun.GunOf = this;
         }
@@ -431,7 +435,7 @@ namespace Cyberpunk77022
     {
         public BigEnemy(GameStage game, Camera camera, Point2D pos) : base(game, camera, pos, 100, 100, Color.LightBlue, "dying3", 300)
         {
-            this.Gun = new Shotgun1(this.Game.Manager.Window, 3);
+            this.Gun = new Shotgun1(this.Game.Manager.Window, 3, true);
             this.Gun.Game = this.Game;
             this.Gun.GunOf = this;
         }

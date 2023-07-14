@@ -44,14 +44,10 @@ namespace Cyberpunk77022
         {
             _game = game;
             _color = Color.Random();
-            //_color.A = 0;
             _camera = game.Camera;
             _gun = gun;
             _range = range;
             _speed = speed;
-            //float a = (float)(gun.AimPoint.X - gun.BasePoint.X);
-            //float b = (float)(gun.AimPoint.Y - gun.BasePoint.Y);
-            //float c = (float)Math.Sqrt(a * a + b * b);
             _angle = (float)Math.PI * 2 - gun.Angle;
             sinAngle = (float)Math.Sin(_angle);
             cosAngle = (float)Math.Cos(_angle);
@@ -68,7 +64,6 @@ namespace Cyberpunk77022
             }
             _initPos = gun.Nozzle;
             _Pos = _initPos;
-            //_angle = (float)Math.PI * 2 - (float)Math.Atan(b / a);
             delta = (float)((Math.Sqrt(_width * _width + _height * _height) / 2));
             beta = (float)(_angle - Math.Atan(_width / _height));
             _damage = damage;
@@ -209,10 +204,12 @@ namespace Cyberpunk77022
         public float VelX
         {
             get { return _VelX; }
+            set { _VelX = value; }
         }
         public float VelY
         {
             get { return _VelY; }
+            set { _VelY = value; }
         }
 
         public Point2D Pos
@@ -279,6 +276,17 @@ namespace Cyberpunk77022
         public float Speed
         {
             get { return _speed; }
+            set 
+            { 
+                _speed = value;
+                _VelX = (float)(_speed * ((float)Math.Sin(_angle + Math.PI / 2)));
+                _VelY = (float)(_speed * ((float)Math.Cos(_angle + Math.PI / 2)));
+                if (_gun.Reverse)
+                {
+                    _VelX *= -1;
+                    _VelY *= -1;
+                }
+            }
         }
 
         public Trace Trace
@@ -294,7 +302,12 @@ namespace Cyberpunk77022
         {
             this.Trace = new Trace(game, game.Manager.Window, game.Camera, this);
             game.AddTrace(this.Trace);
-
+        }
+        public NormalBullet(GameStage game, Gun gun, float range, float speed, float damage, Color color) : base(game, gun, range, speed, damage)
+        {
+            this.Trace = new Trace(game, game.Manager.Window, game.Camera, this);
+            this.Trace.GetColor = color;
+            game.AddTrace(this.Trace);
         }
     }
     public class RPGBullet : Bullet
@@ -309,23 +322,28 @@ namespace Cyberpunk77022
 
         public override void Explode()
         {
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(250, 275), 300, new Point2D()
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(25, 75), 450, new Point2D()
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color));
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(200, 275), 300, new Point2D()
+            }, this.Color, 0.6f, 20));
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(20, 75), 350, new Point2D()
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color));
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(150, 175), 300, new Point2D()
+            }, this.Color, 0.5f, 30));
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 75), 400, new Point2D()
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color));
+            }, this.Color, 0.7f, 25));
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 20), 3000, new Point2D()
+            {
+                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            }, this.Color, 0.5f, 150));
 
-            for(int i = 0; i < this.Game.Enemies.Count; i++)
+            for (int i = 0; i < this.Game.Enemies.Count; i++)
             {
                 float dist = (float)((this.Pos.X - this.Game.Enemies[i].Pos.X) * (this.Pos.X - this.Game.Enemies[i].Pos.X) + (this.Pos.Y - this.Game.Enemies[i].Pos.Y) * (this.Pos.Y - this.Game.Enemies[i].Pos.Y));
                 if (dist < _explodeRange * _explodeRange)
@@ -342,7 +360,7 @@ namespace Cyberpunk77022
             base.MoveBullet();
             for(int i = 0; i < 5; i++)
             {
-                if(new Random().Next(0,20) < 4) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2,8), new Random().Next(20,30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White));
+                if(new Random().Next(0,20) < 4) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2,8), new Random().Next(20,30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White, (float)(new Random().NextDouble()*0.3 + 0.1), new Random().Next(2,5)));
             }
         }
 

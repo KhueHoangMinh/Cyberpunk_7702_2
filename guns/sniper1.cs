@@ -12,5 +12,8 @@ namespace Cyberpunk77022
         public Sniper1(Window window, float damage) : base("Sniper 1", "sniper1", "a gun", 50, window, "gun1", "sniper", 250,50, damage, 10000000, 1)
         {
         }
+        public Sniper1(Window window, float damage, bool enemys) : base("Sniper 1", "sniper1", "a gun", 50, window, "gun1", "sniper", 250, 50, damage, 10000000, 1,enemys)
+        {
+        }
     }
 }

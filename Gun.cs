@@ -46,6 +46,8 @@ namespace Cyberpunk77022
         string _desc;
         int _price;
         bool purchased = false;
+        bool _minimized = false;
+        bool _enemyGun = false;
 
         public Gun(string name, string id, string desc, int price, GameStage game, Object GunOf, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil)
         {
@@ -126,6 +128,65 @@ namespace Cyberpunk77022
             _damage = damage;
             _fireRate = fireRate;
             _recoil = recoil;
+        }
+
+        public Gun(string name, string id, string desc, int price, Window window, string bitmapName, string soundName, float DisplayWidth, float butt, float damage, float fireRate, float recoil, bool enemys)
+        {
+            _name = name;
+            _id = id;
+            _desc = desc;
+            _price = price;
+            _GunOf = GunOf;
+            singleshot = SplashKit.SoundEffectNamed(soundName);
+            _graphic = SplashKit.BitmapNamed(bitmapName);
+            _DisplayWidth = DisplayWidth;
+            _butt = butt;
+            _nozzleLength = _DisplayWidth - _butt;
+            scale = (float)(_DisplayWidth / _graphic.Width);
+            _pos = new Point2D() { X = (_graphic.Width - _DisplayWidth) / 2, Y = (_graphic.Height - _graphic.Height * scale) / 2, };
+            drawingOptions = new DrawingOptions()
+            {
+                Dest = _window,
+                ScaleX = scale,
+                ScaleY = scale,
+                AnchorOffsetX = 0,
+                AnchorOffsetY = 0,
+                Angle = 0,
+            };
+            float shopScale = 300 * 1.0f / _graphic.Width;
+            shopDrawingOption = new DrawingOptions()
+            {
+                Dest = window,
+                ScaleX = shopScale,
+                ScaleY = shopScale,
+            };
+            _ShootTime = 999999999;
+            _aimPoint = new Point2D();
+            nozzle = new Point2D();
+            _basePoint = new Point2D();
+            _damage = damage;
+            _fireRate = fireRate;
+            _recoil = recoil;
+            _minimized = enemys;
+            _enemyGun = enemys;
+
+            if (_enemyGun)
+            {
+                _DisplayWidth = _DisplayWidth / 2;
+                _butt = _butt / 2;
+                _nozzleLength = _DisplayWidth - _butt;
+                scale = (float)(_DisplayWidth / _graphic.Width);
+                _pos = new Point2D() { X = (_graphic.Width - _DisplayWidth) / 2, Y = (_graphic.Height - _graphic.Height * scale) / 2, };
+                drawingOptions = new DrawingOptions()
+                {
+                    Dest = _window,
+                    ScaleX = scale,
+                    ScaleY = scale,
+                    AnchorOffsetX = 0,
+                    AnchorOffsetY = 0,
+                    Angle = 0,
+                };
+            }
         }
         public virtual void Update(Point2D aimPoint)
         {
@@ -226,14 +287,24 @@ namespace Cyberpunk77022
         {
             if(_game != null)
             {
-                Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage);
+                Color color = Color.White;
+                if(!enemyGun)
+                {
+                    color = Color.Random();
+                }
+                Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage, color);
+                if (enemyGun)
+                {
+                    NewBullet.Speed = 30;
+                }
+                NewBullet.Color = color;
                 for (int i = 0; i < 3; i++)
                 {
                     _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
                     {
                         X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
                         Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                    }, Color.Random()));
+                    }, color));
                 }
                 _game.AddBullet(NewBullet);
             }
@@ -325,6 +396,16 @@ namespace Cyberpunk77022
         {
             get { return purchased; }
             set { purchased = value; }
+        }
+
+        public bool Minimized
+        {
+            get { return _minimized; }
+        }
+
+        public bool enemyGun
+        {
+            get { return _enemyGun; }
         }
     }
 }

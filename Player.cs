@@ -38,6 +38,10 @@ namespace Cyberpunk77022
 
         public void Update(List<Ground> grounds, List<Bullet> bullets)
         {
+            if (this.Pos.Y > 3000)
+            {
+                _health = -1;
+            }
             _jumped = true;
             string collide = "no";
             for (int i = 0; i < grounds.Count; i++)

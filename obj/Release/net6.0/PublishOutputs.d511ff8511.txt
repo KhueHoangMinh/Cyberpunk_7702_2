@@ -1,0 +1,5 @@
+C:\msys64\home\hoang\Cyberpunk77022_noserver\bin\Release\net6.0\publish\Cyberpunk77022.exe
+C:\msys64\home\hoang\Cyberpunk77022_noserver\bin\Release\net6.0\publish\Cyberpunk77022.dll
+C:\msys64\home\hoang\Cyberpunk77022_noserver\bin\Release\net6.0\publish\Cyberpunk77022.deps.json
+C:\msys64\home\hoang\Cyberpunk77022_noserver\bin\Release\net6.0\publish\Cyberpunk77022.runtimeconfig.json
+C:\msys64\home\hoang\Cyberpunk77022_noserver\bin\Release\net6.0\publish\Cyberpunk77022.pdb

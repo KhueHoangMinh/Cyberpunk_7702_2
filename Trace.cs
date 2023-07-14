@@ -100,6 +100,11 @@ namespace Cyberpunk77022
         public Color GetColor
         {
             get { return _color; }
+            set 
+            {
+                _color = value;
+                _color.A = (float)0.6;
+            }
         }
 
         public void ReCalAngle(float NewAngle)

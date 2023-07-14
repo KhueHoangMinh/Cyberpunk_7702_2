@@ -1,0 +1,5 @@
+C:\Users\hoang\Downloads\CyberPunk77022_Published\Cyberpunk77022.exe
+C:\Users\hoang\Downloads\CyberPunk77022_Published\Cyberpunk77022.dll
+C:\Users\hoang\Downloads\CyberPunk77022_Published\Cyberpunk77022.deps.json
+C:\Users\hoang\Downloads\CyberPunk77022_Published\Cyberpunk77022.runtimeconfig.json
+C:\Users\hoang\Downloads\CyberPunk77022_Published\Cyberpunk77022.pdb

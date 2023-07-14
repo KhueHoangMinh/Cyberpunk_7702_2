@@ -23,7 +23,7 @@ namespace Cyberpunk77022
         Queue<Trace> traces;
         Queue<Trace> TraceAdd;
         int TracePop = 0;
-        Queue<Explosion> explosions;
+        List<Explosion> explosions;
         Queue<Explosion> ExploAdd;
         int ExploPop = 0;
         Queue<Smoke> smokes;
@@ -53,7 +53,7 @@ namespace Cyberpunk77022
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             traces = new Queue<Trace>();
-            explosions = new Queue<Explosion>();
+            explosions = new List<Explosion>();
             smokes = new Queue<Smoke>();
             MinusHealthAdd = new Queue<MinusHealth>();
             TraceAdd = new Queue<Trace>();
@@ -134,16 +134,26 @@ namespace Cyberpunk77022
                     smokes.Dequeue();
                     SmokePop--;
                 }
-                while (ExploAdd.Count > 0) explosions.Enqueue(ExploAdd.Dequeue());
+                while (ExploAdd.Count > 0) explosions.Add(ExploAdd.Dequeue());
                 foreach (Explosion explosion in explosions)
                 {
                     explosion.Update();
                 }
-                while (ExploPop > 0 && explosions.Count > 0)
+                int m = 0;
+                while (m < explosions.Count)
                 {
-                    explosions.Dequeue();
-                    ExploPop--;
+                    if (explosions[m].GetColor.A < 0.01)
+                    {
+                        explosions.Remove(explosions[m]);
+                        m--;
+                    }
+                    m++;
                 }
+                //while (ExploPop > 0 && explosions.Count > 0)
+                //{
+                //    explosions.Dequeue();
+                //    ExploPop--;
+                //}
                 foreach (MinusHealth minusHealth in minusHealths)
                 {
                     minusHealth.Update();
@@ -321,7 +331,7 @@ namespace Cyberpunk77022
 
         public void RemoveMinusHealth()
         {
-            MinusHealthPop++;
+            
         }
 
         public void EndGame()
