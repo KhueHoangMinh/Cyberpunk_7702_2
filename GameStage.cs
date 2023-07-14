@@ -333,7 +333,7 @@ namespace Cyberpunk77022
 
         public void RemoveMinusHealth()
         {
-            
+            MinusHealthPop++;
         }
 
         public void EndGame()
