@@ -115,11 +115,11 @@ namespace Cyberpunk77022
 
         public virtual void Explode()
         {
-            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(20, 25), new Random().Next(40, 60), new Point2D()
+            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 20), 3000, new Point2D()
             {
-                X = (double)new Random().Next((int)this.Pos.X - 10, (int)this.Pos.X + 10),
-                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-            }, this.Color));
+                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            }, this.Color, 0.2f, 30));
             _game.RemoveBullet(this);
         }
 
@@ -153,7 +153,7 @@ namespace Cyberpunk77022
         public virtual void Draw()
         {
             //SplashKit.FillQuad(_color, calQuad());
-            SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 5);
+            //SplashKit.FillCircle(_color, _Pos.X - _camera.Pos.X, _Pos.Y - _camera.Pos.Y, 5);
         }
 
         public Quad calQuad()
@@ -341,7 +341,7 @@ namespace Cyberpunk77022
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.5f, 150));
+            }, this.Color, 0.5f, 250));
 
             for (int i = 0; i < this.Game.Enemies.Count; i++)
             {

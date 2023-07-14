@@ -173,6 +173,8 @@ namespace Cyberpunk77022
                         paused = !paused;
                     }
                 }
+                Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " + 
+                    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " ");
             } else
             {
                 if (this.OutEf._completed)

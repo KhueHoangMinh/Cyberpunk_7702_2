@@ -279,33 +279,40 @@ namespace Cyberpunk77022
                 {
                     _shock += _recoil;
                 }
-                this.ShootAction();
-            }
-        }
-
-        public virtual void ShootAction()
-        {
-            if(_game != null)
-            {
                 Color color = Color.White;
-                if(!enemyGun)
+                if (!enemyGun)
                 {
                     color = Color.Random();
                 }
+                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(2, 5), 35, new Point2D()
+                {
+                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                }, color, 0.3f, 5));
+                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(5, 10), 35, new Point2D()
+                {
+                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                }, color, 0.2f, 30));
+                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(15, 20), 100, new Point2D()
+                {
+                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                }, color, 0.1f, 50));
+                this.ShootAction(color);
+            }
+        }
+
+        public virtual void ShootAction(Color color)
+        {
+            if(_game != null)
+            {
                 Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage, color);
                 if (enemyGun)
                 {
                     NewBullet.Speed = 30;
                 }
                 NewBullet.Color = color;
-                for (int i = 0; i < 3; i++)
-                {
-                    _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(8, 10), new Random().Next(30, 50), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)NewBullet.InitPos.X - 10, (int)NewBullet.InitPos.X + 10),
-                        Y = (double)new Random().Next((int)NewBullet.InitPos.Y - 10, (int)NewBullet.InitPos.Y + 10),
-                    }, color));
-                }
                 _game.AddBullet(NewBullet);
             }
         }
