@@ -81,6 +81,7 @@ namespace Cyberpunk77022
                 _alive = false;
                 SplashKit.SoundEffectNamed(_dying).Play();
                 this.Color = Color.DarkGray;
+                _game.AddCoin(new Coin(this.Game, this.Pos, aX, aY));
                 //_game.RemoveEnemy(this);
             }
             if(!_alive)
@@ -124,15 +125,8 @@ namespace Cyberpunk77022
                 if (isCollide == "bottom")
                 {
                     this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
-                    //if (this.VelY > 0 && this.VelY < 3)
-                    //{
-                    //    this.VelY = 0;
-                    //}
-                    //else if (this.VelY > 3)
-                    //{
-                    //    this.VelY = -this.VelY * 0.9f;
-                    //}
-                    if(this.VelY > 0) this.VelY = 0;
+                    aX /= 1.06f;
+                    if (this.VelY > 0) this.VelY = 0;
                     _jumped = false;
                 }
                 else
@@ -157,7 +151,7 @@ namespace Cyberpunk77022
                 }
             }
             if(_gravity) base.Gravity();
-            aX /= 1.06f;
+            //aX /= 1.06f;
             aY /= 1.06f;
             VelX = 0;
 
@@ -199,22 +193,7 @@ namespace Cyberpunk77022
         public void GetHit(Bullet bullet)
         {
             _minusHealth = _health;
-            if (bullet is NormalBullet)
-            {
-                if (_health >= 0)
-                {
-                    aX = 10 * bullet.VelX / bullet.Speed;
-                    aY = 10 * bullet.VelY / bullet.Speed;
-                    aY -= 10;
-                }
-                else
-                {
-                    aX = 20 * bullet.VelX / bullet.Speed;
-                    aY = 20 * bullet.VelY / bullet.Speed;
-                    aY -= 20;
-                }
-                _health -= bullet.Damage;
-            } else if (bullet is RPGBullet)
+            if (bullet is RPGBullet)
             {
                 float scale = ((bullet as RPGBullet).ExplodeRange - (float)Math.Sqrt((this.Pos.X - bullet.Pos.X) * (this.Pos.X - bullet.Pos.X) + (this.Pos.Y - bullet.Pos.Y) * (this.Pos.Y - bullet.Pos.Y)))/ (bullet as RPGBullet).ExplodeRange;
                 if (_health >= 0)
@@ -230,8 +209,23 @@ namespace Cyberpunk77022
                     aY -= scale * 70;
                 }
                 _health -= (int) (scale * bullet.Damage);
+            } else
+            {
+                if (_health >= 0)
+                {
+                    aX = 10 * bullet.VelX / bullet.Speed;
+                    aY = 10 * bullet.VelY / bullet.Speed;
+                    aY -= 10;
+                }
+                else
+                {
+                    aX = 20 * bullet.VelX / bullet.Speed;
+                    aY = 20 * bullet.VelY / bullet.Speed;
+                    aY -= 20;
+                }
+                _health -= bullet.Damage;
             }
-            _minusHealth -= _health;
+                _minusHealth -= _health;
             if (_alive) _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
             //this.Pos = new Point2D() { X = this.Pos.X + bullet.VelX, Y = this.Pos.Y + bullet.VelY };
         }
@@ -253,7 +247,7 @@ namespace Cyberpunk77022
             set { _health = value; }
         }
 
-        public bool Gravity
+        public bool GravityEffect
         {
             get { return _gravity; }
             set { _gravity = value; }
@@ -309,7 +303,7 @@ namespace Cyberpunk77022
         {
             if (this.Health < 0 && this.Alive)
             {
-                this.Gravity = false;
+                this.GravityEffect = false;
             }
             if (this.Game.GetPlayer.Pos.X < this.Pos.X)
             {
@@ -444,7 +438,7 @@ namespace Cyberpunk77022
         {
             if (this.Health < 0 && this.Alive)
             {
-                this.Gravity = false;
+                this.GravityEffect = false;
             }
             if (this.Game.GetPlayer.Pos.X < this.Pos.X)
             {

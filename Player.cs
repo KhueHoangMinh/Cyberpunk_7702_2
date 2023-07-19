@@ -22,7 +22,7 @@ namespace Cyberpunk77022
         public Player(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY) : base(camera, pos, sizeX,sizeY, Color.White, true,0,0) { 
             _manager = game.Manager;
             _game = game;
-            _PlayerGun = game.Manager.Gun;
+            _PlayerGun = this.Game.Manager.SelectedGun[0];
             _PlayerGun.Game = game;
             _PlayerGun.GunOf = this;
 
@@ -114,7 +114,24 @@ namespace Cyberpunk77022
                     }
                 }
             }
+
+
             VelX = VelX / 1.06f;
+
+            if (SplashKit.KeyDown(KeyCode.Num1Key))
+            {
+                _PlayerGun = this.Game.Manager.SelectedGun[0];
+                _PlayerGun.Game = this.Game;
+                _PlayerGun.GunOf = this;
+            }
+
+            if (SplashKit.KeyDown(KeyCode.Num2Key))
+            {
+                _PlayerGun = this.Game.Manager.SelectedGun[1];
+                _PlayerGun.Game = this.Game;
+                _PlayerGun.GunOf = this;
+            }
+
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
             _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
             if (SplashKit.MouseDown(MouseButton.LeftButton))
@@ -135,7 +152,7 @@ namespace Cyberpunk77022
                 _health -= bullet.Damage;
             }
             _minusHealth -= _health;
-            _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
+            _game.AddMinusHealth(new MinusHealth(_game, this, (int)_minusHealth));
         }
 
         public void DrawGun() 
@@ -167,6 +184,20 @@ namespace Cyberpunk77022
             get
             {
                 return _health;
+            }
+        }
+        public float MaxHealth
+        {
+            get
+            {
+                return _maxHealth;
+            }
+        }
+        public float MinusHealth
+        {
+            get
+            {
+                return _minusHealth;
             }
         }
 

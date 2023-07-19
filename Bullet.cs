@@ -32,10 +32,12 @@ namespace Cyberpunk77022
         bool _isCollided = false;
         float _range = 800;
         float _damage;
+        bool _pierce = false;
+        List<Enemy> _hitted;
 
 
-        float checkUnitX;
-        float checkUnitY;
+        protected float checkUnitX;
+        protected float checkUnitY;
 
         Trace _trace;
 
@@ -70,12 +72,12 @@ namespace Cyberpunk77022
         }
 
 
-        public void CheckCollide()
+
+        public virtual void CheckCollide()
         {
             if ((this.Pos.X - _initPos.X) * (this.Pos.X - _initPos.X) + (this.Pos.Y - _initPos.Y) * (this.Pos.Y - _initPos.Y) > _range * _range)
             {
                 this.IsCollided = true;
-                SplashKit.SoundEffectNamed("hit").Play();
                 _game.RemoveBullet(this);
                 Explode();
             }
@@ -86,19 +88,35 @@ namespace Cyberpunk77022
                 {
                     this.IsCollided = true;
                     SplashKit.SoundEffectNamed("hit").Play();
+                    _game.RemoveBullet(this);
                     Explode();
                     break;
                 }
             }
 
+            
             for (int j = 0; j < _game.Enemies.Count; j++)
             {
                 if (_game.Enemies[j].IsCollided(this.Pos) && this.Gun.GunOf is Player)
                 {
-                    this.IsCollided = true;
-                    SplashKit.SoundEffectNamed("hit").Play();
-                    _game.Enemies[j].GetHit(this);
-                    Explode();
+                    if(_pierce)
+                    {
+                        if(!_hitted.Contains(_game.Enemies[j]))
+                        {
+                            _hitted.Add(_game.Enemies[j]);
+
+                            SplashKit.SoundEffectNamed("hit").Play();
+                            _game.Enemies[j].GetHit(this);
+                            Explode();
+                        }
+                    } else
+                    {
+                        this.IsCollided = true;
+                        SplashKit.SoundEffectNamed("hit").Play();
+                        _game.Enemies[j].GetHit(this);
+                        _game.RemoveBullet(this);
+                        Explode();
+                    }
                     break;
                 }
             }
@@ -109,6 +127,7 @@ namespace Cyberpunk77022
                 this.IsCollided = true;
                 SplashKit.SoundEffectNamed("hit").Play();
                 _game.GetPlayer.GetHit(this);
+                _game.RemoveBullet(this);
                 Explode();
             }
         }
@@ -120,10 +139,9 @@ namespace Cyberpunk77022
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
             }, this.Color, 0.2f, 30));
-            _game.RemoveBullet(this);
         }
 
-        public void MoveBullet()
+        public virtual void MoveBullet()
         {
             float StartX = (float)_Pos.X;
             float StartY = (float)_Pos.Y;
@@ -215,6 +233,7 @@ namespace Cyberpunk77022
         public Point2D Pos
         {
             get { return _Pos; }
+            set { _Pos = value; }
         }
 
         public Point2D InitPos
@@ -294,6 +313,19 @@ namespace Cyberpunk77022
             get { return _trace; }
             set { _trace = value; }
         }
+
+        public bool Pierce
+        {
+            get { return _pierce; }
+            set 
+            { 
+                _pierce = value; 
+                if( _pierce )
+                {
+                    _hitted = new List<Enemy>();
+                }
+            }
+        }
     }
 
     public class NormalBullet : Bullet
@@ -308,6 +340,34 @@ namespace Cyberpunk77022
             this.Trace = new Trace(game, game.Manager.Window, game.Camera, this);
             this.Trace.GetColor = color;
             game.AddTrace(this.Trace);
+        }
+    }
+    public class SniperBullet : Bullet
+    {
+        public SniperBullet(GameStage game, Gun gun, float range, float speed, float damage) : base(game, gun, range, speed, damage)
+        {
+            this.Pierce = true;
+        }
+        public override void MoveBullet()
+        {
+            float StartX = (float)this.Pos.X;
+            float StartY = (float)this.Pos.Y;
+            while (Math.Abs(this.VelX) > Math.Abs(this.Pos.X - StartX) && Math.Abs(this.VelY) > Math.Abs(this.Pos.Y - StartY))
+            {
+                this.Pos = new Point2D() { X = this.Pos.X + checkUnitX, Y = this.Pos.Y + checkUnitY }; 
+                if(new Random().Next(0, 9) < 3) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2, 8), new Random().Next(20, 30), new Point2D() { X = new Random().Next((int)this.Pos.X - 2, (int)this.Pos.X + 2), Y = new Random().Next((int)this.Pos.Y - 2, (int)this.Pos.Y + 2) }, Color.White, (float)(new Random().NextDouble() * 0.4 + 0.1), new Random().Next(2, 3)));
+
+                CheckCollide();
+                if (this.IsCollided)
+                {
+                    break;
+                }
+            }
+            if (!this.IsCollided)
+            {
+                this.Pos = new Point2D() { X = StartX + this.VelX, Y = StartY + this.VelY };
+                CheckCollide();
+            }
         }
     }
     public class RPGBullet : Bullet

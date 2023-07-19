@@ -414,5 +414,15 @@ namespace Cyberpunk77022
         {
             get { return _enemyGun; }
         }
+
+        public float Speed
+        {
+            get { return _speed; }
+        }
+
+        public Bitmap Bitmap
+        {
+            get { return _graphic; }
+        }
     }
 }

@@ -19,6 +19,7 @@ namespace Cyberpunk77022
             _name = name;
             _id = id;
             _desc = desc;
+            _price = price;
         }
 
         public abstract void Graphic(float x, float y);

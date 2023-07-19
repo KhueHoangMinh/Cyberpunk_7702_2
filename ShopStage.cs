@@ -91,7 +91,7 @@ namespace Cyberpunk77022
             if(_actualItem.Purchased)
             {
                 selectButton.Update();
-                if (_page.Shop.Manager.Gun == _actualItem || _page.Shop.Manager.Skin == _actualItem || _page.Shop.Manager.Skill == _actualItem)
+                if (_page.Shop.Manager.SelectedGun.Contains(_actualItem) || _page.Shop.Manager.Skin == _actualItem || _page.Shop.Manager.Skill == _actualItem)
                 {
                     _state = "selected";
                 } else

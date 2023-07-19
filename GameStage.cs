@@ -1,4 +1,5 @@
-﻿using SplashKitSDK;
+﻿using Cyberpunk77022.skills;
+using SplashKitSDK;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +18,7 @@ namespace Cyberpunk77022
         List<Enemy> enemies;
         List<Ground> grounds;
         List<Bullet> bullets;
+        List<Coin> coins;
         Queue<MinusHealth> minusHealths;
         Queue<MinusHealth> MinusHealthAdd;
         int MinusHealthPop = 0;
@@ -52,6 +54,7 @@ namespace Cyberpunk77022
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
+            coins = new List<Coin>();
             traces = new Queue<Trace>();
             explosions = new List<Explosion>();
             smokes = new Queue<Smoke>();
@@ -60,7 +63,7 @@ namespace Cyberpunk77022
             ExploAdd = new Queue<Explosion>();
             SmokeAdd = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
-            pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-80, 80, 70, 70);
+            pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-60, 60, 60, 60);
             resumeBtn = new Button("Resume", Color.Green, this.Manager.Window.Width / 2, this.Manager.Window.Height/2-50, 250, 150);
             quitBtn = new Button("QUIT", Color.Red, this.Manager.Window.Width / 2, this.Manager.Window.Height/2 + 150, 250, 150);
             this.Manager.Score = 0;
@@ -114,6 +117,10 @@ namespace Cyberpunk77022
                 for (int i = 0; i < bullets.Count; i++)
                 {
                     bullets[i].Update();
+                }
+                for (int i = 0; i < coins.Count; i++)
+                {
+                    coins[i].Update();
                 }
                 player.Update(grounds, bullets);
                 if(player.Health <= 0) { 
@@ -173,8 +180,8 @@ namespace Cyberpunk77022
                         paused = !paused;
                     }
                 }
-                Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " + 
-                    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " ");
+                //Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " + 
+                //    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " ");
             } else
             {
                 if (this.OutEf._completed)
@@ -205,6 +212,88 @@ namespace Cyberpunk77022
             //Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
+        public void DrawUI()
+        {
+            SplashKit.DrawText(this.Manager.Score.ToString(), Color.White, "font", 50, this.Manager.Window.Width / 2 - SplashKit.TextWidth(this.Manager.Score.ToString(), "font", 50) / 2, 20);
+            pauseBtn.Draw();
+            if (paused)
+            {
+                SplashKit.FillRectangle(_background, 0, 0, this.Manager.Window.Width, this.Manager.Window.Height);
+                SplashKit.FillRectangle(Color.RGBAColor(0, 0, 0, 0.6), this.Manager.Window.Width / 2 - 300, this.Manager.Window.Height / 2 - 300, 600, 600);
+                SplashKit.DrawText("Paused", Color.White, "font", 60, this.Manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, this.Manager.Window.Height / 2 - 250);
+                resumeBtn.Draw();
+                quitBtn.Draw();
+            }
+
+
+            SplashKit.FillRectangle(Color.Gray, 30, 30, 200, 70);
+
+            SplashKit.FillRectangle(Color.Black, 40, 40, 50, 50);
+            SplashKit.FillRectangle(Color.Black, 105, 40, 50, 50);
+            SplashKit.FillRectangle(Color.Black, 170, 40, 50, 50);
+
+            if(player.Gun == this.Manager.SelectedGun[0])
+            {
+                SplashKit.FillRectangle(Color.RGBAColor(1, 1, 1, 0.1), 40, 40, 50, 50);
+                SplashKit.DrawRectangle(Color.White,38,38,54,54);
+            } else
+            if (player.Gun == this.Manager.SelectedGun[1])
+            {
+                SplashKit.FillRectangle(Color.RGBAColor(1, 1, 1, 0.1), 105, 40, 50, 50);
+                SplashKit.DrawRectangle(Color.White, 103, 38, 54, 54);
+            }
+
+            SplashKit.DrawText("1", Color.White, "font", 14, 41, 41);
+            SplashKit.DrawText("2", Color.White, "font", 14, 106, 41);
+            SplashKit.DrawText("power", Color.White, "font", 12, 171, 41);
+
+            SplashKit.DrawBitmap(this.Manager.SelectedGun[0].Bitmap,
+                65 - this.Manager.SelectedGun[0].Bitmap.Width / 2,
+                65 - this.Manager.SelectedGun[0].Bitmap.Height / 2,
+                new DrawingOptions()
+                {
+                    Dest = this.Manager.Window,
+                    ScaleX = (float)45.0 / this.Manager.SelectedGun[0].Bitmap.Width,
+                    ScaleY = (float)45.0 / this.Manager.SelectedGun[0].Bitmap.Width
+                }
+            );
+
+            if(this.Manager.SelectedGun[1] != null)
+            {
+                SplashKit.DrawBitmap(this.Manager.SelectedGun[1].Bitmap,
+                    130 - this.Manager.SelectedGun[1].Bitmap.Width / 2,
+                    65 - this.Manager.SelectedGun[1].Bitmap.Height / 2,
+                    new DrawingOptions()
+                    {
+                        Dest = this.Manager.Window,
+                        ScaleX = (float)45.0 / this.Manager.SelectedGun[1].Bitmap.Width,
+                        ScaleY = (float)45.0 / this.Manager.SelectedGun[1].Bitmap.Width
+                    }
+                );
+            }
+
+            this.Manager.Skill.InGameGraphic(195, 65);
+
+            SplashKit.FillRectangle(Color.Gray, 30, 110, 200, 30);
+            SplashKit.FillRectangle(Color.Green, 30, 110, 200 * player.Health / player.MaxHealth, 30);
+            SplashKit.FillRectangle(Color.RGBAColor(255, 0, 0, 90), 30 + 200 * player.Health / player.MaxHealth , 110, 200 * player.MinusHealth / player.MaxHealth, 30);
+
+            SplashKit.DrawText(((int)player.Health).ToString() + "/" + player.MaxHealth.ToString(), Color.White, "font", 20,
+                130 - SplashKit.TextWidth(((int)player.Health).ToString() + "/" + player.MaxHealth.ToString(), "font", 20)/2,
+                125 - SplashKit.TextHeight(((int)player.Health).ToString(), "font", 20)/2
+            );
+
+            SplashKit.FillRectangle(Color.Yellow, 30, 150, 20, 20);
+            SplashKit.DrawText(this.Manager.Coin.ToString(), Color.Yellow, "font", 20,
+                55,
+                150
+            );
+
+
+            this.InEf.Draw();
+            this.OutEf.Draw();
+        }
+
         public override void Draw()
         {
             foreach (Trace trace in traces)
@@ -214,6 +303,10 @@ namespace Cyberpunk77022
             for (int i = 0; i < bullets.Count; i++)
             {
                 bullets[i].Draw();
+            }
+            for (int i = 0; i < coins.Count; i++)
+            {
+                coins[i].Draw();
             }
             player.Draw();
             for (int i = 0; i < enemies.Count; i++)
@@ -245,19 +338,7 @@ namespace Cyberpunk77022
             {
                 minusHealth.Draw();
             }
-            SplashKit.DrawText(this.Manager.Score.ToString(), Color.White, "font", 50, this.Manager.Window.Width / 2 - SplashKit.TextWidth(this.Manager.Score.ToString(), "font", 50) / 2, 20);
-            pauseBtn.Draw();
-            if(paused)
-            {
-                SplashKit.FillRectangle(_background, 0, 0, this.Manager.Window.Width, this.Manager.Window.Height);
-                SplashKit.FillRectangle(Color.RGBAColor(0,0,0,0.6),this.Manager.Window.Width/2-300, this.Manager.Window.Height/2-300,600,600);
-                SplashKit.DrawText("Paused", Color.White, "font", 60, this.Manager.Window.Width / 2 - SplashKit.TextWidth("Paused", "font", 60) / 2, this.Manager.Window.Height / 2 - 250);
-                resumeBtn.Draw();
-                quitBtn.Draw();
-            }
-
-            this.InEf.Draw();
-            this.OutEf.Draw();
+            DrawUI();
         }
 
         public Camera Camera { get { return camera; } }
@@ -286,6 +367,14 @@ namespace Cyberpunk77022
         {  
             bullets.Remove(bullet);
         }
+        public void AddCoin(Coin coin)
+        {
+            coins.Add(coin);
+        }
+        public void RemoveCoin(Coin coin)
+        {
+            coins.Remove(coin);
+        }
         public void AddEnemy(Enemy enemy)
         {
             enemies.Add(enemy);
@@ -295,7 +384,6 @@ namespace Cyberpunk77022
         {
             enemies.Remove(enemy);
             this.Manager.Score++;
-            this.Manager.Coin++;
         }
 
 

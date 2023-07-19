@@ -100,27 +100,52 @@ namespace Cyberpunk77022
 
     public class AboutStage : Stage
     {
-        Content _content;
-        List<Info> _info;
+        Content _content1;
+        Content _content2;
+        Content _content3;
         Button backBtn;
+        Button pauseBtn;
+        bool pausing = false;
         string _nextState;
         public AboutStage(Manager manager) : base(manager)
         {
-            _info = new List<Info>()
+            _content1 = new Content(this.Manager.Window.Width/2, this.Manager.Window.Height, new List<Info>()
             {
+                new Info("Credits",""),
                 new Info("Developer","Hoang Minh Khue"),
                 new Info("Sounds", "pixabay.com"),
                 new Info("Images", "pngegg.com")
-            };
-            _content = new Content(this.Manager.Window.Width/2, this.Manager.Window.Height,_info);
+            });
+            _content2 = new Content(this.Manager.Window.Width / 6, this.Manager.Window.Height, new List<Info>()
+            {
+                new Info("Controls",""),
+                new Info("Key W","Jump"),
+                new Info("Key A", "Move left"),
+                new Info("Key D", "Move right"),
+                new Info("Left mouse", "Shoot"),
+            });
+            _content3 = new Content(this.Manager.Window.Width * 5 / 6, this.Manager.Window.Height, new List<Info>()
+            {
+                new Info("Functions",""),
+                new Info("Start button","Start the game"),
+                new Info("Shop button", "Enter Shop to change equipments"),
+                new Info("About button", "View game details")
+            });
             backBtn = new Button("<", Color.Red, 80, 80, 70, 70);
+            pauseBtn = new Button("||", Color.Red, 80, 160, 70, 70);
         }
 
         public override void Update()
         {
             backBtn.Update();
-            _content.Update();
-            if(_content.End)
+            pauseBtn.Update();
+            if(!pausing)
+            {
+                _content1.Update();
+                _content2.Update();
+                _content3.Update();
+            }
+            if (_content1.End && _content2.End && _content3.End)
             {
                 this.Closing = true;
                 _nextState = "home";
@@ -131,6 +156,10 @@ namespace Cyberpunk77022
                 {
                     this.Closing = true;
                     _nextState = "home";
+                }
+                if (pauseBtn.Hovering)
+                {
+                    pausing = !pausing;
                 }
             }
             if (this.OutEf._completed)
@@ -152,7 +181,10 @@ namespace Cyberpunk77022
         {
 
             backBtn.Draw();
-            _content.Draw();
+            pauseBtn.Draw();
+            _content1.Draw();
+            _content2.Draw();
+            _content3.Draw();
 
             this.InEf.Draw();
             this.OutEf.Draw();

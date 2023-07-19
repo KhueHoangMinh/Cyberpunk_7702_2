@@ -26,7 +26,8 @@ namespace Cyberpunk77022
         ShopStage shop;
         AboutStage about;
         Stage currentStage;
-        Gun _gun;
+        Gun[] _selectedGun = new Gun[2];
+        int _gun = 0;
         Skin _skin;
         Skill _skill = null;
         Music background;
@@ -60,6 +61,7 @@ namespace Cyberpunk77022
             SplashKit.LoadSoundEffect("dying1", "../../../sounds/dying1.mp3");
             SplashKit.LoadSoundEffect("dying2", "../../../sounds/dying2.mp3");
             SplashKit.LoadSoundEffect("dying3", "../../../sounds/dying3.mp3");
+            SplashKit.LoadSoundEffect("coin", "../../../sounds/coin.mp3");
 
             SplashKit.LoadMusic("background", "../../../sounds/background.mp3");
 
@@ -94,16 +96,19 @@ namespace Cyberpunk77022
                 new Skin("Pink", "pink", "a skin", 50, Color.Pink)
             };
 
-            _guns[0].Purchased = true;
-            _skins[0].Purchased = true;
-            _gun = _guns[0] as Gun;
-            _skin = _skins[0] as Skin;
-
             _skills = new List<ShopItem>()
             {
                 new Health(),
                 new Defense()
             };
+
+            _guns[0].Purchased = true;
+            _skins[0].Purchased = true;
+
+            _selectedGun = new Gun[2] { _guns[0] as Gun, null };
+            _gun = 0;
+            _skin = _skins[0] as Skin;
+
 
             stars = new List<Star>();
             sths = new List<Something>();
@@ -176,8 +181,10 @@ namespace Cyberpunk77022
                                     switch (loading)
                                     {
                                         case "Weapon":
-                                            _guns[i].Purchased = true; 
-                                            _gun = _guns[i] as Gun;
+                                            _guns[i].Purchased = true;
+                                            _selectedGun[1] = _selectedGun[0];
+                                            _selectedGun[0] = _guns[i] as Gun;
+                                            _gun = 0;
                                             break;
                                         case "Skin":
                                             _skins[i].Purchased = true;
@@ -208,7 +215,7 @@ namespace Cyberpunk77022
                 bestScore = 0;
                 _guns[0].Purchased = true;
                 _skins[0].Purchased = true;
-                _gun = _guns[0] as Gun;
+                _selectedGun[0] = _guns[0] as Gun;
                 _skin = _skins[0] as Skin;
                 Save(filename);
             }
@@ -226,7 +233,7 @@ namespace Cyberpunk77022
             {
                 if (_guns[i].Purchased)
                 {
-                    if(_gun == _guns[i])
+                    if(_selectedGun.Contains(_guns[i]))
                     {
                         writer.WriteLine("2");
                     } else
@@ -402,11 +409,22 @@ namespace Cyberpunk77022
             get { return _skills; }
         }
 
+        public Gun[] SelectedGun
+        {
+            get { return _selectedGun; }
+        }
+
         public Gun Gun
         {
-            get { return _gun; }
-            set { _gun = value; }
+            get { return _selectedGun[_gun]; }
+            set
+            {
+                _selectedGun[1] = _selectedGun[0];
+                _selectedGun[0] = value;
+                _gun = 0;
+            }
         }
+
         public Skin Skin
         {
             get { return _skin; }

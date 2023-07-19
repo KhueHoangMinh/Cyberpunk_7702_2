@@ -63,7 +63,6 @@ namespace Cyberpunk77022
         {
             if(obj.Pos.X > this.Left - (obj.Right - obj.Left)/2 && obj.Pos.X < this.Right + (obj.Right - obj.Left) / 2 && obj.Pos.Y > this.Top - (obj.Bottom - obj.Top)/2 && obj.Pos.Y < this.Bottom + (obj.Bottom - obj.Top) / 2)
             {
-
                 Object areaTop;
                 Object areaBottom;
                 Object areaLeft;
