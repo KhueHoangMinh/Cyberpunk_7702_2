@@ -11,7 +11,7 @@ using SplashKitSDK;
 
 namespace Cyberpunk77022
 {
-    public class Program
+    public sealed class Program
     {
 
         static void Main()
@@ -26,22 +26,12 @@ namespace Cyberpunk77022
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);
             Manager manager = new Manager(window);
 
-            string _textInput = SplashKit.TextInput(window);
-
             SplashKit.CurrentWindowToggleFullscreen();
 
             // Game loop
 
             do
             {
-                //if (DateTime.UtcNow.Ticks - CURRENT_UPDATE_TICK >= TIME_BETWEEN_UPDATES)
-                //{
-
-                //    SplashKit.ProcessEvents();
-                //    manager.Update();
-
-                //    CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
-                //}
 
                 while(CURRENT_UPDATE_TICK <= DateTime.UtcNow.Ticks)
                 {
@@ -53,17 +43,6 @@ namespace Cyberpunk77022
                 SplashKit.ClearScreen(Color.Black);
                 manager.Draw();
                 SplashKit.RefreshScreen(120);
-
-                //if (DateTime.UtcNow.Ticks - CURRENT_FRAME_TICK >= TIME_BETWEEN_FRAMES)
-                //{
-                //    SplashKit.ClearScreen(Color.Black);
-                //    manager.Draw();
-                //    SplashKit.RefreshScreen();
-
-                //    CURRENT_FRAME_TICK = DateTime.UtcNow.Ticks;
-                //}
-
-                //Thread.Sleep(1000 / 75);
             } while (
                 !SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey)
             );

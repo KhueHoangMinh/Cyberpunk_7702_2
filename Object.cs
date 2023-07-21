@@ -20,6 +20,7 @@ namespace Cyberpunk77022
         float _velX = 0;
         float _velY = 0;
         Camera _camera;
+        bool _enabled = true;
 
 
         public Object(Camera camera, Point2D pos, float sizeX, float sizeY, Color color, bool gravity, float velX, float velY)
@@ -43,9 +44,11 @@ namespace Cyberpunk77022
             }
         }
 
-        public void Draw()
+        public abstract void Update();
+
+        public virtual void Draw()
         {
-            SplashKit.FillRectangle(_color, (float)_pos.X - _sizeX / 2 - _camera.Pos.X, (float)_pos.Y - _sizeY / 2 - _camera.Pos.Y, _sizeX, _sizeY);
+            if(_enabled) SplashKit.FillRectangle(_color, (float)_pos.X - _sizeX / 2 - _camera.Pos.X, (float)_pos.Y - _sizeY / 2 - _camera.Pos.Y, _sizeX, _sizeY);
         }
 
         public bool IsCollided(Point2D Pos)
@@ -169,6 +172,11 @@ namespace Cyberpunk77022
         {
             get { return _color; }
             set { _color = value; }
+        }
+
+        public bool Enabled
+        {
+            get { return _enabled; }
         }
     }
 }

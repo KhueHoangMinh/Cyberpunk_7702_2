@@ -38,34 +38,37 @@ namespace Cyberpunk77022
 
         public Manager(Window window)
         {
-            SplashKit.LoadBitmap("logo", "../../../logo.png");
-            SplashKit.LoadBitmap("default", "../../../guns_img/default.png");
-            SplashKit.LoadBitmap("gun1", "../../../guns_img/gun1.png");
-            SplashKit.LoadBitmap("gun2", "../../../guns_img/gun2.png");
-            SplashKit.LoadBitmap("gun3", "../../../guns_img/gun3.png");
-            SplashKit.LoadBitmap("gun4", "../../../guns_img/gun4.png");
-            SplashKit.LoadBitmap("gun5", "../../../guns_img/gun5.png");
-            SplashKit.LoadBitmap("gun6", "../../../guns_img/gun6.png");
-            SplashKit.LoadBitmap("rpg", "../../../guns_img/rpg.png");
+            SplashKit.LoadBitmap("logo", "images/logo.png");
+            SplashKit.LoadBitmap("default", "images/guns_img/default.png");
+            SplashKit.LoadBitmap("gun1", "images/guns_img/gun1.png");
+            SplashKit.LoadBitmap("gun2", "images/guns_img/gun2.png");
+            SplashKit.LoadBitmap("gun3", "images/guns_img/gun3.png");
+            SplashKit.LoadBitmap("gun4", "images/guns_img/gun4.png");
+            SplashKit.LoadBitmap("gun5", "images/guns_img/gun5.png");
+            SplashKit.LoadBitmap("gun6", "images/guns_img/gun6.png");
+            SplashKit.LoadBitmap("rpg", "images/guns_img/rpg.png");
 
-            SplashKit.LoadSoundEffect("singleshot", "../../../sounds/singleshot.mp3");
-            SplashKit.LoadSoundEffect("singleshot2", "../../../sounds/singleshot2.mp3");
-            SplashKit.LoadSoundEffect("shotgun", "../../../sounds/shotgun.mp3");
-            SplashKit.LoadSoundEffect("rifle", "../../../sounds/rifle.mp3");
-            SplashKit.LoadSoundEffect("sniper", "../../../sounds/sniper.mp3");
-            SplashKit.LoadSoundEffect("hit", "../../../sounds/hit.mp3");
+            SplashKit.LoadBitmap("coin_single", "images/coin_single.png");
+            SplashKit.LoadBitmap("coin_animation", "images/coin.png");
 
-            SplashKit.LoadSoundEffect("click", "../../../sounds/click.mp3");
-            SplashKit.LoadSoundEffect("denied", "../../../sounds/denied.mp3");
+            SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
+            SplashKit.LoadSoundEffect("singleshot2", "sounds/singleshot2.mp3");
+            SplashKit.LoadSoundEffect("shotgun", "sounds/shotgun.mp3");
+            SplashKit.LoadSoundEffect("rifle", "sounds/rifle.mp3");
+            SplashKit.LoadSoundEffect("sniper", "sounds/sniper.mp3");
+            SplashKit.LoadSoundEffect("hit", "sounds/hit.mp3");
 
-            SplashKit.LoadSoundEffect("dying1", "../../../sounds/dying1.mp3");
-            SplashKit.LoadSoundEffect("dying2", "../../../sounds/dying2.mp3");
-            SplashKit.LoadSoundEffect("dying3", "../../../sounds/dying3.mp3");
-            SplashKit.LoadSoundEffect("coin", "../../../sounds/coin.mp3");
+            SplashKit.LoadSoundEffect("click", "sounds/click.mp3");
+            SplashKit.LoadSoundEffect("denied", "sounds/denied.mp3");
 
-            SplashKit.LoadMusic("background", "../../../sounds/background.mp3");
+            SplashKit.LoadSoundEffect("dying1", "sounds/dying1.mp3");
+            SplashKit.LoadSoundEffect("dying2", "sounds/dying2.mp3");
+            SplashKit.LoadSoundEffect("dying3", "sounds/dying3.mp3");
+            SplashKit.LoadSoundEffect("coin", "sounds/coin.mp3");
 
-            SplashKit.LoadFont("font", "../../../Roboto-Bold.ttf");
+            SplashKit.LoadMusic("background", "sounds/background.mp3");
+
+            SplashKit.LoadFont("font", "fonts/Roboto-Bold.ttf");
 
 
             _window = window;

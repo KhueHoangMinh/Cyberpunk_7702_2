@@ -15,6 +15,7 @@ namespace Cyberpunk77022
     public class GameStage : Stage
     {
         Player player;
+        float _coinScale = (float)(20.0 / SplashKit.BitmapNamed("coin_single").Width);
         List<Enemy> enemies;
         List<Ground> grounds;
         List<Bullet> bullets;
@@ -41,6 +42,7 @@ namespace Cyberpunk77022
         Button quitBtn;
         Color _background;
         bool paused = false;
+        Animation CoinAni;
 
         public GameStage(Manager manager) : base(manager)
         {
@@ -49,9 +51,9 @@ namespace Cyberpunk77022
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();
-            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = -50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
-            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 50, Y = this.Manager.Window.Height / 2 }, 100, this.Manager.Window.Height + 100, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 300, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = -150, Y = this.Manager.Window.Height / 2 }, 300, this.Manager.Window.Height + 300, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 150, Y = this.Manager.Window.Height / 2 }, 300, this.Manager.Window.Height + 300, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));
             bullets = new List<Bullet>();
             coins = new List<Coin>();
@@ -69,6 +71,16 @@ namespace Cyberpunk77022
             this.Manager.Score = 0;
             _background = Color.Black;
             _background.A = 0.5f;
+            SplashKit.BitmapSetCellDetails(
+                SplashKit.BitmapNamed("coin_animation"),
+                 SplashKit.BitmapNamed("coin_single").Width,
+                 SplashKit.BitmapNamed("coin_single").Height,
+                 7,
+                 1,
+                 7
+            );
+            AnimationScript CoinAniScript = SplashKit.LoadAnimationScript("CoinAniScript","CoinAni.txt");
+            CoinAni = SplashKit.CreateAnimation(CoinAniScript, "CoinAni");
         }
 
         public override void Update()
@@ -122,14 +134,14 @@ namespace Cyberpunk77022
                 {
                     coins[i].Update();
                 }
-                player.Update(grounds, bullets);
+                player.Update();
                 if(player.Health <= 0) { 
                     this.EndGame();
                 }
 
                 for (int i = 0; i < enemies.Count; i++)
                 {
-                    enemies[i].Update(grounds, bullets);
+                    enemies[i].Update();
                 }
                 while (SmokeAdd.Count > 0) smokes.Enqueue(SmokeAdd.Dequeue());
                 foreach (Smoke smoke in smokes)
@@ -282,8 +294,17 @@ namespace Cyberpunk77022
                 130 - SplashKit.TextWidth(((int)player.Health).ToString() + "/" + player.MaxHealth.ToString(), "font", 20)/2,
                 125 - SplashKit.TextHeight(((int)player.Health).ToString(), "font", 20)/2
             );
-
-            SplashKit.FillRectangle(Color.Yellow, 30, 150, 20, 20);
+            SplashKit.DrawBitmap(
+                SplashKit.BitmapNamed("coin_animation"),
+                30 - SplashKit.BitmapNamed("coin_single").Width / 2 + 10, 150 - SplashKit.BitmapNamed("coin_single").Height / 2 + 10,
+                new DrawingOptions()
+                {
+                    Dest = this.Manager.Window,
+                    ScaleX = _coinScale,
+                    ScaleY = _coinScale,
+                    Anim = CoinAni
+                }
+            );
             SplashKit.DrawText(this.Manager.Coin.ToString(), Color.Yellow, "font", 20,
                 55,
                 150

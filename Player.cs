@@ -36,7 +36,7 @@ namespace Cyberpunk77022
             _health = _maxHealth;
         }
 
-        public void Update(List<Ground> grounds, List<Bullet> bullets)
+        public override void Update()
         {
             if (this.Pos.Y > 3000)
             {
@@ -44,31 +44,31 @@ namespace Cyberpunk77022
             }
             _jumped = true;
             string collide = "no";
-            for (int i = 0; i < grounds.Count; i++)
+            for (int i = 0; i < _game.Grounds.Count; i++)
             {
-                string isCollide = this.IsCollideAt(grounds[i]);
+                string isCollide = this.IsCollideAt(_game.Grounds[i]);
                 if(isCollide != "no") collide = isCollide;
                 if (isCollide == "bottom")
                 {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
+                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
                     if(this.VelY > 0) this.VelY = 0;
                     _jumped = false;
                 } else
                 if (isCollide == "top")
                 {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = grounds[i].Bottom + (-this.Top + this.Pos.Y - 1) };
+                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Bottom + (-this.Top + this.Pos.Y - 1) };
                     if (this.VelY < 0) this.VelY = 0;
                 } else
                 if (isCollide == "right")
                 {
                     _jumped = false;
-                    this.Pos = new Point2D() { X = grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y - 1 };
+                    this.Pos = new Point2D() { X = _game.Grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y - 1 };
                     if(this.VelX > 0) this.VelX = 0;
                 } else
                 if (isCollide == "left")
                 {
                     _jumped = false;
-                    this.Pos = new Point2D() { X = grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y + 1 };
+                    this.Pos = new Point2D() { X = _game.Grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y + 1 };
                     if (this.VelX < 0) this.VelX = 0;
                 }
             }
