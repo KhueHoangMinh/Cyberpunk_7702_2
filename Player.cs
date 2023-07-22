@@ -36,6 +36,35 @@ namespace Cyberpunk77022
             _health = _maxHealth;
         }
 
+        public override void CollideTop(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Bottom + (this.Bottom - this.Top) / 2 + 1 };
+            if (this.VelY < 0) this.VelY = 0;
+            if (this.Collide == "no") this.Collide = "top";
+        }
+        public override void CollideBottom(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Top - (this.Bottom - this.Top) / 2 - 1 };
+            this.VelX = this.VelX * 0.96f;
+            if (this.VelY > 0) this.VelY = 0;
+            _jumped = false;
+            if (this.Collide == "no") this.Collide = "bottom";
+        }
+        public override void CollideRight(Object @object)
+        {
+            this.Pos = new Point2D() { X = @object.Left - (this.Right - this.Left) / 2 - 1, Y = this.Pos.Y };
+            if (this.VelX > 0) this.VelX = 0;
+            _jumped = false;
+            if (this.Collide == "no") this.Collide = "right";
+        }
+        public override void CollideLeft(Object @object)
+        {
+            this.Pos = new Point2D() { X = @object.Right + (this.Right - this.Left) / 2 + 1, Y = this.Pos.Y };
+            if (this.VelX < 0) this.VelX = 0;
+            _jumped = false;
+            if (this.Collide == "no") this.Collide = "left";
+        }
+
         public override void Update()
         {
             if (this.Pos.Y > 3000)
@@ -43,49 +72,41 @@ namespace Cyberpunk77022
                 _health = -1;
             }
             _jumped = true;
-            string collide = "no";
-            for (int i = 0; i < _game.Grounds.Count; i++)
+
+
+            this.VelX = this.VelX * 0.96f;
+
+            if (SplashKit.KeyDown(KeyCode.Num1Key))
             {
-                string isCollide = this.IsCollideAt(_game.Grounds[i]);
-                if(isCollide != "no") collide = isCollide;
-                if (isCollide == "bottom")
-                {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
-                    if(this.VelY > 0) this.VelY = 0;
-                    _jumped = false;
-                } else
-                if (isCollide == "top")
-                {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Bottom + (-this.Top + this.Pos.Y - 1) };
-                    if (this.VelY < 0) this.VelY = 0;
-                } else
-                if (isCollide == "right")
-                {
-                    _jumped = false;
-                    this.Pos = new Point2D() { X = _game.Grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y - 1 };
-                    if(this.VelX > 0) this.VelX = 0;
-                } else
-                if (isCollide == "left")
-                {
-                    _jumped = false;
-                    this.Pos = new Point2D() { X = _game.Grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y + 1 };
-                    if (this.VelX < 0) this.VelX = 0;
-                }
+                _PlayerGun = this.Game.Manager.SelectedGun[0];
+                _PlayerGun.Game = this.Game;
+                _PlayerGun.GunOf = this;
             }
-            base.Gravity();
-            if(SplashKit.KeyDown(KeyCode.AKey))
+
+            if (SplashKit.KeyDown(KeyCode.Num2Key))
+            {
+                _PlayerGun = this.Game.Manager.SelectedGun[1];
+                _PlayerGun.Game = this.Game;
+                _PlayerGun.GunOf = this;
+            }
+
+            this.VelY += G;
+            this.MoveObject(_game.Grounds);
+            _PlayerGun.Update(new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y });
+            if (SplashKit.KeyDown(KeyCode.AKey))
             {
                 this.VelX -= _a;
-            } else if (SplashKit.KeyDown(KeyCode.DKey))
+            }
+            else if (SplashKit.KeyDown(KeyCode.DKey))
             {
                 this.VelX += _a;
             }
             if (SplashKit.KeyDown(KeyCode.WKey) && !_jumped)
             {
-                this.VelY = -10;
-                for(int i = 0; i < 3; i++)
+                this.VelY = -20;
+                for (int i = 0; i < 3; i++)
                 {
-                    switch(collide)
+                    switch (this.Collide)
                     {
                         case "bottom":
                             _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
@@ -102,7 +123,7 @@ namespace Cyberpunk77022
                                 Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
                             }, Color.White));
                             break;
-                            
+
                         case "right":
                             _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
                             {
@@ -114,30 +135,11 @@ namespace Cyberpunk77022
                     }
                 }
             }
-
-
-            VelX = VelX / 1.06f;
-
-            if (SplashKit.KeyDown(KeyCode.Num1Key))
-            {
-                _PlayerGun = this.Game.Manager.SelectedGun[0];
-                _PlayerGun.Game = this.Game;
-                _PlayerGun.GunOf = this;
-            }
-
-            if (SplashKit.KeyDown(KeyCode.Num2Key))
-            {
-                _PlayerGun = this.Game.Manager.SelectedGun[1];
-                _PlayerGun.Game = this.Game;
-                _PlayerGun.GunOf = this;
-            }
-
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
-            _PlayerGun.Update((new Point2D() { X = SplashKit.MousePosition().X + _camera.Pos.X, Y = SplashKit.MousePosition().Y + _camera.Pos.Y }));
             if (SplashKit.MouseDown(MouseButton.LeftButton))
             {
                 _PlayerGun.Shoot();
             }
+            this.Collide = "no";
         }
 
         public void GetHit(Bullet bullet)

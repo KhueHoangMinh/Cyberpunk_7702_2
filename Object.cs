@@ -2,9 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Cyberpunk77022
 {
@@ -15,12 +17,16 @@ namespace Cyberpunk77022
         float _sizeY;
         Color _color;
         bool _gravity;
-        float _g = (float)0.5;
+        float _g = (float)1;
         float _a = (float)0.1;
         float _velX = 0;
         float _velY = 0;
         Camera _camera;
         bool _enabled = true;
+        float checkScale = 1;
+        float checkUnitX;
+        float checkUnitY;
+        string _collide = "no";
 
 
         public Object(Camera camera, Point2D pos, float sizeX, float sizeY, Color color, bool gravity, float velX, float velY)
@@ -33,6 +39,9 @@ namespace Cyberpunk77022
             _gravity = gravity;
             _velX = velX;
             _velY = velY;
+            checkScale = 3.0f / (float)Math.Sqrt(_velX*_velX + _velY*_velY);
+            checkUnitX = _velX * checkScale;
+            checkUnitY = _velY * checkScale;
         }
 
         public void Gravity()
@@ -40,7 +49,82 @@ namespace Cyberpunk77022
             if(_gravity)
             {
                 _velY += _g;
-                _pos.Y += _velY;
+            }
+        }
+
+        public virtual void CollideNone() { }
+        public virtual void CollideTop(Object @object) { }
+        public virtual void CollideRight(Object @object) { }
+        public virtual void CollideBottom(Object @object) { }
+        public virtual void CollideLeft(Object @object) { }
+
+        public string CheckCollide(List<Ground> objects)
+        {
+            string collide = "no";
+            for (int i = 0; i < objects.Count; i++)
+            {
+                string isCollide = IsCollideAt(objects[i]);
+
+                if (isCollide == "bottom")
+                {
+                    CollideBottom(objects[i]);
+                }
+                else
+                if (isCollide == "top")
+                {
+                    CollideTop(objects[i]);
+                }
+                else
+                if (isCollide == "right")
+                {
+                    CollideRight(objects[i]);
+                }
+                else
+                if (isCollide == "left")
+                {
+                    CollideLeft(objects[i]);
+                }
+
+                if (isCollide != "no")
+                {
+                    collide = isCollide;
+                }
+
+            }
+
+            if(collide == "no")
+            {
+                CollideNone();
+            }
+
+            return collide;
+        }
+
+
+        public void MoveObject(List<Ground> objects)
+        {
+            string finalCollide = "no";
+            float StartX = (float)_pos.X;
+            float StartY = (float)_pos.Y;
+            checkScale = 3.0f / (float)Math.Sqrt(_velX * _velX + _velY * _velY);
+            checkUnitX = _velX * checkScale;
+            checkUnitY = _velY * checkScale;
+            while (Math.Abs(_velX) > Math.Abs(_pos.X - StartX) && Math.Abs(_velY) > Math.Abs(_pos.Y - StartY))
+            {
+                _pos.X += checkUnitX;
+                _pos.Y += checkUnitY;
+                string collide = CheckCollide(objects);
+                if (collide != "no")
+                {
+                    finalCollide = collide;
+                    break;
+                }
+            }
+            if (finalCollide == "no")
+            {
+                _pos.X = StartX + _velX;
+                _pos.Y = StartY + _velY;
+                CheckCollide(objects);
             }
         }
 
@@ -117,7 +201,7 @@ namespace Cyberpunk77022
                         return "left";
                     }
                 }
-                else
+                else if (Math.Abs(areaTop.Top - areaBottom.Bottom) < Math.Abs(areaLeft.Left - areaRight.Right))
                 {
                     if (areaTop == obj)
                     {
@@ -127,6 +211,9 @@ namespace Cyberpunk77022
                     {
                         return "top";
                     }
+                } else
+                {
+                    return "no";
                 }
             } else
             {
@@ -177,6 +264,17 @@ namespace Cyberpunk77022
         public bool Enabled
         {
             get { return _enabled; }
+        }
+
+        public string Collide
+        {
+            get { return _collide; }
+            set { _collide = value; }
+        }
+
+        public float G
+        {
+            get { return _g; }
         }
     }
 }

@@ -29,9 +29,8 @@ namespace Cyberpunk77022
         string collide = "no";
         bool _gravity = true;
         string _dying;
-
-        float aX = 0;
-        float aY = 0;
+        float _aX;
+        float _aY;
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
@@ -70,6 +69,72 @@ namespace Cyberpunk77022
             _firedAt = -_fireRate;
             _dying = dying;
         }
+
+        public override void CollideTop(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Bottom + (-this.Top + this.Pos.Y - 1) };
+            if (this.VelY < 0)
+            {
+                if(_alive)
+                {
+                    this.VelY = 0;
+                } else
+                {
+                    this.VelY = -this.VelY * 0.35f;
+                }
+            }
+            if (this.Collide == "no") this.Collide = "top";
+        }
+        public override void CollideBottom(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Top - (this.Bottom - this.Pos.Y) + 1 };
+            if (this.VelY > 0)
+            {
+                if (_alive)
+                {
+                    this.VelY = 0;
+                }
+                else
+                {
+                    this.VelY = -this.VelY * 0.35f;
+                }
+            }
+            _jumped = false;
+            if (this.Collide == "no") this.Collide = "bottom";
+        }
+        public override void CollideRight(Object @object)
+        {
+            _jumped = false;
+            this.Pos = new Point2D() { X = @object.Left + (-this.Right + this.Pos.X), Y = this.Pos.Y - 1 };
+            if (this.VelX > 0)
+            {
+                if (_alive)
+                {
+                    this.VelX = 0;
+                }
+                else
+                {
+                    this.VelX = -this.VelX * 0.65f;
+                }
+            }
+            if (this.Collide == "no") this.Collide = "right";
+        }
+        public override void CollideLeft(Object @object)
+        {
+            _jumped = false;
+            this.Pos = new Point2D() { X = @object.Right - (this.Left - this.Pos.X), Y = this.Pos.Y + 1 };
+            if (this.VelX < 0)
+            {
+                if (_alive)
+                {
+                    this.VelX = 0;
+                }
+                else
+                {
+                    this.VelX = -this.VelX * 0.65f;
+                }
+            }
+        }
         public override void Update()
         {
             if(this.Pos.Y > 3000)
@@ -81,7 +146,7 @@ namespace Cyberpunk77022
                 _alive = false;
                 SplashKit.SoundEffectNamed(_dying).Play();
                 this.Color = Color.DarkGray;
-                _game.AddCoin(new Coin(this.Game, this.Pos, aX, aY));
+                _game.AddCoin(new Coin(this.Game, this.Pos, this.VelX * 0.5f, this.VelY * 0.5f));
                 //_game.RemoveEnemy(this);
             }
             if(!_alive)
@@ -117,43 +182,8 @@ namespace Cyberpunk77022
                 _game.RemoveEnemy(this);
             }
             _jumped = true;
-            collide = "no";
-            for (int i = 0; i < _game.Grounds.Count; i++)
-            {
-                string isCollide = this.IsCollideAt(_game.Grounds[i]);
-                if (isCollide != "no") collide = isCollide;
-                if (isCollide == "bottom")
-                {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Top - (this.Bottom - this.Pos.Y) + 1 };
-                    aX /= 1.06f;
-                    if (this.VelY > 0) this.VelY = 0;
-                    _jumped = false;
-                }
-                else
-                if (isCollide == "top")
-                {
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = _game.Grounds[i].Bottom + (-this.Top + this.Pos.Y - 1) };
-                    if (this.VelY < 0) this.VelY = 0;
-                }
-                else
-                if (isCollide == "right")
-                {
-                    _jumped = false;
-                    this.Pos = new Point2D() { X = _game.Grounds[i].Left + (-this.Right + this.Pos.X), Y = this.Pos.Y - 1 };
-                    if (this.VelX > 0) this.VelX = 0;
-                }
-                else
-                if (isCollide == "left")
-                {
-                    _jumped = false;
-                    this.Pos = new Point2D() { X = _game.Grounds[i].Right - (this.Left - this.Pos.X), Y = this.Pos.Y + 1 };
-                    if (this.VelX < 0) this.VelX = 0;
-                }
-            }
-            if(_gravity) base.Gravity();
-            //aX /= 1.06f;
-            aY /= 1.06f;
-            VelX = 0;
+            this.Gravity();
+            this.MoveObject(_game.Grounds);
 
             if (_alive)
             {
@@ -165,12 +195,7 @@ namespace Cyberpunk77022
                     _firedAt = DateTime.UtcNow.Ticks;
                     _EnemyGun.Shoot();
                 }
-                else
-                {
-                    //_firedAt = DateTime.UtcNow.Ticks;
-                }
             }
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX + aX, Y = this.Pos.Y + this.VelY + aY };
         }
 
         public abstract void Behaviour();
@@ -198,30 +223,30 @@ namespace Cyberpunk77022
                 float scale = ((bullet as RPGBullet).ExplodeRange - (float)Math.Sqrt((this.Pos.X - bullet.Pos.X) * (this.Pos.X - bullet.Pos.X) + (this.Pos.Y - bullet.Pos.Y) * (this.Pos.Y - bullet.Pos.Y)))/ (bullet as RPGBullet).ExplodeRange;
                 if (_health >= 0)
                 {
-                    aX = scale * 50 * bullet.VelX / bullet.Speed;
-                    aY = scale * 50 * bullet.VelY / bullet.Speed;
-                    aY -= scale * 50;
+                    this.VelX = 50.0f * scale;
+                    this.VelY = 50.0f * scale;
+                    this.VelY -= 10;
                 }
                 else
                 {
-                    aX = scale * 70 * bullet.VelX / bullet.Speed;
-                    aY = scale * 70 * bullet.VelY / bullet.Speed;
-                    aY -= scale * 70;
+                    this.VelX = 60.0f * scale;
+                    this.VelY = 60.0f * scale;
+                    this.VelY -= 15;
                 }
                 _health -= (int) (scale * bullet.Damage);
             } else
             {
                 if (_health >= 0)
                 {
-                    aX = 10 * bullet.VelX / bullet.Speed;
-                    aY = 10 * bullet.VelY / bullet.Speed;
-                    aY -= 10;
+                    this.VelX = 0.5f * bullet.VelX;
+                    this.VelY = 0.5f * bullet.VelY;
+                    this.VelY -= 3;
                 }
                 else
                 {
-                    aX = 20 * bullet.VelX / bullet.Speed;
-                    aY = 20 * bullet.VelY / bullet.Speed;
-                    aY -= 20;
+                    this.VelX = 0.7f * bullet.VelX;
+                    this.VelY = 0.7f * bullet.VelY;
+                    this.VelY -= 5;
                 }
                 _health -= bullet.Damage;
             }

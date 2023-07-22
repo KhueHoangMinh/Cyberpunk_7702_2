@@ -47,11 +47,12 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
-            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = 50}, 100, 100);
+            player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = -100}, 100, 100);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
             minusHealths = new Queue<MinusHealth>();
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = this.Manager.Window.Height }, this.Manager.Window.Width, 300, Color.Brown));
+            grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = -300 }, this.Manager.Window.Width + 600, 300, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = -150, Y = this.Manager.Window.Height / 2 }, 300, this.Manager.Window.Height + 300, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width + 150, Y = this.Manager.Window.Height / 2 }, 300, this.Manager.Window.Height + 300, Color.Brown));
             grounds.Add(new Ground(camera, new Point2D() { X = this.Manager.Window.Width / 2, Y = 780 }, 300, 50, Color.Brown));

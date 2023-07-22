@@ -55,8 +55,8 @@ namespace Cyberpunk77022
             cosAngle = (float)Math.Cos(_angle);
             _VelX = (float)(speed * ((float)Math.Sin(_angle + Math.PI / 2)));
             _VelY = (float)(speed * ((float)Math.Cos(_angle + Math.PI / 2)));
-            checkUnitX = 2 * ((float)Math.Sin(_angle + Math.PI / 2));
-            checkUnitY = 2 * ((float)Math.Cos(_angle + Math.PI / 2));
+            checkUnitX = 3.0f * ((float)Math.Sin(_angle + Math.PI / 2));
+            checkUnitY = 3.0f * ((float)Math.Cos(_angle + Math.PI / 2));
             if (gun.Reverse)
             {
                 _VelX *= -1;

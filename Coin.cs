@@ -27,6 +27,31 @@ namespace Cyberpunk77022
                 DrawCell = (int)drawingcell
             };
         }
+        public override void CollideTop(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Bottom + (this.Bottom - this.Top) / 2 + 1 };
+            if (this.VelY < 0) this.VelY = -this.VelY * 0.35f;
+            if (this.Collide == "no") this.Collide = "top";
+        }
+        public override void CollideBottom(Object @object)
+        {
+            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Top - (this.Bottom - this.Top) / 2 - 1 };
+            this.VelX = this.VelX * 0.96f;
+            if (this.VelY > 0) this.VelY = -this.VelY * 0.35f;
+            if (this.Collide == "no") this.Collide = "bottom";
+        }
+        public override void CollideRight(Object @object)
+        {
+            this.Pos = new Point2D() { X = @object.Left - (this.Right - this.Left) / 2 - 1, Y = this.Pos.Y };
+            if (this.VelX > 0) this.VelX = -this.VelX * 0.65f;
+            if (this.Collide == "no") this.Collide = "right";
+        }
+        public override void CollideLeft(Object @object)
+        {
+            this.Pos = new Point2D() { X = @object.Right + (this.Right - this.Left) / 2 + 1, Y = this.Pos.Y };
+            if (this.VelX < 0) this.VelX = -this.VelX * 0.65f;
+            if (this.Collide == "no") this.Collide = "left";
+        }
 
         public override void Update()
         {
@@ -34,44 +59,17 @@ namespace Cyberpunk77022
             {
                 Earn();
             }
-            bool falling = true;
-            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = this.Pos.Y + this.VelY };
-            foreach (Ground ground in _game.Grounds) 
-            { 
-                if(ground.IsCollideAt(this) == "top")
-                {
-                    falling = false;
-                    this.VelX = this.VelX * 0.96f;
-                    if(this.VelY > 0) this.VelY = -this.VelY * 0.35f;
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = ground.Top - (this.Bottom - this.Top) / 2 + 1};
-                }
-                if (ground.IsCollideAt(this) == "right")
-                {
-                    this.VelX = -this.VelX * 0.65f;
-                    this.Pos = new Point2D() { X = ground.Right + (this.Right - this.Left) / 2 - 1, Y = this.Pos.Y};
-                }
-                if (ground.IsCollideAt(this) == "bottom")
-                {
-                    if (this.VelY < 0) this.VelY = -this.VelY * 0.35f;
-                    this.Pos = new Point2D() { X = this.Pos.X, Y = ground.Bottom + (this.Bottom - this.Top) / 2 - 1 };
-                }
-                if (ground.IsCollideAt(this) == "left")
-                {
-                    this.VelX = -this.VelX * 0.65f;
-                    this.Pos = new Point2D() { X = ground.Left - (this.Right - this.Left) / 2 + 1, Y = this.Pos.Y };
-                }
-            }
-            if (falling) this.Gravity();
+            this.MoveObject(_game.Grounds);
+            if (this.Collide != "bottom") this.Gravity();
+            drawingcell += 0.2f;
+            if (drawingcell > SplashKit.BitmapCellCount(SplashKit.BitmapNamed("coin_animation"))) drawingcell = 1;
+            _drawingOptions.DrawCell = (int)drawingcell;
+            this.Collide = "no";
         }
 
         public override void Draw()
         {
-            drawingcell += 0.1f;
-            if (drawingcell > SplashKit.BitmapCellCount(SplashKit.BitmapNamed("coin_animation"))) drawingcell = 0;
-            _drawingOptions.DrawCell = (int)drawingcell;
-            SplashKit.DrawBitmap(
-                _coin,
-                this.Left - _coin.Width / 2 + 15 - _game.Camera.Pos.X, this.Top - _coin.Width / 2 + 15 - _game.Camera.Pos.Y, _drawingOptions);
+            SplashKit.DrawBitmap(_coin, this.Left - _coin.Width / 2 + 15 - _game.Camera.Pos.X, this.Top - _coin.Width / 2 + 15 - _game.Camera.Pos.Y, _drawingOptions);
         }
 
         public void Earn()

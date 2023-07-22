@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Admin\\.nuget\\packages\\": {}
+    "C:\\Users\\hoang\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\msys64\\home\\Admin\\Cyberpunk77022_noserver\\Cyberpunk77022.csproj",
+      "projectUniqueName": "C:\\msys64\\home\\hoang\\Cyberpunk77022_noserver\\Cyberpunk77022.csproj",
       "projectName": "Cyberpunk77022",
-      "projectPath": "C:\\msys64\\home\\Admin\\Cyberpunk77022_noserver\\Cyberpunk77022.csproj",
-      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "C:\\msys64\\home\\Admin\\Cyberpunk77022_noserver\\obj\\",
+      "projectPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022_noserver\\Cyberpunk77022.csproj",
+      "packagesPath": "C:\\Users\\hoang\\.nuget\\packages\\",
+      "outputPath": "C:\\msys64\\home\\hoang\\Cyberpunk77022_noserver\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\hoang\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }
