@@ -13,15 +13,18 @@ namespace Cyberpunk77022
         GameStage _game;
         DrawingOptions _drawingOptions;
         Bitmap _coin;
+        float drawingcell = 0;
         public Coin(GameStage game, Point2D pos, float VelX, float VelY): base(game.Camera, pos, 30, 30, Color.Yellow, true, VelX, VelY)
         {
             _game = game;
-            _coin = SplashKit.BitmapNamed("coin_single");
+            _coin = SplashKit.BitmapNamed("coin_animation");
+            float scale = (float)(30.0 / _coin.Width);
             _drawingOptions = new DrawingOptions()
             {
                 Dest = game.Manager.Window,
-                ScaleX = (float)(30.0 / _coin.Width),
-                ScaleY = (float)(30.0 / _coin.Width),
+                ScaleX = scale,
+                ScaleY = scale,
+                DrawCell = (int)drawingcell
             };
         }
 
@@ -63,7 +66,12 @@ namespace Cyberpunk77022
 
         public override void Draw()
         {
-            SplashKit.DrawBitmap(_coin,this.Left - _coin.Width/2 + 15 - _game.Camera.Pos.X,this.Top - _coin.Height / 2 + 15 - _game.Camera.Pos.Y, _drawingOptions);
+            drawingcell += 0.1f;
+            if (drawingcell > SplashKit.BitmapCellCount(SplashKit.BitmapNamed("coin_animation"))) drawingcell = 0;
+            _drawingOptions.DrawCell = (int)drawingcell;
+            SplashKit.DrawBitmap(
+                _coin,
+                this.Left - _coin.Width / 2 + 15 - _game.Camera.Pos.X, this.Top - _coin.Width / 2 + 15 - _game.Camera.Pos.Y, _drawingOptions);
         }
 
         public void Earn()

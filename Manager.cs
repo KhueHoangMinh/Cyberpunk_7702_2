@@ -50,6 +50,14 @@ namespace Cyberpunk77022
 
             SplashKit.LoadBitmap("coin_single", "images/coin_single.png");
             SplashKit.LoadBitmap("coin_animation", "images/coin.png");
+            SplashKit.BitmapSetCellDetails(
+                SplashKit.BitmapNamed("coin_animation"),
+                 SplashKit.BitmapNamed("coin_animation").Width,
+                 SplashKit.BitmapNamed("coin_animation").Width,
+                 1,
+                 7,
+                 7
+            );
 
             SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
             SplashKit.LoadSoundEffect("singleshot2", "sounds/singleshot2.mp3");
@@ -69,6 +77,7 @@ namespace Cyberpunk77022
             SplashKit.LoadMusic("background", "sounds/background.mp3");
 
             SplashKit.LoadFont("font", "fonts/Roboto-Bold.ttf");
+
 
 
             _window = window;

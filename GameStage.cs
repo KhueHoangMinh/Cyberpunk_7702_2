@@ -15,7 +15,7 @@ namespace Cyberpunk77022
     public class GameStage : Stage
     {
         Player player;
-        float _coinScale = (float)(20.0 / SplashKit.BitmapNamed("coin_single").Width);
+        float _coinScale = (float)(20.0 / SplashKit.BitmapNamed("coin_animation").Width);
         List<Enemy> enemies;
         List<Ground> grounds;
         List<Bullet> bullets;
@@ -42,7 +42,7 @@ namespace Cyberpunk77022
         Button quitBtn;
         Color _background;
         bool paused = false;
-        Animation CoinAni;
+        float drawingcell = 0;
 
         public GameStage(Manager manager) : base(manager)
         {
@@ -71,16 +71,6 @@ namespace Cyberpunk77022
             this.Manager.Score = 0;
             _background = Color.Black;
             _background.A = 0.5f;
-            SplashKit.BitmapSetCellDetails(
-                SplashKit.BitmapNamed("coin_animation"),
-                 SplashKit.BitmapNamed("coin_single").Width,
-                 SplashKit.BitmapNamed("coin_single").Height,
-                 7,
-                 1,
-                 7
-            );
-            AnimationScript CoinAniScript = SplashKit.LoadAnimationScript("CoinAniScript","CoinAni.txt");
-            CoinAni = SplashKit.CreateAnimation(CoinAniScript, "CoinAni");
         }
 
         public override void Update()
@@ -294,15 +284,17 @@ namespace Cyberpunk77022
                 130 - SplashKit.TextWidth(((int)player.Health).ToString() + "/" + player.MaxHealth.ToString(), "font", 20)/2,
                 125 - SplashKit.TextHeight(((int)player.Health).ToString(), "font", 20)/2
             );
+            drawingcell += 0.05f;
+            if (drawingcell > SplashKit.BitmapCellCount(SplashKit.BitmapNamed("coin_animation"))) drawingcell = 0;
             SplashKit.DrawBitmap(
                 SplashKit.BitmapNamed("coin_animation"),
-                30 - SplashKit.BitmapNamed("coin_single").Width / 2 + 10, 150 - SplashKit.BitmapNamed("coin_single").Height / 2 + 10,
+                30 - SplashKit.BitmapNamed("coin_animation").Width / 2 + 10, 150 - SplashKit.BitmapNamed("coin_animation").Width / 2 + 10,
                 new DrawingOptions()
                 {
                     Dest = this.Manager.Window,
                     ScaleX = _coinScale,
                     ScaleY = _coinScale,
-                    Anim = CoinAni
+                    DrawCell = (int)drawingcell
                 }
             );
             SplashKit.DrawText(this.Manager.Coin.ToString(), Color.Yellow, "font", 20,
