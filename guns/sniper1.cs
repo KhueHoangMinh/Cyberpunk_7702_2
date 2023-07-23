@@ -11,18 +11,11 @@ namespace Cyberpunk77022
     {
         public Sniper1(Window window, float damage) : base("Sniper 1", "sniper1", "a gun", 50, window, "gun1", "sniper", 250,50, damage, 10000000, 1)
         {
+            this.BulletFactory = new SniperBulletFactory();
         }
         public Sniper1(Window window, float damage, bool enemys) : base("Sniper 1", "sniper1", "a gun", 50, window, "gun1", "sniper", 250, 50, damage, 10000000, 1,enemys)
         {
-        }
-
-        public override void ShootAction(Color color)
-        {
-            if (this.Game != null)
-            {
-                Bullet NewBullet = new SniperBullet(this.Game, this, 1000, this.Speed, this.Damage);
-                this.Game.AddBullet(NewBullet);
-            }
+            this.BulletFactory = new SniperBulletFactory();
         }
     }
 }

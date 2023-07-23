@@ -29,8 +29,8 @@ namespace Cyberpunk77022
         string collide = "no";
         bool _gravity = true;
         string _dying;
-        float _aX;
-        float _aY;
+        //float _aX;
+        //float _aY;
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
             _manager = game.Manager;
@@ -223,14 +223,14 @@ namespace Cyberpunk77022
                 float scale = ((bullet as RPGBullet).ExplodeRange - (float)Math.Sqrt((this.Pos.X - bullet.Pos.X) * (this.Pos.X - bullet.Pos.X) + (this.Pos.Y - bullet.Pos.Y) * (this.Pos.Y - bullet.Pos.Y)))/ (bullet as RPGBullet).ExplodeRange;
                 if (_health >= 0)
                 {
-                    this.VelX = 50.0f * scale;
-                    this.VelY = 50.0f * scale;
+                    this.VelX = 30.0f * bullet.VelX * scale;
+                    this.VelY = 30.0f * bullet.VelY * scale;
                     this.VelY -= 10;
                 }
                 else
                 {
-                    this.VelX = 60.0f * scale;
-                    this.VelY = 60.0f * scale;
+                    this.VelX = 50.0f * bullet.VelX * scale;
+                    this.VelY = 50.0f * bullet.VelY * scale;
                     this.VelY -= 15;
                 }
                 _health -= (int) (scale * bullet.Damage);

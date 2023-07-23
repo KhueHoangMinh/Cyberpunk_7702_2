@@ -152,6 +152,10 @@ namespace Cyberpunk77022
                 CheckCollide();
                 if (this.IsCollided)
                 {
+                    //if(this.Trace != null)
+                    //{
+                    //    this.Trace.Stopped = true;
+                    //}
                     break;
                 }
             }
@@ -325,6 +329,12 @@ namespace Cyberpunk77022
                     _hitted = new List<Enemy>();
                 }
             }
+        }
+
+        public float Range
+        {
+            get { return _range; }  
+            set { _range = value; }
         }
     }
 

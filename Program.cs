@@ -19,12 +19,12 @@ namespace Cyberpunk77022
             int WIDTH = 1920;
             int HEIGHT = 1080;
             long TIME_BETWEEN_UPDATES = 150000;
-            long TIME_BETWEEN_FRAMES = 0;
             long CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
-            long CURRENT_FRAME_TICK = DateTime.UtcNow.Ticks;
+            uint FPS = 120;
 
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);
-            Manager manager = new Manager(window);
+
+            Manager.Instance.Window = window;
 
             SplashKit.CurrentWindowToggleFullscreen();
 
@@ -36,13 +36,13 @@ namespace Cyberpunk77022
                 while(CURRENT_UPDATE_TICK <= DateTime.UtcNow.Ticks)
                 {
                     SplashKit.ProcessEvents();
-                    manager.Update();
+                    Manager.Instance.Update();
                     CURRENT_UPDATE_TICK += TIME_BETWEEN_UPDATES;
                 }
 
                 SplashKit.ClearScreen(Color.Black);
-                manager.Draw();
-                SplashKit.RefreshScreen(120);
+                Manager.Instance.Draw();
+                SplashKit.RefreshScreen(FPS);
             } while (
                 !SplashKit.WindowCloseRequested(window) && !SplashKit.KeyDown(KeyCode.EscapeKey)
             );

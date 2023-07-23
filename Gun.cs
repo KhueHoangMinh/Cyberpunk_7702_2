@@ -11,6 +11,33 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
+    public interface BulletFactory
+    {
+        public Bullet CreateBullet(GameStage game, Gun gun, Color color);
+    }
+
+    public class NormalBulletFactory : BulletFactory
+    {
+        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
+        {
+            return new NormalBullet(game, gun, gun.Range, gun.Speed, gun.Damage, color);
+        }
+    }
+    public class SniperBulletFactory : BulletFactory
+    {
+        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
+        {
+            return new SniperBullet(game, gun, gun.Range, gun.Speed, gun.Damage);
+        }
+    }
+    public class RPGBulletFactory : BulletFactory
+    {
+        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
+        {
+            return new RPGBullet(game, gun, gun.Range, 10, gun.Damage);
+        }
+    }
+
     public abstract class Gun : ShopItem
     {
         Object _GunOf;
@@ -18,6 +45,7 @@ namespace Cyberpunk77022
         Window _window;
         SoundEffect singleshot;
         Bitmap _graphic;
+        BulletFactory _bulletFactory;
         Point2D _pos;
         DrawingOptions drawingOptions;
         DrawingOptions shopDrawingOption;
@@ -32,7 +60,6 @@ namespace Cyberpunk77022
         Point2D _aimPoint;
         Point2D _basePoint;
         float angle;
-        float _range = 2000;
         float _damage;
         float _recoil;
         float _butt;
@@ -45,6 +72,7 @@ namespace Cyberpunk77022
         string _id;
         string _desc;
         int _price;
+        float _range = 1000;
         bool purchased = false;
         bool _minimized = false;
         bool _enemyGun = false;
@@ -61,6 +89,7 @@ namespace Cyberpunk77022
             _camera = game.Camera;
             singleshot = SplashKit.SoundEffectNamed(soundName);
             _graphic = SplashKit.BitmapNamed(bitmapName);
+            _bulletFactory = new NormalBulletFactory();
             _DisplayWidth = DisplayWidth;
             _butt = butt;
             _nozzleLength = _DisplayWidth - _butt;
@@ -78,7 +107,7 @@ namespace Cyberpunk77022
             float shopScale = 300 * 1.0f / _graphic.Width;
             shopDrawingOption = new DrawingOptions()
             {
-                Dest = game.Manager.Window,
+                Dest = _window,
                 ScaleX = shopScale,
                 ScaleY = shopScale,
             };
@@ -100,6 +129,7 @@ namespace Cyberpunk77022
             _GunOf = GunOf;
             singleshot = SplashKit.SoundEffectNamed(soundName);
             _graphic = SplashKit.BitmapNamed(bitmapName);
+            _bulletFactory = new NormalBulletFactory();
             _DisplayWidth = DisplayWidth;
             _butt = butt;
             _nozzleLength = _DisplayWidth - _butt;
@@ -139,6 +169,7 @@ namespace Cyberpunk77022
             _GunOf = GunOf;
             singleshot = SplashKit.SoundEffectNamed(soundName);
             _graphic = SplashKit.BitmapNamed(bitmapName);
+            _bulletFactory = new NormalBulletFactory();
             _DisplayWidth = DisplayWidth;
             _butt = butt;
             _nozzleLength = _DisplayWidth - _butt;
@@ -307,12 +338,11 @@ namespace Cyberpunk77022
         {
             if(_game != null)
             {
-                Bullet NewBullet = new NormalBullet(_game, this, 800, _speed, _damage, color);
+                Bullet NewBullet = _bulletFactory.CreateBullet(_game, this, color);
                 if (enemyGun)
                 {
                     NewBullet.Speed = 30;
                 }
-                NewBullet.Color = color;
                 _game.AddBullet(NewBullet);
             }
         }
@@ -423,6 +453,18 @@ namespace Cyberpunk77022
         public Bitmap Bitmap
         {
             get { return _graphic; }
+        }
+
+        public BulletFactory BulletFactory
+        {
+            get { return _bulletFactory; }
+            set { _bulletFactory = value; }
+        }
+
+        public float Range
+        {
+            get { return _range; }
+            set { _range = value; }
         }
     }
 }

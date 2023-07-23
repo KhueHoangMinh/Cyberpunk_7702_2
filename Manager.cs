@@ -10,8 +10,21 @@ using System.Xml.Linq;
 
 namespace Cyberpunk77022
 {
-    public class Manager
+    public sealed class Manager
     {
+        private static Manager instance = null;
+
+        public static Manager Instance
+        {
+            get
+            {
+                if(instance == null)
+                {
+                    instance = new Manager();
+                }
+                return instance;
+            }
+        }
 
         static int coin = 1000;
         static int score = 0;
@@ -36,7 +49,7 @@ namespace Cyberpunk77022
         List<ShopItem> _skins;
         List<ShopItem> _skills;
 
-        public Manager(Window window)
+        private Manager()
         {
             SplashKit.LoadBitmap("logo", "images/logo.png");
             SplashKit.LoadBitmap("default", "images/guns_img/default.png");
@@ -77,74 +90,6 @@ namespace Cyberpunk77022
             SplashKit.LoadMusic("background", "sounds/background.mp3");
 
             SplashKit.LoadFont("font", "fonts/Roboto-Bold.ttf");
-
-
-
-            _window = window;
-
-            background = SplashKit.MusicNamed("background");
-            SplashKit.SetMusicVolume(0.6f);
-            background.FadeIn(3000);
-
-            _guns = new List<ShopItem>()
-            {
-                new Pistol1(_window, 40),
-                new Sniper1(_window, 99),
-                new Pistol2(_window, 50),
-                new Rifle1(_window, 20),
-                new Rifle2(_window, 25),
-                new Sniper2(_window, 100),
-                new Shotgun1(_window, 30),
-                new RPG(_window, 300)
-            };
-
-            _skins = new List<ShopItem>()
-            {
-                new Skin("Blue", "blue", "a skin", 0, Color.Blue),
-                new Skin("Green", "green", "a skin", 10, Color.Green),
-                new Skin("Red", "red", "a skin", 20, Color.Red),
-                new Skin("Yellow", "yellow", "a skin", 30, Color.Yellow),
-                new Skin("Gray", "gray", "a skin", 40, Color.Gray),
-                new Skin("Pink", "pink", "a skin", 50, Color.Pink)
-            };
-
-            _skills = new List<ShopItem>()
-            {
-                new Health(),
-                new Defense()
-            };
-
-            _guns[0].Purchased = true;
-            _skins[0].Purchased = true;
-
-            _selectedGun = new Gun[2] { _guns[0] as Gun, null };
-            _gun = 0;
-            _skin = _skins[0] as Skin;
-
-
-            stars = new List<Star>();
-            sths = new List<Something>();
-
-            this.Load("../../../userdata.txt");
-
-
-            home = new HomeStage(this);
-            game = new GameStage(this);
-            end = new EndStage(this);
-            shop = new ShopStage(this, "home");
-            about = new AboutStage(this);
-
-            currentStage = home;
-
-            for (int i = 0; i < 30; i++)
-            {
-                stars.Add(new Star());
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                sths.Add(new Something());
-            }
-
         }
 
         public void Load(string filename)
@@ -450,6 +395,73 @@ namespace Cyberpunk77022
         public Window Window
         {
             get { return _window; }
+            set 
+            { 
+                _window = value;
+
+
+                background = SplashKit.MusicNamed("background");
+                SplashKit.SetMusicVolume(0.6f);
+                background.FadeIn(3000);
+
+                _guns = new List<ShopItem>()
+            {
+                new Pistol1(_window, 40),
+                new Sniper1(_window, 99),
+                new Pistol2(_window, 50),
+                new Rifle1(_window, 20),
+                new Rifle2(_window, 25),
+                new Sniper2(_window, 100),
+                new Shotgun1(_window, 30),
+                new RPG(_window, 300)
+            };
+
+                _skins = new List<ShopItem>()
+            {
+                new Skin("Blue", "blue", "a skin", 0, Color.Blue),
+                new Skin("Green", "green", "a skin", 10, Color.Green),
+                new Skin("Red", "red", "a skin", 20, Color.Red),
+                new Skin("Yellow", "yellow", "a skin", 30, Color.Yellow),
+                new Skin("Gray", "gray", "a skin", 40, Color.Gray),
+                new Skin("Pink", "pink", "a skin", 50, Color.Pink)
+            };
+
+                _skills = new List<ShopItem>()
+            {
+                new Health(),
+                new Defense()
+            };
+
+                _guns[0].Purchased = true;
+                _skins[0].Purchased = true;
+
+                _selectedGun = new Gun[2] { _guns[0] as Gun, null };
+                _gun = 0;
+                _skin = _skins[0] as Skin;
+
+
+                stars = new List<Star>();
+                sths = new List<Something>();
+
+                this.Load("../../../userdata.txt");
+
+                for (int i = 0; i < 30; i++)
+                {
+                    stars.Add(new Star());
+                }
+                for (int i = 0; i < 10; i++)
+                {
+                    sths.Add(new Something());
+                }
+
+
+                home = new HomeStage(this);
+                game = new GameStage(this);
+                end = new EndStage(this);
+                shop = new ShopStage(this, "home");
+                about = new AboutStage(this);
+                currentStage = home;
+            }
         }
         public HomeStage HomeStage { get { return home; } }
 

@@ -29,6 +29,8 @@ namespace Cyberpunk77022
 
         float checkUnitX;
         float checkUnitY;
+
+        bool _stopped = false;
         public Trace(GameStage game, Window window, Camera camera, Bullet tracing)
         {
             _game = game;
@@ -65,20 +67,25 @@ namespace Cyberpunk77022
             {
                 _Dest = _tracing.Pos;
             }
-            _Pos.X = _initPoint.X + (_Dest.X - _initPoint.X) / 2;
-            _Pos.Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2;
-            _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
-            Point2D Start = _initPoint;
-            while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - Start.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - Start.Y))
+
+            if(!_stopped)
             {
-                if (_height > 5)
+                _Pos.X = _initPoint.X + (_Dest.X - _initPoint.X) / 2;
+                _Pos.Y = _initPoint.Y + (_Dest.Y - _initPoint.Y) / 2;
+                _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
+                Point2D Start = _initPoint;
+                while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - Start.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - Start.Y))
                 {
-                    _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
-                    _initPoint.X += checkUnitX;
-                    _initPoint.Y += checkUnitY;
-                } else
-                {
-                    break;
+                    if (_height > 10)
+                    {
+                        _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
+                        _initPoint.X += checkUnitX;
+                        _initPoint.Y += checkUnitY;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
             //_initPoint = DestStop;
@@ -170,6 +177,12 @@ namespace Cyberpunk77022
                 };
 
             }
+        }
+
+        public bool Stopped
+        {
+            get { return _stopped; } 
+            set { _stopped = value; }
         }
     }
 }
