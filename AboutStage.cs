@@ -111,14 +111,14 @@ namespace Cyberpunk77022
         {
             _content1 = new Content(this.Manager.Window.Width/2, this.Manager.Window.Height, new List<Info>()
             {
-                new Info("Credits",""),
+                new Info("Credits","---"),
                 new Info("Developer","Hoang Minh Khue"),
                 new Info("Sounds", "pixabay.com"),
                 new Info("Images", "pngegg.com")
             });
             _content2 = new Content(this.Manager.Window.Width / 6, this.Manager.Window.Height, new List<Info>()
             {
-                new Info("Controls",""),
+                new Info("Controls","---"),
                 new Info("Key W","Jump"),
                 new Info("Key A", "Move left"),
                 new Info("Key D", "Move right"),
@@ -126,10 +126,11 @@ namespace Cyberpunk77022
             });
             _content3 = new Content(this.Manager.Window.Width * 5 / 6, this.Manager.Window.Height, new List<Info>()
             {
-                new Info("Functions",""),
+                new Info("Functions","---"),
                 new Info("Start button","Start the game"),
                 new Info("Shop button", "Enter Shop to change equipments"),
-                new Info("About button", "View game details")
+                new Info("About button", "View game details"),
+                new Info("Key Esc", "Close the game")
             });
             backBtn = new Button("<", Color.Red, 80, 80, 70, 70);
             pauseBtn = new Button("||", Color.Red, 80, 160, 70, 70);

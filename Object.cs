@@ -107,8 +107,8 @@ namespace Cyberpunk77022
             float StartX = (float)_pos.X;
             float StartY = (float)_pos.Y;
             checkScale = 3.0f / (float)Math.Sqrt(_velX * _velX + _velY * _velY);
-            checkUnitX = _velX * checkScale;
-            checkUnitY = _velY * checkScale;
+            checkUnitX = _velX * checkScale * 1.0f;
+            checkUnitY = _velY * checkScale * 1.0f;
             while (Math.Abs(_velX) > Math.Abs(_pos.X - StartX) && Math.Abs(_velY) > Math.Abs(_pos.Y - StartY))
             {
                 _pos.X += checkUnitX;
@@ -120,12 +120,15 @@ namespace Cyberpunk77022
                     break;
                 }
             }
-            if (finalCollide == "no")
+            if (finalCollide != "left" && finalCollide != "right")
             {
                 _pos.X = StartX + _velX;
-                _pos.Y = StartY + _velY;
-                CheckCollide(objects);
             }
+            if (finalCollide != "top" && finalCollide != "bottom")
+            {
+                _pos.Y = StartY + _velY;
+            }
+            CheckCollide(objects);
         }
 
         public abstract void Update();
@@ -275,6 +278,12 @@ namespace Cyberpunk77022
         public float G
         {
             get { return _g; }
+        }
+
+        public bool GravityEffect
+        {
+            get { return _gravity; }
+            set { _gravity = value; }
         }
     }
 }

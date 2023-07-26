@@ -134,11 +134,11 @@ namespace Cyberpunk77022
 
         public virtual void Explode()
         {
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 20), 3000, new Point2D()
+            this.Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, 400, new Point2D()
             {
-                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.2f, 30));
+                X = this.Pos.X,
+                Y = this.Pos.Y
+            }, SplashKit.BitmapNamed("smoke_animation")));
         }
 
         public virtual void MoveBullet()
@@ -392,30 +392,38 @@ namespace Cyberpunk77022
 
         public override void Explode()
         {
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(25, 75), 450, new Point2D()
-            {
-                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.6f, 20));
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(20, 75), 350, new Point2D()
-            {
-                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.5f, 30));
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 75), 400, new Point2D()
-            {
-                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.7f, 25));
+            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(25, 75), 450, new Point2D()
+            //{
+            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            //}, this.Color, 0.6f, 20));
+            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(20, 75), 350, new Point2D()
+            //{
+            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            //}, this.Color, 0.5f, 30));
+            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 75), 400, new Point2D()
+            //{
+            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
+            //}, this.Color, 0.7f, 25));
             this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 20), 3000, new Point2D()
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, this.Color, 0.5f, 250));
+            }, Color.RGBAColor(0.8, 0.4, 0.4, 0.3), 0.5f, 250));
+            this.Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, 600, new Point2D()
+            {
+                X = this.Pos.X,
+                Y = this.Pos.Y
+            }, SplashKit.BitmapNamed("explo_animation")));
 
             for (int i = 0; i < this.Game.Enemies.Count; i++)
             {
-                float dist = (float)((this.Pos.X - this.Game.Enemies[i].Pos.X) * (this.Pos.X - this.Game.Enemies[i].Pos.X) + (this.Pos.Y - this.Game.Enemies[i].Pos.Y) * (this.Pos.Y - this.Game.Enemies[i].Pos.Y));
+                float dist = (float)((this.Pos.X - this.Game.Enemies[i].Pos.X) * 
+                    (this.Pos.X - this.Game.Enemies[i].Pos.X) + 
+                    (this.Pos.Y - this.Game.Enemies[i].Pos.Y) * 
+                    (this.Pos.Y - this.Game.Enemies[i].Pos.Y));
                 if (dist < _explodeRange * _explodeRange)
                 {
                     this.Game.Enemies[i].GetHit(this);
@@ -430,7 +438,17 @@ namespace Cyberpunk77022
             base.MoveBullet();
             for(int i = 0; i < 5; i++)
             {
-                if(new Random().Next(0,20) < 4) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2,8), new Random().Next(20,30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White, (float)(new Random().NextDouble()*0.3 + 0.1), new Random().Next(2,5)));
+                if (new Random().Next(0, 20) < 4) 
+                {
+                    Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(100, 150), new Point2D()
+                    { 
+                        X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), 
+                        Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) 
+                    }, SplashKit.BitmapNamed("smoke_animation"))); 
+                    //Game.AddExplosion(
+                    //    new Explosion(this.Game, this.Game.Camera, new Random().Next(2, 8), new Random().Next(20, 30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White, (float)(new Random().NextDouble() * 0.3 + 0.1), new Random().Next(2, 5)));
+
+                }
             }
         }
 

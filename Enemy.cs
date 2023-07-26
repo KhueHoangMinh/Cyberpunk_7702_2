@@ -29,6 +29,7 @@ namespace Cyberpunk77022
         string collide = "no";
         bool _gravity = true;
         string _dying;
+        EnemyState _state;
         //float _aX;
         //float _aY;
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
@@ -43,12 +44,13 @@ namespace Cyberpunk77022
             _maxHealth = 100;
             _health = _maxHealth;
             dest = new Point2D() { X = new Random().Next(200, 300), Y = new Random().Next(200, 300) };
-            _speed = (float)(new Random().NextDouble() + 0.5);
+            _speed = (float)(new Random().NextDouble() + 0.2);
             _jumpTime = new Random().Next(30000000, 50000000);
             _fireRate = new Random().Next(30000000, 50000000);
             _jumpedAt = -_jumpTime;
             _firedAt = -_fireRate;
             _dying = dying;
+            _state = new LivingState(this);
         }
         public Enemy(GameStage game, Camera camera, Point2D pos, float sizeX, float sizeY, Color color, string dying, float MaxHealth) : base(camera, pos, sizeX, sizeY, color, true, 0, 0)
         {
@@ -62,12 +64,13 @@ namespace Cyberpunk77022
             _maxHealth = MaxHealth;
             _health = _maxHealth;
             dest = new Point2D() { X = new Random().Next(200, 300), Y = new Random().Next(200, 300) };
-            _speed = (float)(new Random().NextDouble() + 0.5);
+            _speed = (float)(new Random().NextDouble() + 0.2);
             _jumpTime = new Random().Next(30000000, 50000000);
             _fireRate = new Random().Next(30000000, 50000000);
             _jumpedAt = -_jumpTime;
             _firedAt = -_fireRate;
             _dying = dying;
+            _state = new LivingState(this);
         }
 
         public override void CollideTop(Object @object)
@@ -99,6 +102,7 @@ namespace Cyberpunk77022
                     this.VelY = -this.VelY * 0.35f;
                 }
             }
+            this.VelX *= 0.98f;
             _jumped = false;
             if (this.Collide == "no") this.Collide = "bottom";
         }
@@ -144,32 +148,15 @@ namespace Cyberpunk77022
             if(_health < 0 && _alive)
             {
                 _alive = false;
+                this.GravityEffect = true;
+                _state = new DyingState(this);
                 SplashKit.SoundEffectNamed(_dying).Play();
                 this.Color = Color.DarkGray;
                 _game.AddCoin(new Coin(this.Game, this.Pos, this.VelX * 0.5f, this.VelY * 0.5f));
                 //_game.RemoveEnemy(this);
             }
-            if(!_alive)
-            {
-                Color pale = this.Color;
-                pale.A -= 0.01f;
-                this.Color = pale;
-                if (this.Color.A <= 0.3)
-                {
-                    if (new Random().Next(0, 15) < 1)
-                    {
-                        for (int i = 0; i < 5; i++)
-                        {
-                            _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Left, (int)this.Right),
-                                Y = (double)new Random().Next((int)this.Top, (int)this.Bottom),
-                            }, Color.White, 0, 0));
-                        }
-                    }
-                }
-            }
-            if(this.Color.A <= 0)
+            _state.Behaviour();
+            if (this.Color.A <= 0)
             {
                 for (int i = 0; i < 5; i++)
                 {
@@ -185,17 +172,7 @@ namespace Cyberpunk77022
             this.Gravity();
             this.MoveObject(_game.Grounds);
 
-            if (_alive)
-            {
-                this.Behaviour();
 
-                _EnemyGun.Update(_game.GetPlayer.Pos);
-                if (DateTime.UtcNow.Ticks - _firedAt >= _fireRate && new Random().Next(0, 19) < 5)
-                {
-                    _firedAt = DateTime.UtcNow.Ticks;
-                    _EnemyGun.Shoot();
-                }
-            }
         }
 
         public abstract void Behaviour();
@@ -221,34 +198,36 @@ namespace Cyberpunk77022
             if (bullet is RPGBullet)
             {
                 float scale = ((bullet as RPGBullet).ExplodeRange - (float)Math.Sqrt((this.Pos.X - bullet.Pos.X) * (this.Pos.X - bullet.Pos.X) + (this.Pos.Y - bullet.Pos.Y) * (this.Pos.Y - bullet.Pos.Y)))/ (bullet as RPGBullet).ExplodeRange;
+
+                _health -= (int)(scale * bullet.Damage);
                 if (_health >= 0)
                 {
-                    this.VelX = 30.0f * bullet.VelX * scale;
-                    this.VelY = 30.0f * bullet.VelY * scale;
+                    this.VelX += 10.0f * bullet.VelX * scale;
+                    this.VelY += 10.0f * bullet.VelY * scale;
                     this.VelY -= 10;
                 }
                 else
                 {
-                    this.VelX = 50.0f * bullet.VelX * scale;
-                    this.VelY = 50.0f * bullet.VelY * scale;
+                    this.VelX += 30.0f * bullet.VelX * scale;
+                    this.VelY += 30.0f * bullet.VelY * scale;
                     this.VelY -= 15;
                 }
-                _health -= (int) (scale * bullet.Damage);
             } else
             {
+                
+                _health -= bullet.Damage;
                 if (_health >= 0)
                 {
-                    this.VelX = 0.5f * bullet.VelX;
-                    this.VelY = 0.5f * bullet.VelY;
+                    this.VelX += 0.2f * bullet.VelX;
+                    this.VelY += 0.2f * bullet.VelY;
                     this.VelY -= 3;
                 }
                 else
                 {
-                    this.VelX = 0.7f * bullet.VelX;
-                    this.VelY = 0.7f * bullet.VelY;
-                    this.VelY -= 5;
+                    this.VelX += 1.0f * bullet.VelX;
+                    this.VelY += 1.0f * bullet.VelY;
+                    this.VelY -= 10;
                 }
-                _health -= bullet.Damage;
             }
                 _minusHealth -= _health;
             if (_alive) _game.AddMinusHealth(new MinusHealth(_game, this, _minusHealth));
@@ -272,12 +251,6 @@ namespace Cyberpunk77022
             set { _health = value; }
         }
 
-        public bool GravityEffect
-        {
-            get { return _gravity; }
-            set { _gravity = value; }
-        }
-
         public GameStage Game
         {
             get { return _game; }
@@ -291,12 +264,6 @@ namespace Cyberpunk77022
         public Point2D Dest
         {
             get { return dest; }
-        }
-
-        public string Collide
-        {
-            get { return collide; }
-            set { collide = value; }
         }
 
         public bool Jumped
@@ -316,6 +283,17 @@ namespace Cyberpunk77022
             get { return _jumpedAt; }
             set { _jumpedAt = value; }
         }
+
+        public long FiredAt
+        {
+            get { return _firedAt; }
+            set { _firedAt = value; }
+        }
+
+        public long FireRate
+        {
+            get { return _fireRate; }
+        }
     }
 
     public class NormalEnemy : Enemy
@@ -326,36 +304,32 @@ namespace Cyberpunk77022
 
         public override void Behaviour()
         {
-            if (this.Health < 0 && this.Alive)
-            {
-                this.GravityEffect = false;
-            }
             if (this.Game.GetPlayer.Pos.X < this.Pos.X)
             {
                 if (-this.Game.GetPlayer.Pos.X + this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    this.VelX += -this.Speed;
                 }
                 else if (-this.Game.GetPlayer.Pos.X + this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    this.VelX += this.Speed;
                 }
             }
             else if (this.Game.GetPlayer.Pos.X > this.Pos.X)
             {
                 if (this.Game.GetPlayer.Pos.X - this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    this.VelX += this.Speed;
                 }
                 else if (this.Game.GetPlayer.Pos.X - this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    this.VelX += -this.Speed;
                 }
             }
             if (DateTime.UtcNow.Ticks - this.JumpedAt >= this.JumpTime && !this.Jumped && new Random().Next(0, 19) < 5)
             {
                 this.JumpedAt = DateTime.UtcNow.Ticks;
-                this.VelY = -10;
+                this.VelY += -10;
                 for (int i = 0; i < 3; i++)
                 {
                     switch (this.Collide)
@@ -391,6 +365,13 @@ namespace Cyberpunk77022
             {
                 //_jumpedAt = DateTime.UtcNow.Ticks;
             }
+
+            this.Gun.Update(this.Game.GetPlayer.Pos);
+            if (DateTime.UtcNow.Ticks - this.FiredAt >= this.FireRate && new Random().Next(0, 19) < 5)
+            {
+                this.FiredAt = DateTime.UtcNow.Ticks;
+                this.Gun.Shoot();
+            }
         }
     }
 
@@ -401,52 +382,62 @@ namespace Cyberpunk77022
             this.Gun = new Rifle1(this.Game.Manager.Window, 8, true);
             this.Gun.Game = this.Game;
             this.Gun.GunOf = this;
+            this.GravityEffect = false;
         }
         public override void Behaviour()
         {
+            double tempVelX = 0;
+            double tempVelY = 0;
             if (this.Game.GetPlayer.Pos.X < this.Pos.X)
             {
                 if (-this.Game.GetPlayer.Pos.X + this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    tempVelX = -1;
                 }
                 else if (-this.Game.GetPlayer.Pos.X + this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    tempVelX = 1;
                 }
             }
             else if (this.Game.GetPlayer.Pos.X > this.Pos.X)
             {
                 if (this.Game.GetPlayer.Pos.X - this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    tempVelX = 1;
                 }
                 else if (this.Game.GetPlayer.Pos.X - this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    tempVelX = -1;
                 }
             }
             if (this.Game.GetPlayer.Pos.Y < this.Pos.Y)
             {
                 if (-this.Game.GetPlayer.Pos.Y + this.Pos.Y > this.Dest.Y)
                 {
-                    this.VelY = -this.Speed;
+                    tempVelY = -1;
                 }
                 else if (-this.Game.GetPlayer.Pos.Y + this.Pos.Y < this.Dest.Y)
                 {
-                    this.VelY = this.Speed;
+                    tempVelY = 1;
                 }
             }
             else if (this.Game.GetPlayer.Pos.Y > this.Pos.Y)
             {
                 if (this.Game.GetPlayer.Pos.Y - this.Pos.Y > this.Dest.Y)
                 {
-                    this.VelY = this.Speed;
+                    tempVelY = 1;
                 }
                 else if (this.Game.GetPlayer.Pos.Y - this.Pos.Y < this.Dest.Y)
                 {
-                    this.VelY = -this.Speed;
+                    tempVelY = -1;
                 }
+            }
+            this.Pos = new Point2D() { X = this.Pos.X + tempVelX, Y = this.Pos.Y + tempVelY };
+            this.Gun.Update(this.Game.GetPlayer.Pos);
+            if (DateTime.UtcNow.Ticks - this.FiredAt >= this.FireRate && new Random().Next(0, 19) < 5)
+            {
+                this.FiredAt = DateTime.UtcNow.Ticks;
+                this.Gun.Shoot();
             }
         }
     }
@@ -461,36 +452,32 @@ namespace Cyberpunk77022
 
         public override void Behaviour()
         {
-            if (this.Health < 0 && this.Alive)
-            {
-                this.GravityEffect = false;
-            }
             if (this.Game.GetPlayer.Pos.X < this.Pos.X)
             {
                 if (-this.Game.GetPlayer.Pos.X + this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    this.VelX += -this.Speed;
                 }
                 else if (-this.Game.GetPlayer.Pos.X + this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    this.VelX += this.Speed;
                 }
             }
             else if (this.Game.GetPlayer.Pos.X > this.Pos.X)
             {
                 if (this.Game.GetPlayer.Pos.X - this.Pos.X > this.Dest.X)
                 {
-                    this.VelX = this.Speed;
+                    this.VelX += this.Speed;
                 }
                 else if (this.Game.GetPlayer.Pos.X - this.Pos.X < this.Dest.X)
                 {
-                    this.VelX = -this.Speed;
+                    this.VelX += -this.Speed;
                 }
             }
             if (DateTime.UtcNow.Ticks - this.JumpedAt >= this.JumpTime && !this.Jumped && new Random().Next(0, 19) < 5)
             {
                 this.JumpedAt = DateTime.UtcNow.Ticks;
-                this.VelY = -10;
+                this.VelY += -10;
                 for (int i = 0; i < 3; i++)
                 {
                     switch (this.Collide)
@@ -525,6 +512,12 @@ namespace Cyberpunk77022
             else
             {
                 //_jumpedAt = DateTime.UtcNow.Ticks;
+            }
+            this.Gun.Update(this.Game.GetPlayer.Pos);
+            if (DateTime.UtcNow.Ticks - this.FiredAt >= this.FireRate && new Random().Next(0, 19) < 5)
+            {
+                this.FiredAt = DateTime.UtcNow.Ticks;
+                this.Gun.Shoot();
             }
         }
     }

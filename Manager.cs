@@ -71,6 +71,33 @@ namespace Cyberpunk77022
                  7,
                  7
             );
+            SplashKit.LoadBitmap("explo_animation", "images/explosion.png");
+            SplashKit.BitmapSetCellDetails(
+                SplashKit.BitmapNamed("explo_animation"),
+                 SplashKit.BitmapNamed("explo_animation").Height,
+                 SplashKit.BitmapNamed("explo_animation").Height,
+                 7,
+                 1,
+                 7
+            );
+            SplashKit.LoadBitmap("smoke_animation", "images/smoke.png");
+            SplashKit.BitmapSetCellDetails(
+                SplashKit.BitmapNamed("smoke_animation"),
+                 SplashKit.BitmapNamed("smoke_animation").Height/2,
+                 SplashKit.BitmapNamed("smoke_animation").Height/2,
+                 5,
+                 2,
+                 10
+            );
+            SplashKit.LoadBitmap("shot_animation", "images/shot.png");
+            SplashKit.BitmapSetCellDetails(
+                SplashKit.BitmapNamed("shot_animation"),
+                 SplashKit.BitmapNamed("shot_animation").Height / 5,
+                 SplashKit.BitmapNamed("shot_animation").Height / 5,
+                 4,
+                 5,
+                 20
+            );
 
             SplashKit.LoadSoundEffect("singleshot", "sounds/singleshot.mp3");
             SplashKit.LoadSoundEffect("singleshot2", "sounds/singleshot2.mp3");

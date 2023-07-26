@@ -76,7 +76,7 @@ namespace Cyberpunk77022
                 Point2D Start = _initPoint;
                 while (Math.Abs(_VelX) > Math.Abs(_initPoint.X - Start.X) && Math.Abs(_VelY) > Math.Abs(_initPoint.Y - Start.Y))
                 {
-                    if (_height > 10)
+                    if (_height > 3)
                     {
                         _height = (float)Math.Sqrt((_Dest.X - _initPoint.X) * (_Dest.X - _initPoint.X) + (_Dest.Y - _initPoint.Y) * (_Dest.Y - _initPoint.Y));
                         _initPoint.X += checkUnitX;
@@ -84,6 +84,7 @@ namespace Cyberpunk77022
                     }
                     else
                     {
+                        if(_color.A < 0.6) _color.A = 0;
                         break;
                     }
                 }

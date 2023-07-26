@@ -22,6 +22,7 @@ namespace Cyberpunk77022
             _drawingOptions = new DrawingOptions()
             {
                 Dest = game.Manager.Window,
+                Angle = 0,
                 ScaleX = scale,
                 ScaleY = scale,
                 DrawCell = (int)drawingcell
@@ -55,6 +56,7 @@ namespace Cyberpunk77022
 
         public override void Update()
         {
+            _drawingOptions.Angle += 5;
             if(this.IsCollideAt(_game.GetPlayer) != "no")
             {
                 Earn();

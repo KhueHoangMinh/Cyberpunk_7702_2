@@ -20,12 +20,17 @@ namespace Cyberpunk77022
         List<Ground> grounds;
         List<Bullet> bullets;
         List<Coin> coins;
+        NormalEnemyFactory _normalEnemyFactory;
+        FlyEnemyFactory _flyEnemyFactory;
+        BigEnemyFactory _bigEnemyFactory;
         Queue<MinusHealth> minusHealths;
         Queue<MinusHealth> MinusHealthAdd;
         int MinusHealthPop = 0;
         Queue<Trace> traces;
         Queue<Trace> TraceAdd;
         int TracePop = 0;
+        List<AniShot> aniShots;
+        Queue<AniShot> aniShotsAdd;
         List<Explosion> explosions;
         Queue<Explosion> ExploAdd;
         int ExploPop = 0;
@@ -47,6 +52,9 @@ namespace Cyberpunk77022
         public GameStage(Manager manager) : base(manager)
         {
             camera = new Camera(this.Manager.Window.Width, this.Manager.Window.Height);
+            _normalEnemyFactory = new NormalEnemyFactory(this);
+            _flyEnemyFactory = new FlyEnemyFactory(this);
+            _bigEnemyFactory = new BigEnemyFactory(this);
             player = new Player(this, camera, new Point2D() { X = this.Manager.Window.Width/2, Y = -100}, 100, 100);
             enemies = new List<Enemy>();
             grounds = new List<Ground>();
@@ -59,10 +67,12 @@ namespace Cyberpunk77022
             bullets = new List<Bullet>();
             coins = new List<Coin>();
             traces = new Queue<Trace>();
+            aniShots = new List<AniShot>();
             explosions = new List<Explosion>();
             smokes = new Queue<Smoke>();
             MinusHealthAdd = new Queue<MinusHealth>();
             TraceAdd = new Queue<Trace>();
+            aniShotsAdd = new Queue<AniShot>();
             ExploAdd = new Queue<Explosion>();
             SmokeAdd = new Queue<Smoke>();
             _clearAt = DateTime.UtcNow.Ticks;
@@ -94,13 +104,13 @@ namespace Cyberpunk77022
                                 int rand = new Random().Next(1, 10);
                                 if (rand < 4)
                                 {
-                                    enemies.Add(new NormalEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                    enemies.Add(_normalEnemyFactory.CreateEnemy());
                                 } else if(rand > 4 && rand < 8)
                                 {
-                                    enemies.Add(new FlyEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                    enemies.Add(_flyEnemyFactory.CreateEnemy());
                                 } else
                                 {
-                                    enemies.Add(new BigEnemy(this, camera, new Point2D() { X = new Random().Next(10, 1000), Y = new Random().Next(10, 100) }));
+                                    enemies.Add(_bigEnemyFactory.CreateEnemy());
                                 }
                             }
                             _resting = true;
@@ -144,15 +154,34 @@ namespace Cyberpunk77022
                     smokes.Dequeue();
                     SmokePop--;
                 }
+                while (aniShotsAdd.Count > 0) aniShots.Add(aniShotsAdd.Dequeue());
+                foreach (AniShot aniShot in aniShots)
+                {
+                    aniShot.Update();
+                }
+                int m = 0;
+                while (m < aniShots.Count)
+                {
+                    if (!aniShots[m].Drawing)
+                    {
+                        aniShots.Remove(aniShots[m]);
+                        m--;
+                    }
+                    m++;
+                }
                 while (ExploAdd.Count > 0) explosions.Add(ExploAdd.Dequeue());
                 foreach (Explosion explosion in explosions)
                 {
                     explosion.Update();
                 }
-                int m = 0;
+                m = 0;
                 while (m < explosions.Count)
                 {
                     if (explosions[m].GetColor.A < 0.01)
+                    {
+                        explosions.Remove(explosions[m]);
+                        m--;
+                    } else if (explosions[m] is AniExplosion && !(explosions[m] as AniExplosion).Drawing)
                     {
                         explosions.Remove(explosions[m]);
                         m--;
@@ -183,8 +212,8 @@ namespace Cyberpunk77022
                         paused = !paused;
                     }
                 }
-                //Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " + 
-                //    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " ");
+                //Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " +
+                //    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " " + aniShots.Count.ToString() + " ");
             } else
             {
                 if (this.OutEf._completed)
@@ -212,7 +241,6 @@ namespace Cyberpunk77022
             {
                 this.OutEf.Update();
             }
-            //Console.WriteLine(bullets.Count.ToString() + " " + traces.Count.ToString());
         }
 
         public void DrawUI()
@@ -344,6 +372,10 @@ namespace Cyberpunk77022
             {
                 smoke.Draw();
             }
+            foreach (AniShot aniShot in aniShots)
+            {
+                aniShot.Draw();
+            }
             foreach (Explosion explosion in explosions)
             {
                 explosion.Draw();
@@ -409,6 +441,14 @@ namespace Cyberpunk77022
         public void RemoveTrace()
         {
             TracePop++;
+        }
+        public void AddAniShot(AniShot aniShot)
+        {
+            aniShotsAdd.Enqueue(aniShot);
+        }
+
+        public void RemoveAniShot()
+        {
         }
         public void AddExplosion(Explosion explosion)
         {

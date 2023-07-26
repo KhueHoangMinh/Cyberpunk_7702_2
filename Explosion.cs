@@ -84,7 +84,7 @@ namespace Cyberpunk77022
             };
         }
 
-        public void Update()
+        public virtual void Update()
         {
             if (_color.A >= 0.01)
             {
@@ -97,7 +97,7 @@ namespace Cyberpunk77022
             }
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             SplashKit.FillQuad(_color, calQuad());
             //SplashKit.FillCircle(_color, _pos.X - _camera.Pos.X, _pos.Y - _camera.Pos.Y, _rad);
@@ -106,6 +106,22 @@ namespace Cyberpunk77022
         public Color GetColor
         {
             get { return _color; }
+        }
+
+        public Point2D Pos
+        {
+            get { return _pos; }
+            set { _pos = value; }
+        }
+
+        public GameStage Game
+        {
+            get { return _game; }
+        }
+
+        public float Rad
+        {
+            get { return _rad; }
         }
     }
 }

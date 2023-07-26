@@ -46,7 +46,7 @@ namespace Cyberpunk77022
         {
         }
 
-        public void Update()
+        public virtual void Update()
         {
             _angle += rotSpeed;
             _pos.X += _initVelX;
@@ -70,7 +70,7 @@ namespace Cyberpunk77022
             cosAngle = (float)Math.Cos(_angle);
         }
 
-        public void Draw()
+        public virtual void Draw()
         {
             SplashKit.FillQuad(_color, calQuad());
         }
@@ -108,5 +108,44 @@ namespace Cyberpunk77022
         {
             get { return _color; }
         }
+
+        public GameStage Game
+        {
+            get { return _game; }
+        }
+
+        public Point2D Pos
+        {
+            get { return _pos; }
+            set { _pos = value; }
+        }
+
+        public float Rad
+        {
+            get { return _rad; }   
+            set { _rad = value; }
+        }
+
+        public float RotSpeed
+        {
+            get { return rotSpeed; }
+        }
+
+        public float InitVelX
+        {
+            get { return _initVelX; }
+            set { _initVelX = value; }
+        }
+        public float InitVelY
+        {
+            get { return _initVelY; }
+            set { _initVelY = value; }
+        }
+        public float VelY
+        {
+            get { return _velY; }
+            set { _velY = value; }
+        }
+
     }
 }

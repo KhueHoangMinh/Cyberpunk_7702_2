@@ -38,13 +38,13 @@ namespace Cyberpunk77022
 
         public override void CollideTop(Object @object)
         {
-            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Bottom + (this.Bottom - this.Top) / 2 + 1 };
+            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = @object.Bottom + (this.Bottom - this.Top) / 2 + 1 };
             if (this.VelY < 0) this.VelY = 0;
             if (this.Collide == "no") this.Collide = "top";
         }
         public override void CollideBottom(Object @object)
         {
-            this.Pos = new Point2D() { X = this.Pos.X, Y = @object.Top - (this.Bottom - this.Top) / 2 - 1 };
+            this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = @object.Top - (this.Bottom - this.Top) / 2 - 1 };
             this.VelX = this.VelX * 0.96f;
             if (this.VelY > 0) this.VelY = 0;
             _jumped = false;
@@ -52,14 +52,14 @@ namespace Cyberpunk77022
         }
         public override void CollideRight(Object @object)
         {
-            this.Pos = new Point2D() { X = @object.Left - (this.Right - this.Left) / 2 - 1, Y = this.Pos.Y };
+            this.Pos = new Point2D() { X = @object.Left - (this.Right - this.Left) / 2 - 1, Y = this.Pos.Y + this.VelY };
             if (this.VelX > 0) this.VelX = 0;
             _jumped = false;
             if (this.Collide == "no") this.Collide = "right";
         }
         public override void CollideLeft(Object @object)
         {
-            this.Pos = new Point2D() { X = @object.Right + (this.Right - this.Left) / 2 + 1, Y = this.Pos.Y };
+            this.Pos = new Point2D() { X = @object.Right + (this.Right - this.Left) / 2 + 1, Y = this.Pos.Y + this.VelY };
             if (this.VelX < 0) this.VelX = 0;
             _jumped = false;
             if (this.Collide == "no") this.Collide = "left";
@@ -109,27 +109,27 @@ namespace Cyberpunk77022
                     switch (this.Collide)
                     {
                         case "bottom":
-                            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150,200), new Point2D()
                             {
                                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                                 Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
-                            }, Color.White));
+                            }, SplashKit.BitmapNamed("smoke_animation")));
                             break;
 
                         case "left":
-                            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150, 200), new Point2D()
                             {
                                 X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
                                 Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            }, SplashKit.BitmapNamed("smoke_animation")));
                             break;
 
                         case "right":
-                            _game.AddExplosion(new Explosion(_game, _camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
+                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150, 200), new Point2D()
                             {
                                 X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
                                 Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            }, SplashKit.BitmapNamed("smoke_animation")));
                             break;
 
                     }

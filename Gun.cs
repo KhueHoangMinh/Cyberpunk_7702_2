@@ -11,33 +11,6 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace Cyberpunk77022
 {
-    public interface BulletFactory
-    {
-        public Bullet CreateBullet(GameStage game, Gun gun, Color color);
-    }
-
-    public class NormalBulletFactory : BulletFactory
-    {
-        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
-        {
-            return new NormalBullet(game, gun, gun.Range, gun.Speed, gun.Damage, color);
-        }
-    }
-    public class SniperBulletFactory : BulletFactory
-    {
-        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
-        {
-            return new SniperBullet(game, gun, gun.Range, gun.Speed, gun.Damage);
-        }
-    }
-    public class RPGBulletFactory : BulletFactory
-    {
-        public Bullet CreateBullet(GameStage game, Gun gun, Color color)
-        {
-            return new RPGBullet(game, gun, gun.Range, 10, gun.Damage);
-        }
-    }
-
     public abstract class Gun : ShopItem
     {
         Object _GunOf;
@@ -277,11 +250,11 @@ namespace Cyberpunk77022
                     {
                         _initVelY *= -1;
                     }
-                    _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(2, 3), new Random().Next(20, 50), new Point2D()
+                    _game.AddSmoke(new AniSmoke(_game, _camera, new Random().Next(20, 30), new Random().Next(20, 50), new Point2D()
                     {
                         X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
                         Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                    }, Color.White, _initVelX, _initVelY));
+                    }, _initVelX, _initVelY));
                 }
                 else if (DateTime.UtcNow.Ticks - _ShootTime > 8000000)
                 {
@@ -330,6 +303,7 @@ namespace Cyberpunk77022
                     X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
                     Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
                 }, color, 0.1f, 50));
+                this.Game.AddAniShot(new AniShot(this.Game, this.Game.Camera, this.Nozzle, this.Angle * (float)(360.0 / (2 * Math.PI)), this.Reverse));
                 this.ShootAction(color);
             }
         }
