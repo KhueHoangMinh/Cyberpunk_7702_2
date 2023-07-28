@@ -470,7 +470,7 @@ namespace Cyberpunk77022
                 stars = new List<Star>();
                 sths = new List<Something>();
 
-                this.Load("../../../userdata.txt");
+                this.Load("userdata.txt");
 
                 for (int i = 0; i < 30; i++)
                 {

@@ -303,7 +303,7 @@ namespace Cyberpunk77022
                 );
             }
 
-            this.Manager.Skill.InGameGraphic(195, 65);
+            if(this.Manager.Skill != null) this.Manager.Skill.InGameGraphic(195, 65);
 
             SplashKit.FillRectangle(Color.Gray, 30, 110, 200, 30);
             SplashKit.FillRectangle(Color.Green, 30, 110, 200 * player.Health / player.MaxHealth, 30);
@@ -480,7 +480,7 @@ namespace Cyberpunk77022
 
         public void EndGame()
         {
-            this.Manager.Save("../../../userdata.txt");
+            this.Manager.Save("userdata.txt");
             this.Closing = true;
         }
     }

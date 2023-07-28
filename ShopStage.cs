@@ -112,7 +112,7 @@ namespace Cyberpunk77022
                                 break;
                         }
                         _state = "selected";
-                        _page.Shop.Manager.Save("../../../userdata.txt");
+                        _page.Shop.Manager.Save("userdata.txt");
                     }
                 }
             } else
@@ -125,7 +125,7 @@ namespace Cyberpunk77022
                         _page.Shop.Manager.Coin -= _price;
                         _state = "purchased";
                         _actualItem.Purchased = true;
-                        _page.Shop.Manager.Save("../../../userdata.txt");
+                        _page.Shop.Manager.Save("userdata.txt");
                     }
                 }
             }

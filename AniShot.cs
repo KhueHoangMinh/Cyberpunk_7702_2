@@ -36,8 +36,8 @@ namespace Cyberpunk77022
 
         public void Update()
         {
-            drawingcell += 0.2f;
-            if (drawingcell > 3 + 0.2f)
+            drawingcell += 0.4f;
+            if (drawingcell > 3 + 0.4f)
             {
                 _game.RemoveAniShot();
                 drawing = false;

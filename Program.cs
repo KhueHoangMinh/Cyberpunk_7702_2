@@ -20,7 +20,7 @@ namespace Cyberpunk77022
             int HEIGHT = 1080;
             long TIME_BETWEEN_UPDATES = 150000;
             long CURRENT_UPDATE_TICK = DateTime.UtcNow.Ticks;
-            uint FPS = 120;
+            uint FPS = 75;
 
             Window window = new Window("Cyberpunk 7702 | 2", WIDTH, HEIGHT);
 
