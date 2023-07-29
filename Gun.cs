@@ -250,11 +250,15 @@ namespace Cyberpunk77022
                     {
                         _initVelY *= -1;
                     }
-                    _game.AddSmoke(new AniSmoke(_game, _camera, new Random().Next(20, 30), new Random().Next(20, 50), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
-                        Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                    }, _initVelX, _initVelY));
+                    int size = new Random().Next(20, 30);
+                    _game.AddAnimation(
+                        new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false, true, new Random().Next(2,5), _initVelX, _initVelY,
+                            new Point2D()
+                            {
+                                X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                                Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                            }, size, size)
+                        );
                 }
                 else if (DateTime.UtcNow.Ticks - _ShootTime > 8000000)
                 {
@@ -288,22 +292,29 @@ namespace Cyberpunk77022
                 {
                     color = Color.Random();
                 }
-                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(2, 5), 35, new Point2D()
-                {
-                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
-                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                }, color, 0.3f, 5));
-                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(5, 10), 35, new Point2D()
-                {
-                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
-                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                }, color, 0.2f, 30));
-                this.Game.AddExplosion(new Explosion(_game, _camera, new Random().Next(15, 20), 100, new Point2D()
-                {
-                    X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
-                    Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
-                }, color, 0.1f, 50));
-                this.Game.AddAniShot(new AniShot(this.Game, this.Game.Camera, this.Nozzle, this.Angle * (float)(360.0 / (2 * Math.PI)), this.Reverse));
+                this.Game.AddAnimation(
+                        new CalAnimation(_game, color, 0.05f, new Random().Next(0, 180), 2, 0, 0, new Point2D()
+                        {
+                            X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                            Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                        }, 10, 10)
+                    );
+                this.Game.AddAnimation(
+                        new CalAnimation(_game, color, 0.08f, new Random().Next(0, 180), 20, 0, 0, new Point2D()
+                        {
+                            X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                            Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                        }, 16, 16)
+                    );
+                this.Game.AddAnimation(
+                        new CalAnimation(_game, color, 0.1f, new Random().Next(0, 180), 50, 0, 0, new Point2D()
+                        {
+                            X = (double)new Random().Next((int)nozzle.X - 10, (int)nozzle.X + 10),
+                            Y = (double)new Random().Next((int)nozzle.Y - 10, (int)nozzle.Y + 10),
+                        }, 20, 20)
+                    );
+                this.Game.AddAnimation(new PreLoadedAnimation(this.Game, SplashKit.BitmapNamed("shot_animation"), 0 , 3,
+                    false, this.Reverse, this.Angle * (float)(360.0 / (2 * Math.PI)), this.Nozzle, 500, 500));
                 this.ShootAction(color);
             }
         }

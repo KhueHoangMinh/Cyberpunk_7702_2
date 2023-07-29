@@ -134,11 +134,15 @@ namespace Cyberpunk77022
 
         public virtual void Explode()
         {
-            this.Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, 400, new Point2D()
-            {
-                X = this.Pos.X,
-                Y = this.Pos.Y
-            }, SplashKit.BitmapNamed("smoke_animation")));
+            this.Game.AddAnimation(
+                new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false,
+                    new Point2D()
+                    {
+                        X = this.Pos.X,
+                        Y = this.Pos.Y
+                    }, 400,400
+                )
+            );
         }
 
         public virtual void MoveBullet()
@@ -364,8 +368,15 @@ namespace Cyberpunk77022
             float StartY = (float)this.Pos.Y;
             while (Math.Abs(this.VelX) > Math.Abs(this.Pos.X - StartX) && Math.Abs(this.VelY) > Math.Abs(this.Pos.Y - StartY))
             {
-                this.Pos = new Point2D() { X = this.Pos.X + checkUnitX, Y = this.Pos.Y + checkUnitY }; 
-                if(new Random().Next(0, 9) < 3) Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(2, 8), new Random().Next(20, 30), new Point2D() { X = new Random().Next((int)this.Pos.X - 2, (int)this.Pos.X + 2), Y = new Random().Next((int)this.Pos.Y - 2, (int)this.Pos.Y + 2) }, Color.White, (float)(new Random().NextDouble() * 0.4 + 0.1), new Random().Next(2, 3)));
+                this.Pos = new Point2D() { X = this.Pos.X + checkUnitX, Y = this.Pos.Y + checkUnitY };
+                int size = new Random().Next(2, 8);
+                if (new Random().Next(0, 9) < 3) Game.AddAnimation(
+                    new CalAnimation(this.Game, Color.White, 0.03f, new Random().Next(0, 180), 2, 0, 0, new Point2D()
+                    {
+                        X = new Random().Next((int)this.Pos.X - 2, (int)this.Pos.X + 2),
+                        Y = new Random().Next((int)this.Pos.Y - 2, (int)this.Pos.Y + 2)
+                    }, size,size)
+                );
 
                 CheckCollide();
                 if (this.IsCollided)
@@ -392,31 +403,20 @@ namespace Cyberpunk77022
 
         public override void Explode()
         {
-            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(25, 75), 450, new Point2D()
-            //{
-            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            //}, this.Color, 0.6f, 20));
-            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(20, 75), 350, new Point2D()
-            //{
-            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            //}, this.Color, 0.5f, 30));
-            //this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 75), 400, new Point2D()
-            //{
-            //    X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-            //    Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            //}, this.Color, 0.7f, 25));
-            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(15, 20), 3000, new Point2D()
+            this.Game.AddAnimation(new CalAnimation(this.Game, Color.RGBAColor(0.8, 0.4, 0.4, 0.3), 0.03f, new Random().Next(0,180), 260, 0, 0, new Point2D()
             {
                 X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
                 Y = (double)new Random().Next((int)this.Pos.Y - 20, (int)this.Pos.Y + 20),
-            }, Color.RGBAColor(0.8, 0.4, 0.4, 0.3), 0.5f, 250));
-            this.Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, 600, new Point2D()
-            {
-                X = this.Pos.X,
-                Y = this.Pos.Y
-            }, SplashKit.BitmapNamed("explo_animation")));
+            }, 20, 20));
+            Game.AddAnimation(
+                new PreLoadedAnimation(Game, SplashKit.BitmapNamed("explo_animation"), 0, SplashKit.BitmapNamed("explo_animation").CellCount - 1, false,
+                    new Point2D()
+                    {
+                        X = this.Pos.X,
+                        Y = this.Pos.Y
+                    }, 600,600
+                )
+            );
 
             for (int i = 0; i < this.Game.Enemies.Count; i++)
             {
@@ -438,16 +438,18 @@ namespace Cyberpunk77022
             base.MoveBullet();
             for(int i = 0; i < 5; i++)
             {
-                if (new Random().Next(0, 20) < 4) 
+                int size = new Random().Next(100, 150);
+                if (new Random().Next(0, 20) < 4)
                 {
-                    Game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(100, 150), new Point2D()
-                    { 
-                        X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), 
-                        Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) 
-                    }, SplashKit.BitmapNamed("smoke_animation"))); 
-                    //Game.AddExplosion(
-                    //    new Explosion(this.Game, this.Game.Camera, new Random().Next(2, 8), new Random().Next(20, 30), new Point2D() { X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5), Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5) }, Color.White, (float)(new Random().NextDouble() * 0.3 + 0.1), new Random().Next(2, 5)));
-
+                    Game.AddAnimation(
+                        new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false,
+                            new Point2D()
+                            {
+                                X = new Random().Next((int)this.Pos.X - 5, (int)this.Pos.X + 5),
+                                Y = new Random().Next((int)this.Pos.Y - 5, (int)this.Pos.Y + 5)
+                            }, size, size
+                        )
+                    );
                 }
             }
         }

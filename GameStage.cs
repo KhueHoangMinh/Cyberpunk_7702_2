@@ -29,14 +29,8 @@ namespace Cyberpunk77022
         Queue<Trace> traces;
         Queue<Trace> TraceAdd;
         int TracePop = 0;
-        List<AniShot> aniShots;
-        Queue<AniShot> aniShotsAdd;
-        List<Explosion> explosions;
-        Queue<Explosion> ExploAdd;
-        int ExploPop = 0;
-        Queue<Smoke> smokes;
-        Queue<Smoke> SmokeAdd;
-        int SmokePop = 0;
+        List<CustomAnimation> animations;
+        Queue<CustomAnimation> AniAdd;
         Camera camera;
         int round = 0;
         long _clearAt;
@@ -67,14 +61,10 @@ namespace Cyberpunk77022
             bullets = new List<Bullet>();
             coins = new List<Coin>();
             traces = new Queue<Trace>();
-            aniShots = new List<AniShot>();
-            explosions = new List<Explosion>();
-            smokes = new Queue<Smoke>();
+            animations = new List<CustomAnimation>();
             MinusHealthAdd = new Queue<MinusHealth>();
             TraceAdd = new Queue<Trace>();
-            aniShotsAdd = new Queue<AniShot>();
-            ExploAdd = new Queue<Explosion>();
-            SmokeAdd = new Queue<Smoke>();
+            AniAdd = new Queue<CustomAnimation>();
             _clearAt = DateTime.UtcNow.Ticks;
             pauseBtn = new Button("||", Color.Red, this.Manager.Window.Width-60, 60, 60, 60);
             resumeBtn = new Button("Resume", Color.Green, this.Manager.Window.Width / 2, this.Manager.Window.Height/2-50, 250, 150);
@@ -144,55 +134,20 @@ namespace Cyberpunk77022
                 {
                     enemies[i].Update();
                 }
-                while (SmokeAdd.Count > 0) smokes.Enqueue(SmokeAdd.Dequeue());
-                foreach (Smoke smoke in smokes)
-                {
-                    smoke.Update();
-                }
-                while (SmokePop > 0 && smokes.Count > 0)
-                {
-                    smokes.Dequeue();
-                    SmokePop--;
-                }
-                while (aniShotsAdd.Count > 0) aniShots.Add(aniShotsAdd.Dequeue());
-                foreach (AniShot aniShot in aniShots)
-                {
-                    aniShot.Update();
-                }
+                while(AniAdd.Count > 0) animations.Add(AniAdd.Dequeue());
                 int m = 0;
-                while (m < aniShots.Count)
+                while (m < animations.Count)
                 {
-                    if (!aniShots[m].Drawing)
+                    if (animations[m].isPlaying)
                     {
-                        aniShots.Remove(aniShots[m]);
+                        animations[m].Update();
+                    } else 
+                    {
+                        animations.Remove(animations[m]);
                         m--;
                     }
                     m++;
                 }
-                while (ExploAdd.Count > 0) explosions.Add(ExploAdd.Dequeue());
-                foreach (Explosion explosion in explosions)
-                {
-                    explosion.Update();
-                }
-                m = 0;
-                while (m < explosions.Count)
-                {
-                    if (explosions[m].GetColor.A < 0.01)
-                    {
-                        explosions.Remove(explosions[m]);
-                        m--;
-                    } else if (explosions[m] is AniExplosion && !(explosions[m] as AniExplosion).Drawing)
-                    {
-                        explosions.Remove(explosions[m]);
-                        m--;
-                    }
-                    m++;
-                }
-                //while (ExploPop > 0 && explosions.Count > 0)
-                //{
-                //    explosions.Dequeue();
-                //    ExploPop--;
-                //}
                 foreach (MinusHealth minusHealth in minusHealths)
                 {
                     minusHealth.Update();
@@ -212,8 +167,8 @@ namespace Cyberpunk77022
                         paused = !paused;
                     }
                 }
-                //Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " +
-                //    traces.Count.ToString() + " " + explosions.Count.ToString() + " " + smokes.Count.ToString() + " " + aniShots.Count.ToString() + " ");
+                Console.WriteLine(enemies.Count.ToString() + " " + grounds.Count.ToString() + " " + bullets.Count.ToString() + " " + minusHealths.Count.ToString() + " " +
+                    traces.Count.ToString() + " " + animations.Count.ToString());
             } else
             {
                 if (this.OutEf._completed)
@@ -367,18 +322,9 @@ namespace Cyberpunk77022
                 enemies[i].DrawHealth();
                 enemies[i].DrawGun();
             }
-
-            foreach (Smoke smoke in smokes)
+            foreach (CustomAnimation animation in animations)
             {
-                smoke.Draw();
-            }
-            foreach (AniShot aniShot in aniShots)
-            {
-                aniShot.Draw();
-            }
-            foreach (Explosion explosion in explosions)
-            {
-                explosion.Draw();
+                animation.Draw();
             }
             foreach (MinusHealth minusHealth in minusHealths)
             {
@@ -442,31 +388,9 @@ namespace Cyberpunk77022
         {
             TracePop++;
         }
-        public void AddAniShot(AniShot aniShot)
+        public void AddAnimation(CustomAnimation animation)
         {
-            aniShotsAdd.Enqueue(aniShot);
-        }
-
-        public void RemoveAniShot()
-        {
-        }
-        public void AddExplosion(Explosion explosion)
-        {
-            ExploAdd.Enqueue(explosion);
-        }
-
-        public void RemoveExplosion()
-        {
-            ExploPop++;
-        }
-        public void AddSmoke(Smoke smoke)
-        {
-            SmokeAdd.Enqueue(smoke);
-        }
-
-        public void RemoveSmoke()
-        {
-            SmokePop++;
+            AniAdd.Enqueue(animation);
         }
         public void AddMinusHealth(MinusHealth minusHealth)
         {

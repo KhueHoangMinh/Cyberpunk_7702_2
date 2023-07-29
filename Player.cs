@@ -45,7 +45,7 @@ namespace Cyberpunk77022
         public override void CollideBottom(Object @object)
         {
             this.Pos = new Point2D() { X = this.Pos.X + this.VelX, Y = @object.Top - (this.Bottom - this.Top) / 2 - 1 };
-            this.VelX = this.VelX * 0.96f;
+            this.VelX = this.VelX * 0.98f;
             if (this.VelY > 0) this.VelY = 0;
             _jumped = false;
             if (this.Collide == "no") this.Collide = "bottom";
@@ -74,7 +74,7 @@ namespace Cyberpunk77022
             _jumped = true;
 
 
-            this.VelX = this.VelX * 0.96f;
+            this.VelX = this.VelX * 0.99f;
 
             if (SplashKit.KeyDown(KeyCode.Num1Key))
             {
@@ -106,30 +106,43 @@ namespace Cyberpunk77022
                 this.VelY = -20;
                 for (int i = 0; i < 3; i++)
                 {
+                    int size = new Random().Next(150, 200);
                     switch (this.Collide)
                     {
                         case "bottom":
-                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150,200), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                                Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
-                            }, SplashKit.BitmapNamed("smoke_animation")));
+                            _game.AddAnimation(
+                                    new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false,
+                                        new Point2D()
+                                        {
+                                            X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                                            Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
+                                        }, size, size
+                                    )
+                                );
                             break;
 
                         case "left":
-                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150, 200), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, SplashKit.BitmapNamed("smoke_animation")));
+                            _game.AddAnimation(
+                                    new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false,
+                                        new Point2D()
+                                        {
+                                            X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
+                                            Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                        }, size, size
+                                    )
+                                );
                             break;
 
                         case "right":
-                            _game.AddExplosion(new AniExplosion(this.Game, this.Game.Camera, new Random().Next(150, 200), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, SplashKit.BitmapNamed("smoke_animation")));
+                            _game.AddAnimation(
+                                    new PreLoadedAnimation(Game, SplashKit.BitmapNamed("smoke_animation"), 0, SplashKit.BitmapNamed("smoke_animation").CellCount - 1, false,
+                                        new Point2D()
+                                        {
+                                            X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
+                                            Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                        }, size, size
+                                    )
+                                );
                             break;
 
                     }

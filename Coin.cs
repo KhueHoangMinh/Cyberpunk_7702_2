@@ -77,7 +77,9 @@ namespace Cyberpunk77022
         public void Earn()
         {
             SplashKit.SoundEffectNamed("coin").Play();
-            _game.AddExplosion(new Explosion(_game,_game.Camera,15,100,this.Pos,Color.Yellow,0.5f,30));
+            _game.AddAnimation(
+                new CalAnimation(_game,Color.Yellow,0.03f,new Random().Next(0,180),30,0,0,this.Pos,20,20)
+            );
             _game.RemoveCoin(this);
             _game.Manager.Coin++;
         }

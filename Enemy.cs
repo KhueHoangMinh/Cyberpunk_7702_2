@@ -160,11 +160,13 @@ namespace Cyberpunk77022
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    _game.AddSmoke(new Smoke(_game, _camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
-                    {
-                        X = (double)new Random().Next((int)this.Left, (int)this.Right),
-                        Y = (double)new Random().Next((int)this.Top, (int)this.Bottom),
-                    }, Color.White, 0, 0));
+                    _game.AddAnimation(
+                        new CalAnimation(_game,Color.White,0.02f,new Random().Next(0,180),new Random().Next(2,8),0,-10, new Point2D()
+                        {
+                            X = (double)new Random().Next((int)this.Left, (int)this.Right),
+                            Y = (double)new Random().Next((int)this.Top, (int)this.Bottom),
+                        },5,5)
+                    );
                 }
                 _game.RemoveEnemy(this);
             }
@@ -335,27 +337,33 @@ namespace Cyberpunk77022
                     switch (this.Collide)
                     {
                         case "bottom":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                                Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                                        Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                         case "left":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
+                                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                         case "right":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
+                                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                     }
@@ -483,27 +491,33 @@ namespace Cyberpunk77022
                     switch (this.Collide)
                     {
                         case "bottom":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
-                                Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Pos.X - 20, (int)this.Pos.X + 20),
+                                        Y = (double)new Random().Next((int)this.Bottom - 10, (int)this.Bottom + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                         case "left":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Left - 20, (int)this.Left + 20),
+                                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                         case "right":
-                            this.Game.AddExplosion(new Explosion(this.Game, this.Game.Camera, new Random().Next(10, 25), new Random().Next(30, 60), new Point2D()
-                            {
-                                X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
-                                Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
-                            }, Color.White));
+                            this.Game.AddAnimation(
+                                    new CalAnimation(this.Game, Color.White, 0.02f, new Random().Next(0, 180), 10, 0, 0, new Point2D()
+                                    {
+                                        X = (double)new Random().Next((int)this.Right - 20, (int)this.Right + 20),
+                                        Y = (double)new Random().Next((int)this.Pos.Y - 10, (int)this.Pos.Y + 10),
+                                    }, 5, 5)
+                                );
                             break;
 
                     }

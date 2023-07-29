@@ -45,11 +45,13 @@ namespace Cyberpunk77022
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        Host.Game.AddSmoke(new Smoke(Host.Game, Host.Game.Camera, new Random().Next(8, 15), new Random().Next(20, 50), new Point2D()
-                        {
-                            X = (double)new Random().Next((int)Host.Left, (int)Host.Right),
-                            Y = (double)new Random().Next((int)Host.Top, (int)Host.Bottom),
-                        }, Color.White, 0, 0));
+                        Host.Game.AddAnimation(
+                            new CalAnimation(Host.Game, Color.White, 0.02f, new Random().Next(0, 180), new Random().Next(2, 8), 0, -10, new Point2D()
+                            {
+                                X = (double)new Random().Next((int)Host.Left, (int)Host.Right),
+                                Y = (double)new Random().Next((int)Host.Top, (int)Host.Bottom),
+                            }, 5, 5)
+                        );
                     }
                 }
             }
