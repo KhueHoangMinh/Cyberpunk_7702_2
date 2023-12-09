@@ -1,5 +1,7 @@
 # Installation guide
 Updating...
+install C++ and Splashkit for C++
+Clone this repository and run with Visual Studio 
 # Demo screenshots
 ![Screenshot (379)](https://github.com/KhueHoangMinh/Cyberpunk_7702_2/assets/120011896/b6fbf358-51a3-48db-8ea8-148a1fa20a5b)
 ![Screenshot (375)](https://github.com/KhueHoangMinh/Cyberpunk_7702_2/assets/120011896/a0ee1a30-cf01-4c79-ad66-68eaae0527a7)
